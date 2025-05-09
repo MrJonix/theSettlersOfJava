@@ -3,6 +3,7 @@ package de.mrjonix.catan;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.dsl.FXGL;
 
 import javafx.scene.input.KeyCode;
 
@@ -108,12 +109,12 @@ public class App extends GameApplication {
         
         for (int i = 0; i < waterCoords.length; i++) {
         	int[] coord = waterCoords[i];
-        	HexagonTile tile = new HexagonTile(coord[0], coord[1], HEX_SIZE, 0, i % 2 == 0 ? Material.WATER : Material.BOAT_WATER);
+        	HexagonTile tile = new HexagonTile(coord[0], coord[1], HEX_SIZE, 0, 
+        						i % 2 == 0 ? Material.WATER : Material.BOAT_WATER);
         	tiles.add(tile);
         	spawn("hexagon", tile.getSpawnData());
+        	
         }
-                
-            
        
     }
     

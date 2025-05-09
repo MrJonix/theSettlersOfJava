@@ -3,10 +3,26 @@ package de.mrjonix.catan;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public enum Material {
 	
 	WOOL,IRON,WOOD,WHEAT,CLAY,DESSERT,WATER,BOAT_WATER;
+	
+	private static final Map<Material, String> resourceImages = Map.of(
+		    Material.WOOD, "/wood.png",
+		    Material.WOOL, "/wool.png",
+		    Material.DESSERT, "/dessert.png",
+		    Material.IRON, "/iron.png",
+		    Material.CLAY, "/clay.png",
+		    Material.WHEAT, "/wheat.png",
+		    Material.WATER, "/water.png",
+		    Material.BOAT_WATER, "/water-boat-left.png"
+		);
+	
+	public String getResourceImagePath() {
+		return resourceImages.get(this);
+	}
 	
 	public static List<Material> generateMaterialList() {
     	List<Material> materialsList = new ArrayList<>();
@@ -31,4 +47,5 @@ public enum Material {
         Collections.shuffle(materialsList);
         return materialsList;
     }
+	
 }

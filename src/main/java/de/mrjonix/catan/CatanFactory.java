@@ -5,6 +5,7 @@ import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 import java.net.URL;
 import java.util.Map;
 
+import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
@@ -22,24 +23,14 @@ import javafx.scene.text.Text;
 
 // EntityFactory für das Hexagon
 public class CatanFactory implements EntityFactory {
-	private static final Map<Material, String> resourceImages = Map.of(
-		    Material.WOOD, "/wood.png",
-		    Material.WOOL, "/wool.png",
-		    Material.DESSERT, "/dessert.png",
-		    Material.IRON, "/iron.png",
-		    Material.CLAY, "/clay.png",
-		    Material.WHEAT, "/wheat.png",
-		    Material.WATER, "/water.png",
-		    Material.BOAT_WATER, "/water-boat-left.png"
-		);
 
     @Spawns("hexagon")
     public Entity newHexagon(SpawnData data) {
         double size = data.get("size");
         int number = data.get("number");
-        
+        Material material = data.get("material");
         // Load the selected image
-        URL resourceUrl = getClass().getResource(resourceImages.get(data.get("material")));
+        URL resourceUrl = getClass().getResource(material.getResourceImagePath());
         if (resourceUrl == null) {
             System.err.println("Image resource not found. Ensure that the image file is correctly located in the resources folder.");
         } 
@@ -85,12 +76,22 @@ public class CatanFactory implements EntityFactory {
 	        stack.setTranslateX(-25);
 	        stack.setTranslateY(-25);
         }
+        
+        
         // Build the entity with the hexagon, the selected image as a view, and the number in the center
-        return entityBuilder(data)
+        Entity box = entityBuilder(data)
                 .viewWithBBox(hex) // Add the hexagon shape as background
                 .view(imageView)  // Add the selected image on top of the hexagon
                 .view(stack)
                 .build();
+        
+        box.getViewComponent().getChildren().forEach(node -> {
+            node.setOnMouseClicked(e -> {
+                FXGL.getDialogService().showMessageBox("You clicked the box with the Material " + material);
+            });
+        });
+
+        return box;
     }
 
     private Polygon createHexagon(double size) {
