@@ -3,6 +3,7 @@ package de.mrjonix.catan;
 import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 
 import java.net.URL;
+import java.util.Map;
 
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
@@ -16,17 +17,29 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 // EntityFactory für das Hexagon
 public class CatanFactory implements EntityFactory {
+	private static final Map<Material, String> resourceImages = Map.of(
+		    Material.WOOD, "/wood.png",
+		    Material.WOOL, "/wool.png",
+		    Material.DESSERT, "/dessert.png",
+		    Material.IRON, "/iron.png",
+		    Material.CLAY, "/clay.png",
+		    Material.WHEAT, "/wheat.png",
+		    Material.WATER, "/water.png",
+		    Material.BOAT_WATER, "/water-boat-left.png"
+		);
 
     @Spawns("hexagon")
     public Entity newHexagon(SpawnData data) {
         double size = data.get("size");
         int number = data.get("number");
+        
         // Load the selected image
-        URL resourceUrl = getClass().getResource(data.get("path"));
+        URL resourceUrl = getClass().getResource(resourceImages.get(data.get("material")));
         if (resourceUrl == null) {
             System.err.println("Image resource not found. Ensure that the image file is correctly located in the resources folder.");
         } 
@@ -51,19 +64,27 @@ public class CatanFactory implements EntityFactory {
         // Center the image within the hexagon by adjusting the translateX and translateY
         imageView.setTranslateX(-hexHeight / 2);  // Center the image horizontally within the hexagon
         imageView.setTranslateY(-hexWidth / 2); // Center the image vertically within the hexagon
-        
-        Circle circle = new Circle(25); // Radius 25
-        circle.setFill(Color.WHITE);
-        circle.setStroke(Color.BLACK);
-
-        Text text = new Text(String.valueOf(number));
-        text.setFont(Font.font(20));
-        text.setFill(Color.BLACK);
-
-        StackPane stack = new StackPane(circle, text);
-        stack.setTranslateX(-25);
-        stack.setTranslateY(-25);
-        
+        Color color;
+        if (number == 6 || number == 8) {
+        	color = Color.RED;
+        } else {
+        	color = Color.BLACK;
+        }
+        StackPane stack = new StackPane();
+        if (number != 0) {
+	        Circle circle = new Circle(25); // Radius 25
+	        circle.setFill(Color.WHITE);
+	
+	        Text text = new Text(String.valueOf(number));
+	        text.setFont(Font.font("Myriad Pro", FontWeight.BOLD, 30));
+	        
+	        
+	        text.setFill(color);
+	
+	        stack = new StackPane(circle, text);
+	        stack.setTranslateX(-25);
+	        stack.setTranslateY(-25);
+        }
         // Build the entity with the hexagon, the selected image as a view, and the number in the center
         return entityBuilder(data)
                 .viewWithBBox(hex) // Add the hexagon shape as background
