@@ -1,0 +1,97 @@
+@startuml
+' Spieler-Klasse
+class Player {
+  - id: int
+  - name: String
+  - resources: Map<ResourceType, int>
+  - settlements: List<Settlement>
+  - roads: List<Road>
+  + buildSettlement(location: HexCorner): void
+  + buildRoad(start: HexCorner, end: HexCorner): void
+  + tradeWith(other: Player): void
+}
+
+' Spielfeld-Klassen
+class GameBoard {
+  - hexes: List<Hex>
+  - roads: List<Road>
+  - settlements: List<Settlement>
+  + initializeBoard(): void
+  + getAvailableLocations(): List<HexCorner>
+}
+
+class Hex {
+  - type: HexType
+  - numberToken: int
+  - position: HexPosition
+}
+
+class Road {
+  - start: HexCorner
+  - end: HexCorner
+  - owner: Player
+}
+
+class Settlement {
+  - location: HexCorner
+  - owner: Player
+  - isCity: boolean
+}
+
+' Spiel-Controller
+class GameController {
+  - players: List<Player>
+  - board: GameBoard
+  - currentPlayer: Player
+  + startGame(): void
+  + endTurn(): void
+  + rollDice(): int
+  + distributeResources(numberRolled: int): void
+}
+
+' Ressourcentyp-Enum
+enum ResourceType {
+  Brick
+  Lumber
+  Wool
+  Grain
+  Ore
+}
+
+' HexTyp-Enum
+enum HexType {
+  Forest
+  Hill
+  Field
+  Mountain
+  Pasture
+  Desert
+}
+
+' Hilfsklassen
+class HexCorner {
+  - x: int
+  - y: int
+}
+
+class HexPosition {
+  - q: int
+  - r: int
+  - s: int
+}
+
+' Beziehungen
+Player "1" -- "many" Road
+Player "1" -- "many" Settlement
+Settlement "1" --> "1" HexCorner
+Road "1" --> "1" HexCorner : start
+Road "1" --> "1" HexCorner : end
+Hex "1" -- "1" HexPosition
+HexCorner -- Hex : adjacency
+
+GameController --> Player
+GameController --> GameBoard
+GameBoard --> Hex
+GameBoard --> Settlement
+GameBoard --> Road
+@enduml
