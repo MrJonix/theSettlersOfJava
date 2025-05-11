@@ -26,8 +26,10 @@ public class CatanFactory implements EntityFactory {
 
     @Spawns("hexagon")
     public Entity newHexagon(SpawnData data) {
+    	
         double size = data.get("size");
         int number = data.get("number");
+        
         Material material = data.get("material");
         // Load the selected image
         URL resourceUrl = getClass().getResource(material.getResourceImagePath());
@@ -103,7 +105,6 @@ public class CatanFactory implements EntityFactory {
         for (int i = 0; i < 6; i++) {
             // Adjust the angle to ensure the hexagon is properly aligned
             double angle = startingAngle + Math.toRadians(60 * i); // Add 60° for each vertex
-
             // Calculate the x and y position for each point
             double x = size * Math.cos(angle);
             double y = size * Math.sin(angle);

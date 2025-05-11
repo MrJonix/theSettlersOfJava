@@ -4,18 +4,19 @@ class Player {
   - id: int
   - name: String
   - resources: Map<ResourceType, int>
-  - settlements: List<Settlement>
+  - buildings: List<Building>
   - roads: List<Road>
-  + buildSettlement(location: HexCorner): void
+  + build(location: HexCorner, Building building): void
   + buildRoad(start: HexCorner, end: HexCorner): void
   + tradeWith(other: Player): void
+  + calcVictoryPoints(): int
 }
 
 ' Spielfeld-Klassen
 class GameBoard {
   - hexes: List<Hex>
   - roads: List<Road>
-  - settlements: List<Settlement>
+  - buildings: List<Building>
   + initializeBoard(): void
   + getAvailableLocations(): List<HexCorner>
 }
@@ -26,16 +27,28 @@ class Hex {
   - position: HexPosition
 }
 
-class Road {
+class HexEdge {
   - start: HexCorner
   - end: HexCorner
+}
+
+class Road {
+  - position: HexEdge
   - owner: Player
 }
 
-class Settlement {
+abstract class Building {
   - location: HexCorner
   - owner: Player
-  - isCity: boolean
+  + getVictoryPoints(): int
+}
+
+class Settlement extends Building {
+  + getVictoryPoints(): int = 1
+}
+
+class City extends Building {
+  + getVictoryPoints(): int = 2
 }
 
 ' Spiel-Controller
@@ -56,8 +69,18 @@ enum ResourceType {
   Wool
   Grain
   Ore
+  - displayName: String
+  - color: Color
+  - imagePath: String
+  - tradeValue: int
+  + ResourceType(displayName: String, color: String, imagePath: String, tradeValue: int)
+  
+  + getDisplayName(): String
+  + getColor(): Color
+  + getImagePath(): String
+  + getTradeValue(): int
+  + static getRandomResource(): ResourceType
 }
-
 ' HexTyp-Enum
 enum HexType {
   Forest
@@ -66,7 +89,19 @@ enum HexType {
   Mountain
   Pasture
   Desert
+
+  - displayName: String
+  - imagePath: String
+  - color: String
+
+  + HexType(displayName: String, imagePath: String, color: String)
+
+  + getDisplayName(): String
+  + getImagePath(): String
+  + getColor(): String
+  + static generateHexTypeList(): List<HexType>
 }
+
 
 ' Hilfsklassen
 class HexCorner {
@@ -77,21 +112,31 @@ class HexCorner {
 class HexPosition {
   - q: int
   - r: int
-  - s: int
+}
+
+class Harbor {
+  - location: HexEdge
+  - tradeRatio: int
+  - resourceType: ResourceType  // null für 3:1-Hafen (Any)
+  + getTradeOffer(player: Player): TradeOffer
 }
 
 ' Beziehungen
 Player "1" -- "many" Road
-Player "1" -- "many" Settlement
-Settlement "1" --> "1" HexCorner
-Road "1" --> "1" HexCorner : start
-Road "1" --> "1" HexCorner : end
+Player "1" -- "many" Building
+Player --> ResourceType
+HexType --> ResourceType
+Building "1" --> "1" HexCorner
+HexEdge "1" --> "1" HexCorner : start
+HexEdge "1" --> "1" HexCorner : end
 Hex "1" -- "1" HexPosition
 HexCorner -- Hex : adjacency
-
+Road  -->  HexEdge
+Harbor -->  HexEdge
+Hex --> HexType
 GameController --> Player
 GameController --> GameBoard
 GameBoard --> Hex
-GameBoard --> Settlement
+GameBoard --> Building
 GameBoard --> Road
 @enduml
