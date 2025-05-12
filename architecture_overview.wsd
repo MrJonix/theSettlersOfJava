@@ -4,6 +4,7 @@
 class Player {
   - id: int
   - name: String
+  - victoryPoints: int
   - resources: Map<ResourceType, int>
   + hasResources(required: Map<ResourceType, int>): boolean
   + addResources(gains: Map<ResourceType, int>): void
@@ -12,8 +13,7 @@ class Player {
   + upgradeToCity(location: HexCorner): boolean
   + buildRoad(position: HexEdge): boolean
   + initiateTrade(offer: TradeOffer): void
-  + calcVictoryPoints(): int
-  
+  + getVictoryPoints(): int 
 }
 
 class TradeOffer {
