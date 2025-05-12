@@ -1,0 +1,166 @@
+@startuml
+
+' Spieler-Klasse
+class Player {
+  - id: int
+  - name: String
+  - victoryPoints: int
+  - resources: Map<ResourceType, int>
+  + hasResources(required: Map<ResourceType, int>): boolean
+  + addResources(gains: Map<ResourceType, int>): void
+  + removeResources(costs: Map<ResourceType, int>): void
+  + buildSettlement(location: HexCorner): boolean
+  + upgradeToCity(location: HexCorner): boolean
+  + buildRoad(position: HexEdge): boolean
+  + initiateTrade(offer: TradeOffer): void
+  + getVictoryPoints(): int 
+}
+
+class TradeOffer {
+  - offerer: Player
+  - receiver: Player
+  - offeredResources: Map<ResourceType, int>
+  - requestedResources: Map<ResourceType, int>
+  + accept(): void
+  + decline(): void
+}
+
+class GameBoard {
+  - hexes: List<Hex>
+  - roads: List<Road>
+  - buildings: List<Building>
+  - harbors: List<Harbor>
+  + initializeBoard(): void
+  + getAvailableSettlementLocations(player: Player): List<HexCorner>
+  + getAvailableRoadPositions(player: Player): List<HexEdge>
+  + getAccessibleHarbors(player: Player): List<Harbor>
+  + getBuildingsForPlayer(player: Player): List<Building>
+  + getHexAt(position: HexPosition): Hex
+}
+
+class Hex {
+  - type: HexType
+  - numberToken: int
+  - position: HexPosition
+}
+
+class HexEdge {
+  - start: HexCorner
+  - end: HexCorner
+}
+
+class Road {
+  - position: HexEdge
+  - owner: Player
+}
+
+abstract class Building {
+  - location: HexCorner
+  - owner: Player
+  + getVictoryPoints(): int
+}
+
+class Settlement extends Building {
+  + getVictoryPoints(): int = 1
+}
+
+class City extends Building {
+  + getVictoryPoints(): int = 2
+}
+
+enum GameState {
+  Setup
+  InProgress
+  Ended
+}
+
+class GameController {
+  - players: List<Player>
+  - board: GameBoard
+  - currentPlayer: Player
+  - state: GameState
+  - robber: Robber
+  + startGame(): void
+  + nextTurn(): void
+  + rollDice(): int
+  + distributeResources(numberRolled: int): void
+  + moveRobber(newPosition: Hex): void
+}
+
+enum ResourceType {
+  Brick
+  Lumber
+  Wool
+  Grain
+  Ore
+  - displayName: String
+  - color: Color
+  - imagePath: String
+  + getDisplayName(): String
+  + getColor(): Color
+  + getImagePath(): String
+  + static getRandomResource(): ResourceType
+}
+
+enum HexType {
+  Forest
+  Hill
+  Field
+  Mountain
+  Pasture
+  Desert
+  - displayName: Color
+  - imagePath: String
+  - color: Color
+  + getDisplayName(): String
+  + getImagePath(): String
+  + getColor(): String
+  + static generateHexTypeList(): List<HexType>
+}
+
+class HexCorner {
+  - position: Hex[3]
+}
+
+class HexPosition {
+  - q: int
+  - r: int
+}
+
+class Harbor {
+  - location: HexEdge
+  - tradeRatio: int
+  - resourceType: ResourceType  // null für 3:1-Hafen
+  + getTradeOffer(player: Player): TradeOffer
+}
+
+class Robber {
+  - position: Hex
+  + moveRobber(newPosition: Hex): void
+  + stealResource(player: Player): ResourceType
+}
+
+' Beziehungen mit Komposition & Assoziationen
+Harbor --> ResourceType
+Player --> ResourceType
+
+GameBoard "1" *-- "many" Hex
+GameBoard "1" *-- "many" Road
+GameBoard "1" *-- "many" Building
+GameBoard "1" *-- "many" Harbor
+Building "1" *-- "1" HexCorner
+Road "1" *-- "1" HexEdge
+HexEdge "1" *-- "1" HexCorner : start
+HexEdge "1" *-- "1" HexCorner : end
+Hex "1" *-- "1" HexPosition
+Robber --> Hex
+Hex --> HexType
+
+
+HexCorner -- Hex : adjacency
+GameController --> Player
+GameController --> GameBoard
+GameController --> Robber
+Player --> TradeOffer
+
+@enduml
