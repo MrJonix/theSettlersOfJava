@@ -15,12 +15,16 @@ public class Hex {
 		this.numberToken = numberToken;
 		this.position = position;
 	}
+	public HexPosition getPosition() {
+		return position;
+	}
 	
 	public SpawnData getSpawnData() {
-        return new SpawnData(position.getX(HEX_SIZE), position.getY(HEX_SIZE))
+        return new SpawnData(position.getX(), position.getY())
                 .put("size", HEX_SIZE)
                 .put("position", position)
         		.put("numberToken", numberToken)
         		.put("hexType", type);
     }
+	
 }

@@ -18,14 +18,14 @@ import de.dhbw_ravensburg.theSettlersOfJava.graphics.CatanFactory;
 import javafx.scene.input.KeyCode;
 
 public class App extends GameApplication {
-    private static final int WIDTH = 1200;
-    private static final int HEIGHT = 1200;
+    private static final int WIDTH = 1920;
+    private static final int HEIGHT = 1080;
     
 	@Override
 	protected void initSettings(GameSettings settings) {
         settings.setWidth(WIDTH);
         settings.setHeight(HEIGHT);
-        settings.setTitle("theSettlersOfJava");
+        settings.setTitle("SettlersOfJava");
         settings.setAppIcon("icon.png");
 	}
     @Override

@@ -33,7 +33,6 @@ public class CatanFactory implements EntityFactory {
         // Load the selected image
         System.out.println(type.getImagePath());
         URL resourceUrl = getClass().getResource(type.getImagePath());
-        System.out.println(resourceUrl);
         if (resourceUrl == null) {
             throw new IllegalStateException("Image resource not found: " + type.getImagePath());
         }
@@ -45,8 +44,8 @@ public class CatanFactory implements EntityFactory {
         ImageView imageView = new ImageView(image);
 
         // Set the image Hex.HEX_SIZE to fit the hexagon
-        double hexWidth = Hex.HEX_SIZE * 2; // Hexagon's width
-        double hexHeight = Math.sqrt(3) * Hex.HEX_SIZE; // Hexagon's height
+        double hexWidth = Hex.HEX_SIZE * 2 - 10; // Hexagon's width
+        double hexHeight = Math.sqrt(3) * Hex.HEX_SIZE - 10; // Hexagon's height
 
         // Adjust the image's Hex.HEX_SIZE based on the hexagon's Hex.HEX_SIZE
         imageView.setFitWidth(hexWidth);  
@@ -112,7 +111,7 @@ public class CatanFactory implements EntityFactory {
         }
 
         // Apply color and stroke to the hexagon
-        hex.setFill(Color.LIGHTGRAY);
+        hex.setFill(Color.WHITE);
         hex.setStroke(Color.WHITE);
         return hex;
     }
