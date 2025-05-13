@@ -3,9 +3,7 @@ package de.dhbw_ravensburg.theSettlersOfJava.buildings;
 
 
 import com.almasb.fxgl.dsl.FXGL;
-
 import com.almasb.fxgl.texture.Texture;
-
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexCorner;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexEdge;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
@@ -51,7 +49,7 @@ public class Road {
 
 	    // Klick-Handler
 	    texture.setOnMouseClicked(event -> {
-	        FXGL.getDialogService().showMessageBox("Straße von Spieler.");
+	        FXGL.getDialogService().showMessageBox("Straße von Spieler " + owner + ".");
 	    });
 	}
 

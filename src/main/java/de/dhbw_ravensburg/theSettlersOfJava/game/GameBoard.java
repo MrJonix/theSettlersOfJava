@@ -8,12 +8,16 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import de.dhbw_ravensburg.theSettlersOfJava.buildings.Building;
+import de.dhbw_ravensburg.theSettlersOfJava.buildings.City;
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.Road;
+import de.dhbw_ravensburg.theSettlersOfJava.buildings.Settlement;
 import de.dhbw_ravensburg.theSettlersOfJava.map.Hex;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexCorner;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexEdge;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexPosition;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.HexType;
+import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
 import javafx.scene.paint.Color;
 
 public class GameBoard {
@@ -72,12 +76,14 @@ public class GameBoard {
         for (HexCorner corner : hexCorners) {
             corner.visualizeCorner(Color.WHITE);
         }
-        /*
+        
         List<HexEdge> l = new ArrayList<>(hexEdges);
-	        
-	    Road r = new Road(l.get(3), null);
+	    Player owner = new Player("Jonas");
+	    Road r = new Road(l.get(3), owner);
 	    r.visualize();
-	    */
+	    Building b = new City(l.get(3).getCorners()[0], owner);
+	    b.visualize();
+	    
     }
 
     private void calculateCornersAndEdgesForHex(Hex hex) {

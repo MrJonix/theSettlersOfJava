@@ -4,11 +4,13 @@ public class Player {
 	private static int ID_COUNTER = 0;
 	private int id;
 	private int victoryPoints;
+	private String name;
 	
-	public Player() {
+	public Player(String name) {
 		this.id = ID_COUNTER;
 		this.victoryPoints = 0;
 		ID_COUNTER++;
+		this.name = name;
 	}
 
 	public int getVictoryPoints() {
@@ -21,5 +23,12 @@ public class Player {
 
 	public int getId() {
 		return id;
+	}
+
+	public String getName() {
+		return name;
+	}
+	public String toString() {
+		return name;
 	}
 }
