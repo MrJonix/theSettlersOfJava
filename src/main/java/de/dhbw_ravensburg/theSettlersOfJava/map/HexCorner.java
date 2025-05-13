@@ -1,5 +1,14 @@
 package de.dhbw_ravensburg.theSettlersOfJava.map;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.entity.Entity;
+
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
 public class HexCorner {
 
@@ -37,10 +46,51 @@ public class HexCorner {
     public Hex[] getAdjacentHexes() {
         return adjacentHexes;
     }
+    
+    public void visualizeCorner() {
+
+        Circle circle = new Circle(5, Color.RED);
+
+        Entity circleEntity = FXGL.entityBuilder()
+            .at(x, y)
+            .view(circle)
+            .buildAndAttach();
+
+        // Klick-Handler hinzufügen
+        circle.setOnMouseClicked(event -> {
+           
+            StringBuilder message = new StringBuilder("Benachbarte Hexes:\n");
+            for (Hex hex : this.getAdjacentHexes()) {
+            	HexPosition pos = hex.getPosition();
+                message.append(String.format("- Typ: %s | Position: (%d, %d)\n",
+                        hex.getHexType(), pos.getQ(), pos.getR()));
+            }
+            FXGL.getDialogService().showMessageBox(message.toString());
+        });
+    }
 
     @Override
     public String toString() {
         return String.format("Ecke Koordinaten: (%.2f, %.2f)", x, y);
     }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        HexCorner other = (HexCorner) obj;
+
+        Set<Hex> thisSet = new HashSet<>(Arrays.asList(this.adjacentHexes));
+        Set<Hex> otherSet = new HashSet<>(Arrays.asList(other.adjacentHexes));
+
+        return thisSet.equals(otherSet);
+    }
+
+    @Override
+    public int hashCode() {
+        Set<Hex> set = new HashSet<>(Arrays.asList(adjacentHexes));
+        return set.hashCode();
+    }
+
 }
 

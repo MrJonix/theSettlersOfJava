@@ -31,7 +31,6 @@ public class CatanFactory implements EntityFactory {
         
         HexType type = data.get("hexType");
         // Load the selected image
-        System.out.println(type.getImagePath());
         URL resourceUrl = getClass().getResource(type.getImagePath());
         if (resourceUrl == null) {
             throw new IllegalStateException("Image resource not found: " + type.getImagePath());

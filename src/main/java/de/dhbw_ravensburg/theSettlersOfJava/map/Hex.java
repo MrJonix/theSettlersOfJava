@@ -18,6 +18,9 @@ public class Hex {
 	public HexPosition getPosition() {
 		return position;
 	}
+	public HexType getHexType() {
+		return type;
+	}
 	
 	public SpawnData getSpawnData() {
         return new SpawnData(position.getX(), position.getY())
