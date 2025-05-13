@@ -47,11 +47,11 @@ public class HexCorner {
         return adjacentHexes;
     }
     
-    public void visualizeCorner() {
+    public void visualizeCorner(Color color) {
 
-        Circle circle = new Circle(5, Color.RED);
+        Circle circle = new Circle(10, color);
 
-        Entity circleEntity = FXGL.entityBuilder()
+        FXGL.entityBuilder()
             .at(x, y)
             .view(circle)
             .buildAndAttach();
@@ -73,6 +73,7 @@ public class HexCorner {
     public String toString() {
         return String.format("Ecke Koordinaten: (%.2f, %.2f)", x, y);
     }
+    
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;

@@ -36,7 +36,7 @@ public class HexEdge {
 		
 	}
 	
- 	public void visualizeEdge() {
+ 	public void visualizeEdge(Color color) {
 	    // Koordinaten der beiden Ecken
 	    double x1 = start.getX();
 	    double y1 = start.getY();
@@ -45,8 +45,8 @@ public class HexEdge {
 
 	    // Linie erzeugen
 	    Line line = new Line(x1, y1, x2, y2);
-	    line.setStroke(Color.BLUE);
-	    line.setStrokeWidth(3);
+	    line.setStroke(color);
+	    line.setStrokeWidth(5);
 
 	    // Entity mit Linie erzeugen
 	    Entity lineEntity = FXGL.entityBuilder()

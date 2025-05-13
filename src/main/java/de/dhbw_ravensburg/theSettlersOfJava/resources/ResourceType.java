@@ -6,9 +6,9 @@ import java.util.Random;
 public enum ResourceType {
 	//TODO: Bilder einfügen
     BRICK("Brick", Color.RED, "images/brick.png"),
-    LUMBER("Lumber", Color.GREEN, "images/lumber.png"),
+    WOOD("WOOD", Color.GREEN, "images/wood.png"),
     WOOL("Wool", Color.WHITE, "images/wool.png"),
-    GRAIN("Grain", Color.YELLOW, "images/grain.png"),
+    WHEAT("Wheat", Color.YELLOW, "images/wheat.png"),
     ORE("Ore", Color.GRAY, "images/ore.png");
 
     private final String displayName;

@@ -13,6 +13,7 @@ import de.dhbw_ravensburg.theSettlersOfJava.map.HexCorner;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexEdge;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexPosition;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.HexType;
+import javafx.scene.paint.Color;
 
 public class GameBoard {
 
@@ -57,18 +58,21 @@ public class GameBoard {
             Hex tile = new Hex(HexType.WATER , 0, new HexPosition(coord[0], coord[1]));
             hexes.add(tile);
             spawn("hexagon", tile.getSpawnData());
-            calculateCornersForHex(tile);
         }
-        System.out.println(hexEdges.size());
+
         for (Hex hex : hexes) {
-        	calculateCornersForHex(hex);
+        	calculateCornersAndEdgesForHex(hex);
         }
         
-        visualizeEdges();
-        visualizeCorners();
+        for (HexEdge edge: hexEdges) {
+    		edge.visualizeEdge(Color.BLUE);
+    	}
+        for (HexCorner corner : hexCorners) {
+            corner.visualizeCorner(Color.RED);
+        }
     }
 
-    private void calculateCornersForHex(Hex hex) {
+    private void calculateCornersAndEdgesForHex(Hex hex) {
     	HexPosition pos = hex.getPosition();
         int q = pos.getQ();
         int r = pos.getR();
@@ -108,23 +112,10 @@ public class GameBoard {
 
             if (c1 != null && c2 != null) {
                 hexEdges.add(new HexEdge(c1, c2));
-                System.out.println(new HexEdge(c1, c2));
             }
         }
 
    }
-
-
-    private void visualizeCorners() {
-        for (HexCorner corner : hexCorners) {
-            corner.visualizeCorner();
-        }
-    }
-    private void visualizeEdges() {
-    	for (HexEdge edge: hexEdges) {
-    		edge.visualizeEdge();
-    	}
-    }
     private Hex getHexByPosition(HexPosition pos) {
         for (Hex hex : hexes) {
             if (hex.getPosition().equals(pos)) {
