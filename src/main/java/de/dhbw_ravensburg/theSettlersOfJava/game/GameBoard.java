@@ -2,12 +2,13 @@ package de.dhbw_ravensburg.theSettlersOfJava.game;
 
 import static com.almasb.fxgl.dsl.FXGL.spawn;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-
+import de.dhbw_ravensburg.theSettlersOfJava.buildings.Road;
 import de.dhbw_ravensburg.theSettlersOfJava.map.Hex;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexCorner;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexEdge;
@@ -21,6 +22,7 @@ public class GameBoard {
         {0,-2},{-2,0},{-1,-1},{0,-1},{-1,0},{0,0},{0,2},{2,0},{1,1},{0,1},{1,0},
         {-1,1},{1,-1},{-1,2},{2,-1},{-2,1},{-2,2},{1,-2},{2,-2}
     };
+    
     private static final int[][] waterCoords = {
         {-3,0},{-2,-1},{-1,-2},{0,-3},{1,-3},{2,-3},{3,-3},{3,-2},{3,-1},
         {3,0},{2,1},{1,2},{0,3},{-1,3},{-2,3},{-3,3},{-3,2},{-3,1}
@@ -29,10 +31,9 @@ public class GameBoard {
     private Set<Hex> hexes = new HashSet<>();
     private Set<HexCorner> hexCorners = new HashSet<>();
     private Set<HexEdge> hexEdges = new HashSet<>();
-    private Random random = new Random();
 
     public GameBoard(List<HexType> hexTypeList) {
-        
+    	Random random = new Random();
         for (int i = 0; i < coords.length; i++) {
             int[] coord = coords[i];
             HexType type = hexTypeList.get(i);
@@ -64,12 +65,19 @@ public class GameBoard {
         	calculateCornersAndEdgesForHex(hex);
         }
         
+        
         for (HexEdge edge: hexEdges) {
-    		edge.visualizeEdge(Color.BLUE);
+    		edge.visualizeEdge(Color.WHITE);
     	}
         for (HexCorner corner : hexCorners) {
-            corner.visualizeCorner(Color.RED);
+            corner.visualizeCorner(Color.WHITE);
         }
+        /*
+        List<HexEdge> l = new ArrayList<>(hexEdges);
+	        
+	    Road r = new Road(l.get(3), null);
+	    r.visualize();
+	    */
     }
 
     private void calculateCornersAndEdgesForHex(Hex hex) {
@@ -84,9 +92,6 @@ public class GameBoard {
             { 0, -1 } // Wiederholung für einfaches Paar
         };
 
-        if (hex == null) return; // Falls zentrales Hex nicht vorhanden ist
-        
-        
         HexCorner[] corners = new HexCorner[6];
         
         for (int i = 0; i < 6; i++) {

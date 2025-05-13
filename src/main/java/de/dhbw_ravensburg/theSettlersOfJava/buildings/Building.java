@@ -4,9 +4,8 @@ import de.dhbw_ravensburg.theSettlersOfJava.map.HexCorner;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
 
 public abstract class Building {
-	
-	private HexCorner position;
-	private Player owner;
+	private final HexCorner position;
+	private final Player owner;
 	
 	public Building (HexCorner position, Player owner) {
 		this.position = position;
@@ -20,5 +19,9 @@ public abstract class Building {
 		return owner;
 	}
 	
-	abstract int getVictoryPoints();
+	public abstract int getVictoryPoints();
+	public abstract String getImagePath();
+	public void visualize() {
+		
+	}
 }

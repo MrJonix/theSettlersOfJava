@@ -156,7 +156,6 @@ Hex "1" *-- "1" HexPosition
 Robber --> Hex
 Hex --> HexType
 
-
 HexCorner -- Hex : adjacency
 GameController --> Player
 GameController --> GameBoard
