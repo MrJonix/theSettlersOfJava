@@ -81,7 +81,7 @@ public class GameBoard {
 	    Player owner = new Player("Jonas");
 	    Road r = new Road(l.get(3), owner);
 	    r.visualize();
-	    Building b = new City(l.get(3).getCorners()[0], owner);
+	    Building b = new Settlement(l.get(3).getCorners()[0], owner);
 	    b.visualize();
 	    
     }

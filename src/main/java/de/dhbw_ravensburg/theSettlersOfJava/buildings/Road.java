@@ -38,8 +38,8 @@ public class Road {
 	    texture.setRotate(angle);
 
 	    // Optionale Skalierung
-	    texture.setScaleX(0.5);
-	    texture.setScaleY(0.5);
+	    texture.setScaleX(0.4);
+	    texture.setScaleY(0.4);
 
 	    // Entity mit Texture erzeugen
 	    FXGL.entityBuilder()

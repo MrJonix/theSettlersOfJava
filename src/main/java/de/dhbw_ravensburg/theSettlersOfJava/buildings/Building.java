@@ -30,8 +30,8 @@ public abstract class Building {
 		    Texture texture = FXGL.getAssetLoader().loadTexture(getImagePath());
 
 		    // Optional skalieren
-		    texture.setScaleX(0.6);
-		    texture.setScaleY(0.6);
+		    texture.setScaleX(0.4);
+		    texture.setScaleY(0.4);
 
 		    // Platziere das Bild zentriert auf der Ecke
 		    double x = position.getX() - texture.getWidth() / 2;
