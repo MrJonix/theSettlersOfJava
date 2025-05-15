@@ -23,10 +23,12 @@ public class HexEdge {
 	public HexCorner[] getCorners() {
 		return new HexCorner[] {start,end};
 	}
+	
 	@Override
 	public String toString() {
 		return start + " " + end;
 	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof HexEdge) {

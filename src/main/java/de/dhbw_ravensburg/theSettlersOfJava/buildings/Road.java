@@ -45,6 +45,7 @@ public class Road {
 	    //TODO Fix angle with diffrent assets
 	    
 	    // Bild laden und drehen
+	    
 	    Texture texture = FXGL.getAssetLoader().loadTexture(IMAGE_PATH.get(location.getHexEdgeOrientation()));
 	    texture.setRotate(angle);
 

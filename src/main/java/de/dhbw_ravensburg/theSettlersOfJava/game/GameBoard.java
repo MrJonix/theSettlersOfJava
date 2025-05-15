@@ -84,6 +84,8 @@ public class GameBoard {
 	    r.visualize();
 	    Building b = new City(l.get(3).getCorners()[0], owner);
 	    b.visualize();
+	    Building c = new City(l.get(3).getCorners()[1],owner);
+	    c.visualize();
 	    
     }
 
@@ -135,8 +137,7 @@ public class GameBoard {
                     hexEdges.add(new HexEdge(c1, c2, HexEdgeOrientation.RIGHT_TO_LEFT));
                     break;
             }
-
-                hexEdges.add(new HexEdge(c1, c2, HexEdgeOrientation.LEFT_TO_RIGHT));
+            
             }
         }
 
