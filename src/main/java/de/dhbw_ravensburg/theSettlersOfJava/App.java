@@ -11,10 +11,12 @@ import java.awt.Taskbar.Feature;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.entity.EntityFactory;
+import com.almasb.fxgl.app.scene.Viewport;
+import com.almasb.fxgl.dsl.FXGL;
 
 import de.dhbw_ravensburg.theSettlersOfJava.game.GameController;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.CatanFactory;
+import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 
 public class App extends GameApplication {
@@ -30,25 +32,12 @@ public class App extends GameApplication {
 	}
     @Override
     protected void initInput() {
-        onKey(KeyCode.PLUS, () -> {
-            double currentZoom = getGameScene().getViewport().getZoom();
-            if(currentZoom < 2.5)
-            getGameScene().getViewport().setZoom(currentZoom + 0.025);
-        });
 
-        onKey(KeyCode.MINUS, () -> {
-        	
-            double currentZoom = getGameScene().getViewport().getZoom();
-            if(currentZoom > 1)
-            getGameScene().getViewport().setZoom(currentZoom - 0.025);
-        });
 
-        onKey(KeyCode.UP, () -> {
+    	onKey(KeyCode.UP, () -> {
             double y = getGameScene().getViewport().getY();
-            if (y > 0)
             getGameScene().getViewport().setY(y - 10); // move up
         });
-
         onKey(KeyCode.DOWN, () -> {
             double y = getGameScene().getViewport().getY();
             getGameScene().getViewport().setY(y + 10); // move down
@@ -56,13 +45,12 @@ public class App extends GameApplication {
 
         onKey(KeyCode.LEFT, () -> {
             double x = getGameScene().getViewport().getX();
-            if (x > 0)
             getGameScene().getViewport().setX(x - 10); // move left
         });
 
         onKey(KeyCode.RIGHT, () -> {
             double x = getGameScene().getViewport().getX();
-            getGameScene().getViewport().setX(x + 10); // move righ
+            getGameScene().getViewport().setX(x + 10); // move right
         });
     }
     private void setTaskbar(String res) {
@@ -81,8 +69,7 @@ public class App extends GameApplication {
         setTaskbar("/assets/textures/icon.png");
         new GameController();
     }
-	
-	
+    	
 	public static void main( String[] args ) {launch(args);}
 
 }

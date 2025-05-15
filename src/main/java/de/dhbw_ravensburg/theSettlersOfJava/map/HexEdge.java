@@ -1,9 +1,6 @@
 package de.dhbw_ravensburg.theSettlersOfJava.map;
 
-import java.util.Set;
-
 import com.almasb.fxgl.dsl.FXGL;
-import com.almasb.fxgl.entity.Entity;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -11,10 +8,16 @@ import javafx.scene.shape.Line;
 public class HexEdge {
 	private HexCorner start;
 	private HexCorner end;
+	private HexEdgeOrientation orientation;
 	
-	public HexEdge(HexCorner start, HexCorner end) {
+	public HexEdge(HexCorner start, HexCorner end, HexEdgeOrientation orientation) {
 		this.start = start;
 		this.end = end;
+		this.orientation = orientation;
+	}
+	
+	public HexEdgeOrientation getHexEdgeOrientation() {
+		return orientation;
 	}
 	
 	public HexCorner[] getCorners() {
@@ -49,7 +52,7 @@ public class HexEdge {
 	    line.setStrokeWidth(5);
 
 	    // Entity mit Linie erzeugen
-	    Entity lineEntity = FXGL.entityBuilder()
+	    FXGL.entityBuilder()
 	        .at(0, 0) // Linie hat absolute Koordinaten
 	        .view(line)
 	        .buildAndAttach();

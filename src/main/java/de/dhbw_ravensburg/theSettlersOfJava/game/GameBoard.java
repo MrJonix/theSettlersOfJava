@@ -15,6 +15,7 @@ import de.dhbw_ravensburg.theSettlersOfJava.buildings.Settlement;
 import de.dhbw_ravensburg.theSettlersOfJava.map.Hex;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexCorner;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexEdge;
+import de.dhbw_ravensburg.theSettlersOfJava.map.HexEdgeOrientation;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexPosition;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.HexType;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
@@ -81,7 +82,7 @@ public class GameBoard {
 	    Player owner = new Player("Jonas");
 	    Road r = new Road(l.get(3), owner);
 	    r.visualize();
-	    Building b = new Settlement(l.get(3).getCorners()[0], owner);
+	    Building b = new City(l.get(3).getCorners()[0], owner);
 	    b.visualize();
 	    
     }
@@ -117,12 +118,25 @@ public class GameBoard {
 				corners[i] = corner;
 			}
         }
+        
         for (int i = 0; i < 6; i++) {
             HexCorner c1 = corners[i];
             HexCorner c2 = corners[(i + 1) % 6]; // Ringstruktur
 
             if (c1 != null && c2 != null) {
-                hexEdges.add(new HexEdge(c1, c2));
+            	switch(i % 3) {
+                case 0:
+                    hexEdges.add(new HexEdge(c1, c2, HexEdgeOrientation.LEFT_TO_RIGHT));
+                    break;
+                case 1:
+                    hexEdges.add(new HexEdge(c1, c2, HexEdgeOrientation.STRAIGHT));
+                    break;
+                case 2:
+                    hexEdges.add(new HexEdge(c1, c2, HexEdgeOrientation.RIGHT_TO_LEFT));
+                    break;
+            }
+
+                hexEdges.add(new HexEdge(c1, c2, HexEdgeOrientation.LEFT_TO_RIGHT));
             }
         }
 

@@ -2,14 +2,25 @@ package de.dhbw_ravensburg.theSettlersOfJava.buildings;
 
 
 
+import java.util.EnumMap;
+import java.util.Map;
+
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.texture.Texture;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexCorner;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexEdge;
+import de.dhbw_ravensburg.theSettlersOfJava.map.HexEdgeOrientation;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
 
 public class Road {
-	private static final String IMAGE_PATH = "road.png";
+	private static final Map<HexEdgeOrientation, String> IMAGE_PATH = new EnumMap<>(HexEdgeOrientation.class);
+
+	static {
+	    IMAGE_PATH.put(HexEdgeOrientation.LEFT_TO_RIGHT, "BLUE_road.png");
+	    IMAGE_PATH.put(HexEdgeOrientation.STRAIGHT, "pink_roadStraight1.png");
+	    IMAGE_PATH.put(HexEdgeOrientation.RIGHT_TO_LEFT, "PINK_road.png");
+	}
+
 	private final HexEdge location;
 	private final Player owner;
 	
@@ -34,7 +45,7 @@ public class Road {
 	    //TODO Fix angle with diffrent assets
 	    
 	    // Bild laden und drehen
-	    Texture texture = FXGL.getAssetLoader().loadTexture(IMAGE_PATH);
+	    Texture texture = FXGL.getAssetLoader().loadTexture(IMAGE_PATH.get(location.getHexEdgeOrientation()));
 	    texture.setRotate(angle);
 
 	    // Optionale Skalierung

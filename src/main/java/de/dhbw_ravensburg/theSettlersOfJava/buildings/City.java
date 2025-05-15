@@ -4,7 +4,7 @@ import de.dhbw_ravensburg.theSettlersOfJava.map.HexCorner;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
 
 public class City extends Building {
-	private final static String IMAGE_PATH = "city.png";
+	private final static String IMAGE_PATH = "city 2.png";
 	
 	public City(HexCorner position, Player owner) {
 		super(position, owner);
