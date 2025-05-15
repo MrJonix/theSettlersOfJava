@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import com.almasb.fxgl.dsl.FXGL;
+
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.Building;
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.City;
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.Road;
@@ -78,16 +80,18 @@ public class GameBoard {
         	calculateCornersAndEdgesForHex(hex);
         }
         /*
-         * Test Code for Development
+         * Test Code for Developmenty
          */
+        /*
         List<HexEdge> l = new ArrayList<>(hexEdges);
 	    Player owner = new Player("Jonas");
 	    roads.add(new Road(l.get(3), owner));
 	    buildings.add(new City(l.get(3).getCorners()[0], owner));
 	    
 	    buildings.add(new City(l.get(3).getCorners()[1],owner));
-	    
+	    */
 	    robber.visualize();
+	    
 	    
         for (HexEdge edge: hexEdges) {
     		edge.visualizeEdge(Color.WHITE);
@@ -108,23 +112,61 @@ public class GameBoard {
     			return false;
     		}
     	}
+    	
     	roads.add(road);
     	road.visualize();
 		return true;
     }
-    
     public boolean buildBuilding(Building building) {
-    	for (Building b : buildings) {
-    		if (b.getLocation().equals(building.getLocation())) {
-    			return false;
-    		}
-    	}
-    	buildings.add(building);
-    	building.visualize();
-		return true;
-		
-    }
+    	    HexCorner corner = building.getLocation();
+    	    Player owner = building.getOwner();
+    	    List<HexCorner> adjacentList = new ArrayList<>();
+    	    
+    	    // Erstellen der Liste der Ecken, die an die übergebene Ecke angrenzen
+    	    for (HexEdge edge : hexEdges) {
+    	        HexCorner[] corners = edge.getCorners();
+    	        if (corners[0].equals(corner)) {
+    	            adjacentList.add(corners[1]);
+    	        } else if (corners[1].equals(corner)) {
+    	            adjacentList.add(corners[0]);
+    	        }
+    	    }
+    	    
+    	    // Überprüfen, ob es bereits ein Gebäude an der Ecke gibt oder ob ein angrenzendes Gebäude vorhanden ist
+    	    for (Building existingBuilding : buildings) {
+    	        HexCorner buildingLocation = existingBuilding.getLocation();
+    	        if (buildingLocation.equals(corner)) {
+    	            return false; // Ein Gebäude existiert bereits an dieser Ecke
+    	        }
+    	        if (adjacentList.contains(buildingLocation)) {
+    	            System.err.println("Kein Gebäudebau möglich - zu nahe an einem anderen Gebäude!");
+    	            return false; // Ein angrenzendes Gebäude verhindert den Bau
+    	        }
+    	    }
 
+    	    // Zusätzliche Überprüfung: Wenn bereits zwei oder mehr Gebäude in der Liste sind,
+    	    // prüfe, ob es eine anliegende Straße des gleichen Besitzers gibt.
+    	    if (buildings.size() >= 2) {
+    	        boolean hasAdjacentRoad = false;
+    	        for (Road road : roads) {
+    	            HexCorner[] corners = road.getLocation().getCorners();
+    	            if ((corners[0].equals(corner) || corners[1].equals(corner)) && road.getOwner().equals(owner)) {
+    	                hasAdjacentRoad = true;
+    	                break;
+    	            }
+    	        }
+    	        if (!hasAdjacentRoad) {
+    	            System.err.println("Kein Gebäudebau möglich - es muss eine anliegende Straße des gleichen Besitzers geben!");
+    	            return false;
+    	        }
+    	    }
+
+    	    // Wenn alle Überprüfungen bestanden sind, füge das Gebäude hinzu und visualisiere es
+    	    buildings.add(building);
+    	    building.visualize();
+    	    return true;
+    	}
+    	
     private void calculateCornersAndEdgesForHex(Hex hex) {
     	HexPosition pos = hex.getPosition();
         int q = pos.getQ();

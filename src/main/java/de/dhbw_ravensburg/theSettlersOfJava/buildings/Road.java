@@ -59,10 +59,6 @@ public class Road {
 	        .view(texture)
 	        .buildAndAttach();
 
-	    // Klick-Handler
-	    texture.setOnMouseClicked(event -> {
-	        FXGL.getDialogService().showMessageBox("Straße von Spieler " + owner + ".");
-	    });
 	}
 	
 	public HexEdge getLocation() {
