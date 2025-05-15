@@ -1,5 +1,8 @@
 package de.dhbw_ravensburg.theSettlersOfJava.map;
 
+import javafx.geometry.Point2D;
+
+
 public class HexPosition {
 	private int q;
 	private int r;
@@ -24,6 +27,11 @@ public class HexPosition {
     public int getY() { 
     	return (int) (Hex.HEX_SIZE * 1.5 * r + 500); 
     }
+    
+    public Point2D getWorldPosition() {
+        return new Point2D(getX(), getY());
+    }
+
     public String toString() {
 		return "HexPosition: " + q + " " + r;
     }

@@ -15,9 +15,6 @@ public abstract class Building {
 		this.owner = owner;
 	}
 	
-	public HexCorner getlocation() {
-		return location;
-	}
 	public Player getOwner() {
 		return owner;
 	}

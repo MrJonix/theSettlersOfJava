@@ -19,6 +19,7 @@ import de.dhbw_ravensburg.theSettlersOfJava.map.HexEdgeOrientation;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexPosition;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.HexType;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
+import de.dhbw_ravensburg.theSettlersOfJava.units.Robber;
 import javafx.scene.paint.Color;
 
 public class GameBoard {
@@ -38,6 +39,7 @@ public class GameBoard {
     private Set<HexEdge> hexEdges = new HashSet<>();
     private Set<Building> buildings = new HashSet<>();
     private Set<Road> roads = new HashSet<>();
+    private Robber robber;
 
     public GameBoard(List<HexType> hexTypeList) {
     	Random random = new Random();
@@ -55,6 +57,10 @@ public class GameBoard {
             }
             
             Hex tile = new Hex(type , number, new HexPosition(coord[0], coord[1]));
+            
+            if (type == HexType.DESERT) {
+            	this.robber = new Robber(tile);
+            }
             hexes.add(tile);
             spawn("hexagon", tile.getSpawnData());
 
@@ -80,7 +86,9 @@ public class GameBoard {
 	    buildings.add(new City(l.get(3).getCorners()[0], owner));
 	    
 	    buildings.add(new City(l.get(3).getCorners()[1],owner));
-        
+	    
+	    robber.visualize();
+	    
         for (HexEdge edge: hexEdges) {
     		edge.visualizeEdge(Color.WHITE);
     	}
@@ -93,9 +101,8 @@ public class GameBoard {
 	    for(Building b : buildings) {
 	    	b.visualize();
 	    }
-	    
     }
-    public boolean buildRoad(Road road) {
+    	public boolean buildRoad(Road road) {
     	for (Road r: roads) {
     		if (r.getLocation().equals(road.getLocation())) {
     			return false;
@@ -115,6 +122,7 @@ public class GameBoard {
     	buildings.add(building);
     	building.visualize();
 		return true;
+		
     }
 
     private void calculateCornersAndEdgesForHex(Hex hex) {
