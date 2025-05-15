@@ -22,6 +22,7 @@ import javafx.scene.input.KeyCode;
 public class App extends GameApplication {
     private static final int WIDTH = 1920;
     private static final int HEIGHT = 1080;
+    private static GameController controller;
     
 	@Override
 	protected void initSettings(GameSettings settings) {
@@ -67,7 +68,10 @@ public class App extends GameApplication {
     protected void initGame() {
         getGameWorld().addEntityFactory(new CatanFactory());
         setTaskbar("/assets/textures/icon.png");
-        new GameController();
+        controller = new GameController();
+    }
+    public static GameController getGameController() {
+    	return controller;
     }
     	
 	public static void main( String[] args ) {launch(args);}

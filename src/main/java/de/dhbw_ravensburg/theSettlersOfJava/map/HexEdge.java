@@ -2,6 +2,8 @@ package de.dhbw_ravensburg.theSettlersOfJava.map;
 
 import com.almasb.fxgl.dsl.FXGL;
 
+import de.dhbw_ravensburg.theSettlersOfJava.App;
+import de.dhbw_ravensburg.theSettlersOfJava.buildings.Road;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
@@ -61,6 +63,7 @@ public class HexEdge {
 
 	    // Klick-Handler für die Linie
 	    line.setOnMouseClicked(event -> {
+	    	App.getGameController().getGameBoard().buildRoad(new Road(this, null));
 	        StringBuilder message = new StringBuilder("HexEdge verbindet zwei Ecken:\n");
 
 	        message.append("Ecke 1:\n");

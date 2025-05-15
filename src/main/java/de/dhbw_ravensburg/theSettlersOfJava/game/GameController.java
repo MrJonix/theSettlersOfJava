@@ -13,6 +13,9 @@ public class GameController {
 	public GameController() {
 		board = new GameBoard(HexType.generateHexTypeList());
 	}
+	public GameBoard getGameBoard() {
+		return board;
+	}
 	
 }
 

@@ -36,6 +36,8 @@ public class GameBoard {
     private Set<Hex> hexes = new HashSet<>();
     private Set<HexCorner> hexCorners = new HashSet<>();
     private Set<HexEdge> hexEdges = new HashSet<>();
+    private Set<Building> buildings = new HashSet<>();
+    private Set<Road> roads = new HashSet<>();
 
     public GameBoard(List<HexType> hexTypeList) {
     	Random random = new Random();
@@ -69,7 +71,15 @@ public class GameBoard {
         for (Hex hex : hexes) {
         	calculateCornersAndEdgesForHex(hex);
         }
-        
+        /*
+         * Test Code for Development
+         */
+        List<HexEdge> l = new ArrayList<>(hexEdges);
+	    Player owner = new Player("Jonas");
+	    roads.add(new Road(l.get(3), owner));
+	    buildings.add(new City(l.get(3).getCorners()[0], owner));
+	    
+	    buildings.add(new City(l.get(3).getCorners()[1],owner));
         
         for (HexEdge edge: hexEdges) {
     		edge.visualizeEdge(Color.WHITE);
@@ -77,16 +87,21 @@ public class GameBoard {
         for (HexCorner corner : hexCorners) {
             corner.visualizeCorner(Color.WHITE);
         }
-        
-        List<HexEdge> l = new ArrayList<>(hexEdges);
-	    Player owner = new Player("Jonas");
-	    Road r = new Road(l.get(3), owner);
-	    r.visualize();
-	    Building b = new City(l.get(3).getCorners()[0], owner);
-	    b.visualize();
-	    Building c = new City(l.get(3).getCorners()[1],owner);
-	    c.visualize();
+        for (Road r : roads) {
+        	r.visualize();
+        }
+	    for(Building b : buildings) {
+	    	b.visualize();
+	    }
 	    
+    }
+    public void buildRoad(Road road) {
+    	roads.add(road);
+    	road.visualize();
+    }
+    public void buildBuilding(Building building) {
+    	buildings.add(building);
+    	building.visualize();
     }
 
     private void calculateCornersAndEdgesForHex(Hex hex) {

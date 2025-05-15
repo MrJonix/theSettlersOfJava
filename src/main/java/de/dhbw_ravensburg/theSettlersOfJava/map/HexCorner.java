@@ -7,6 +7,9 @@ import java.util.Set;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 
+import de.dhbw_ravensburg.theSettlersOfJava.App;
+import de.dhbw_ravensburg.theSettlersOfJava.buildings.City;
+import de.dhbw_ravensburg.theSettlersOfJava.buildings.Settlement;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
@@ -58,7 +61,7 @@ public class HexCorner {
 
         // Klick-Handler hinzufügen
         circle.setOnMouseClicked(event -> {
-           
+        	App.getGameController().getGameBoard().buildBuilding(new Settlement(this,null));
             StringBuilder message = new StringBuilder("Benachbarte Hexes:\n");
             for (Hex hex : this.getAdjacentHexes()) {
             	HexPosition pos = hex.getPosition();
