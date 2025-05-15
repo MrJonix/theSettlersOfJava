@@ -17,7 +17,7 @@ public class HexPosition {
 	}
 	
 	public int getR() {
-		return r;
+		return r; 
 	}
 	
 	public int getX() {

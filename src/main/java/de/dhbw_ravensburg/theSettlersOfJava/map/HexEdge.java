@@ -63,7 +63,7 @@ public class HexEdge {
 
 	    // Klick-Handler für die Linie
 	    line.setOnMouseClicked(event -> {
-	    	App.getGameController().getGameBoard().buildRoad(new Road(this, null));
+	    	App.getGameController().getGameBoard().buildRoad(new Road(this, App.getGameController().getCurrentPlayer()));
 	        StringBuilder message = new StringBuilder("HexEdge verbindet zwei Ecken:\n");
 
 	        message.append("Ecke 1:\n");

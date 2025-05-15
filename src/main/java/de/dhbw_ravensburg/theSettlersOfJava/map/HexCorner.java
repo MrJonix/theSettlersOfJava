@@ -61,7 +61,7 @@ public class HexCorner {
 
         // Klick-Handler hinzufügen
         circle.setOnMouseClicked(event -> {
-        	App.getGameController().getGameBoard().buildBuilding(new Settlement(this,null));
+        	App.getGameController().getGameBoard().buildBuilding(new Settlement(this, App.getGameController().getCurrentPlayer()));
             StringBuilder message = new StringBuilder("Benachbarte Hexes:\n");
             for (Hex hex : this.getAdjacentHexes()) {
             	HexPosition pos = hex.getPosition();
