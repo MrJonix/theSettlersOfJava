@@ -1,7 +1,9 @@
 package de.dhbw_ravensburg.theSettlersOfJava.map;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.almasb.fxgl.dsl.FXGL;
@@ -62,13 +64,15 @@ public class HexCorner {
         // Klick-Handler hinzufügen
         circle.setOnMouseClicked(event -> {
         	App.getGameController().getGameBoard().buildBuilding(new Settlement(this, App.getGameController().getCurrentPlayer()));
-            StringBuilder message = new StringBuilder("Benachbarte Hexes:\n");
+            /*
+        	StringBuilder message = new StringBuilder("Benachbarte Hexes:\n");
             for (Hex hex : this.getAdjacentHexes()) {
             	HexPosition pos = hex.getPosition();
                 message.append(String.format("- Typ: %s | Position: (%d, %d)\n",
                         hex.getHexType(), pos.getQ(), pos.getR()));
             }
             FXGL.getDialogService().showMessageBox(message.toString());
+            */
         });
     }
 
@@ -95,6 +99,6 @@ public class HexCorner {
         Set<Hex> set = new HashSet<>(Arrays.asList(adjacentHexes));
         return set.hashCode();
     }
-
 }
+
 
