@@ -34,25 +34,18 @@ public class App extends GameApplication {
     @Override
     protected void initInput() {
 
-
-    	onKey(KeyCode.UP, () -> {
-            double y = getGameScene().getViewport().getY();
-            getGameScene().getViewport().setY(y - 10); // move up
-        });
-        onKey(KeyCode.DOWN, () -> {
-            double y = getGameScene().getViewport().getY();
-            getGameScene().getViewport().setY(y + 10); // move down
-        });
-
-        onKey(KeyCode.LEFT, () -> {
-            double x = getGameScene().getViewport().getX();
-            getGameScene().getViewport().setX(x - 10); // move left
-        });
-
-        onKey(KeyCode.RIGHT, () -> {
-            double x = getGameScene().getViewport().getX();
-            getGameScene().getViewport().setX(x + 10); // move right
-        });
+ 
+        
+    	onKey(KeyCode.UP, () -> moveCamera(0, -10));
+    	onKey(KeyCode.DOWN, () -> moveCamera(0, 10));
+    	onKey(KeyCode.LEFT, () -> moveCamera(-10, 0));
+    	onKey(KeyCode.RIGHT, () -> moveCamera(10, 0));
+    }
+    
+    private void moveCamera(double dx, double dy) {
+        Viewport viewport = getGameScene().getViewport();
+        viewport.setX(viewport.getX() + dx);
+        viewport.setY(viewport.getY() + dy);
     }
     private void setTaskbar(String res) {
         if (Taskbar.isTaskbarSupported()) {
