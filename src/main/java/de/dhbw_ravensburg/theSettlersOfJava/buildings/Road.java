@@ -64,7 +64,10 @@ public class Road {
 	        FXGL.getDialogService().showMessageBox("Straße von Spieler " + owner + ".");
 	    });
 	}
-
+	
+	public HexEdge getLocation() {
+		return location;
+	}
 
 	public Player getOwner() {
 		return owner;

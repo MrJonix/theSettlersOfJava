@@ -7,16 +7,16 @@ import de.dhbw_ravensburg.theSettlersOfJava.map.HexCorner;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
 
 public abstract class Building {
-	private final HexCorner position;
+	private final HexCorner location;
 	private final Player owner;
 	
-	public Building (HexCorner position, Player owner) {
-		this.position = position;
+	public Building (HexCorner location, Player owner) {
+		this.location = location;
 		this.owner = owner;
 	}
 	
-	public HexCorner getPosition() {
-		return position;
+	public HexCorner getlocation() {
+		return location;
 	}
 	public Player getOwner() {
 		return owner;
@@ -34,8 +34,8 @@ public abstract class Building {
 		    texture.setScaleY(0.4);
 
 		    // Platziere das Bild zentriert auf der Ecke
-		    double x = position.getX() - texture.getWidth() / 2;
-		    double y = position.getY() - texture.getHeight() / 2;
+		    double x = location.getX() - texture.getWidth() / 2;
+		    double y = location.getY() - texture.getHeight() / 2;
 
 		    // Entity erstellen und anhängen
 		    FXGL.entityBuilder()
@@ -53,4 +53,8 @@ public abstract class Building {
 		        ));
 		    });
 		}
+
+	public HexCorner getLocation() {
+		return location;
 	}
+}

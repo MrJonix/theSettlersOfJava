@@ -95,13 +95,26 @@ public class GameBoard {
 	    }
 	    
     }
-    public void buildRoad(Road road) {
+    public boolean buildRoad(Road road) {
+    	for (Road r: roads) {
+    		if (r.getLocation().equals(road.getLocation())) {
+    			return false;
+    		}
+    	}
     	roads.add(road);
     	road.visualize();
+		return true;
     }
-    public void buildBuilding(Building building) {
+    
+    public boolean buildBuilding(Building building) {
+    	for (Building b : buildings) {
+    		if (b.getLocation().equals(building.getLocation())) {
+    			return false;
+    		}
+    	}
     	buildings.add(building);
     	building.visualize();
+		return true;
     }
 
     private void calculateCornersAndEdgesForHex(Hex hex) {
