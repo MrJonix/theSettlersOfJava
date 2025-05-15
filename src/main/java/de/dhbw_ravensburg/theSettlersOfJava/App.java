@@ -23,6 +23,8 @@ public class App extends GameApplication {
     private static final int WIDTH = 1920;
     private static final int HEIGHT = 1080;
     private static GameController controller;
+    private double zoom = 1.0;
+
     
 	@Override
 	protected void initSettings(GameSettings settings) {
@@ -34,8 +36,9 @@ public class App extends GameApplication {
     @Override
     protected void initInput() {
 
- 
-        
+    	onKey(KeyCode.PLUS, () -> zoomBy(0.04)); // Zoom in
+    	onKey(KeyCode.MINUS, () -> zoomBy(-0.04)); // Zoom out
+    
     	onKey(KeyCode.UP, () -> moveCamera(0, -10));
     	onKey(KeyCode.DOWN, () -> moveCamera(0, 10));
     	onKey(KeyCode.LEFT, () -> moveCamera(-10, 0));
@@ -47,6 +50,26 @@ public class App extends GameApplication {
         viewport.setX(viewport.getX() + dx);
         viewport.setY(viewport.getY() + dy);
     }
+    
+    private void zoomBy(double delta) {
+        double oldZoom = zoom;
+        zoom = Math.max(0.1, zoom + delta);
+
+        Viewport viewport = getGameScene().getViewport();
+
+        int appWidth = WIDTH;
+        int appHeight = HEIGHT;
+
+        double centerX = viewport.getX() + appWidth / (2 * oldZoom);
+        double centerY = viewport.getY() + appHeight / (2 * oldZoom);
+
+        viewport.setZoom(zoom);
+
+        viewport.setX(centerX - appWidth / (2 * zoom));
+        viewport.setY(centerY - appHeight / (2 * zoom));
+    }
+
+    
     private void setTaskbar(String res) {
         if (Taskbar.isTaskbarSupported()) {
             Taskbar taskbar = Taskbar.getTaskbar();
@@ -63,6 +86,7 @@ public class App extends GameApplication {
         setTaskbar("/assets/textures/icon.png");
         controller = new GameController();
     }
+    
     public static GameController getGameController() {
     	return controller;
     }
