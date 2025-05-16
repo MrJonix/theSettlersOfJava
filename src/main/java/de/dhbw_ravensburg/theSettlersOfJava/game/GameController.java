@@ -20,13 +20,5 @@ public class GameController {
 	public GameBoard getGameBoard() {
 		return board;
 	}
-	
-	/**
-	 * Updates the dice position when the camera moves
-	 */
-	public void updateDicePosition() {
-		if (dice != null) {
-			dice.positionInBottomRight();
-		}
-	}
+
 }

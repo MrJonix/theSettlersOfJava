@@ -47,9 +47,6 @@ public class App extends GameApplication {
         Viewport viewport = getGameScene().getViewport();
         viewport.setX(viewport.getX() + dx);
         viewport.setY(viewport.getY() + dy);
-        
-        // Aktualisiere die Position des Würfels über den GameController
-        controller.updateDicePosition();
     }
     
     private void zoomBy(double delta) {
@@ -68,9 +65,7 @@ public class App extends GameApplication {
 
         viewport.setX(centerX - appWidth / (2 * zoom));
         viewport.setY(centerY - appHeight / (2 * zoom));
-        
-        // Aktualisiere die Position des Würfels über den GameController
-        controller.updateDicePosition();
+       
     }
 
     
