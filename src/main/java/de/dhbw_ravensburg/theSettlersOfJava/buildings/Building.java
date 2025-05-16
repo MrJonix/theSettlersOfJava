@@ -1,6 +1,7 @@
 package de.dhbw_ravensburg.theSettlersOfJava.buildings;
 
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
 
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexCorner;
@@ -10,6 +11,7 @@ public abstract class Building {
 	
 	private final HexCorner location;
 	private final Player owner;
+	protected Entity entity;
 	
 	public Building (HexCorner location, Player owner) {
 		this.location = location;
@@ -36,24 +38,16 @@ public abstract class Building {
 		    double y = location.getY() - texture.getHeight() / 2;
 
 		    // Entity erstellen und anhängen
-		    FXGL.entityBuilder()
+		    entity = FXGL.entityBuilder()
 		        .at(x, y)
 		        .view(texture)
 		        .buildAndAttach();
-
-		    // Klick-Interaktion: Gebäudeinformationen anzeigen
-		    texture.setOnMouseClicked(event -> {
-		        FXGL.getDialogService().showMessageBox(String.format(
-		            "%s von Spieler %s\nSiegpunkte: %d",
-		            this.getClass().getSimpleName(),
-		            owner.getName(),
-		            getVictoryPoints()
-		        ));
-		    });
-		}
+	}
+	public Entity getEntity() {
+		return entity;
+	}
 
 	public HexCorner getLocation() {
 		return location;
 	}
 }
-// Test

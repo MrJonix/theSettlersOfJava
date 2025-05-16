@@ -11,7 +11,9 @@ import java.util.Set;
 import com.almasb.fxgl.dsl.FXGL;
 
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.Building;
+import de.dhbw_ravensburg.theSettlersOfJava.buildings.City;
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.Road;
+import de.dhbw_ravensburg.theSettlersOfJava.buildings.Settlement;
 import de.dhbw_ravensburg.theSettlersOfJava.map.Hex;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexCorner;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexEdge;
@@ -104,6 +106,7 @@ public class GameBoard {
 	    	b.visualize();
 	    }
     }
+    
     public boolean buildRoad(Road road) {
         // Check if there's already a road at this location to prevent duplicate roads
         for (Road existingRoad : roads) {
@@ -154,6 +157,7 @@ public class GameBoard {
     	    HexCorner corner = building.getLocation();
     	    Player owner = building.getOwner();
     	    List<HexCorner> adjacentList = new ArrayList<>();
+    	    boolean upgradeToCity = false;
     	    
     	    // Erstellen der Liste der Ecken, die an die übergebene Ecke angrenzen
     	    for (HexEdge edge : hexEdges) {
@@ -169,7 +173,19 @@ public class GameBoard {
     	    for (Building existingBuilding : buildings) {
     	        HexCorner buildingLocation = existingBuilding.getLocation();
     	        if (buildingLocation.equals(corner)) {
-    	            return false; // Ein Gebäude existiert bereits an dieser Ecke
+    	        	if (existingBuilding.getOwner().equals(owner)) {
+    	        		if(existingBuilding instanceof Settlement &&
+    	        		    building instanceof City) {
+    	        			buildings.remove(existingBuilding);
+    	        			buildings.add(building);
+    	        			building.visualize();
+    	        			existingBuilding.getEntity().removeFromWorld();
+    	        			return true;
+    	        			
+    	        		} else {
+    	        			return false;
+    	        		}
+    	        	}
     	        }
     	        if (adjacentList.contains(buildingLocation)) {
     	            FXGL.getDialogService().showMessageBox("Kein Gebäudebau möglich - zu nahe an einem anderen Gebäude!");
@@ -196,10 +212,12 @@ public class GameBoard {
     	    }
 
     	    // Wenn alle Überprüfungen bestanden sind, füge das Gebäude hinzu und visualisiere es
-    	    buildings.add(building);
-    	    building.visualize();
+
+        	buildings.add(building);
+        	building.visualize();
+    	    
     	    return true;
-    	}
+    }
     
     public HexCorner[] getConnectedCorners(HexCorner corner) {
         List<HexCorner> connectedCorners = new ArrayList<>();
