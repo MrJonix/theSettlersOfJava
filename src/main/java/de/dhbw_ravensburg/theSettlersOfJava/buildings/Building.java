@@ -7,6 +7,7 @@ import de.dhbw_ravensburg.theSettlersOfJava.map.HexCorner;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
 
 public abstract class Building {
+	
 	private final HexCorner location;
 	private final Player owner;
 	

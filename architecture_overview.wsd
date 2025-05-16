@@ -127,11 +127,16 @@ class HexPosition {
   - r: int
 }
 
-class Harbor {
+abstract class Harbor {
   - location: HexEdge
   - tradeRatio: int
-  - resourceType: ResourceType  // null für 3:1-Hafen
   + getTradeOffer(player: Player): TradeOffer
+}
+
+class ResourceHarbor extends Harbor {
+  - resourceType: ResourceType
+}
+class GeneralHarbor extends Harbor {
 }
 
 class Robber {

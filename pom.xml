@@ -2,8 +2,8 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>de.mrjonix</groupId>
-  <artifactId>catan</artifactId>
+  <groupId>de.dhbw-ravensburg</groupId>
+  <artifactId>theSettlersOfJava</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
@@ -27,5 +27,37 @@
     <version>21.1</version>
 	</dependency>
   </dependencies>
+  <build>
+  <defaultGoal>install</defaultGoal>
+  <plugins>
+    <plugin>
+      <groupId>de.elnarion.maven</groupId>
+      <artifactId>plantuml-generator-maven-plugin</artifactId>
+      <version>3.0.1</version>
+      <executions>
+        <execution>
+          <id>generate-uml</id>
+          <phase>generate-resources</phase>
+          <goals>
+            <goal>generate-class-diagram</goal>
+          </goals>
+        </execution>
+      </executions>
+      <configuration>
+        <outputFilename>klassenstruktur.puml</outputFilename>
+        <scanPackages>
+          <scanPackage>de.dhbw_ravensburg.theSettlersOfJava</scanPackage>
+        </scanPackages>
+        <outputDirectory>${project.build.directory}/uml</outputDirectory>
+        <addJPAAnnotations>true</addJPAAnnotations>
+        <addValidationAnnotations>true</addValidationAnnotations>
+        <useShortClassNames>true</useShortClassNames>
+        <hideFields>false</hideFields>
+        <hideMethods>false</hideMethods>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+
   
 </project>
