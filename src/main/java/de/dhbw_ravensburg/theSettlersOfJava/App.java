@@ -14,10 +14,8 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.app.scene.Viewport;
 import com.almasb.fxgl.dsl.FXGL;
 
-import de.dhbw_ravensburg.theSettlersOfJava.game.Dice;
 import de.dhbw_ravensburg.theSettlersOfJava.game.GameController;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.CatanFactory;
-import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 
 public class App extends GameApplication {
@@ -25,7 +23,6 @@ public class App extends GameApplication {
     private static final int HEIGHT = 1080;
     private static GameController controller;
     private double zoom = 1.0;
-    private Dice dice;
     
 	@Override
 	protected void initSettings(GameSettings settings) {
@@ -51,10 +48,8 @@ public class App extends GameApplication {
         viewport.setX(viewport.getX() + dx);
         viewport.setY(viewport.getY() + dy);
         
-        // Reposition the dice to keep it in the bottom right corner
-        if (dice != null) {
-            dice.positionInBottomRight();
-        }
+        // Aktualisiere die Position des Würfels über den GameController
+        controller.updateDicePosition();
     }
     
     private void zoomBy(double delta) {
@@ -74,10 +69,8 @@ public class App extends GameApplication {
         viewport.setX(centerX - appWidth / (2 * zoom));
         viewport.setY(centerY - appHeight / (2 * zoom));
         
-        // Reposition the dice to keep it in the bottom right corner
-        if (dice != null) {
-            dice.positionInBottomRight();
-        }
+        // Aktualisiere die Position des Würfels über den GameController
+        controller.updateDicePosition();
     }
 
     
@@ -96,9 +89,6 @@ public class App extends GameApplication {
         getGameWorld().addEntityFactory(new CatanFactory());
         setTaskbar("/assets/textures/icon.png");
         controller = new GameController();
-        
-        // Create and add the dice
-        dice = new Dice();
     }
     
     public static GameController getGameController() {

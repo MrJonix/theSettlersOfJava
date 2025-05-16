@@ -4,7 +4,6 @@ import java.util.Random;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.components.ViewComponent;
 
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
