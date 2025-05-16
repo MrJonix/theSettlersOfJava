@@ -16,7 +16,6 @@ import com.almasb.fxgl.dsl.FXGL;
 
 import de.dhbw_ravensburg.theSettlersOfJava.game.GameController;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.CatanFactory;
-import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 
 public class App extends GameApplication {
@@ -24,7 +23,6 @@ public class App extends GameApplication {
     private static final int HEIGHT = 1080;
     private static GameController controller;
     private double zoom = 1.0;
-
     
 	@Override
 	protected void initSettings(GameSettings settings) {
@@ -67,6 +65,7 @@ public class App extends GameApplication {
 
         viewport.setX(centerX - appWidth / (2 * zoom));
         viewport.setY(centerY - appHeight / (2 * zoom));
+       
     }
 
     
