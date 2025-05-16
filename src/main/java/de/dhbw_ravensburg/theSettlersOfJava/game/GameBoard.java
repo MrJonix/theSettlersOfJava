@@ -11,9 +11,7 @@ import java.util.Set;
 import com.almasb.fxgl.dsl.FXGL;
 
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.Building;
-import de.dhbw_ravensburg.theSettlersOfJava.buildings.City;
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.Road;
-import de.dhbw_ravensburg.theSettlersOfJava.buildings.Settlement;
 import de.dhbw_ravensburg.theSettlersOfJava.map.Hex;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexCorner;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexEdge;
@@ -181,6 +179,7 @@ public class GameBoard {
 
     	    // Zusätzliche Überprüfung: Wenn bereits zwei oder mehr Gebäude in der Liste sind,
     	    // prüfe, ob es eine anliegende Straße des gleichen Besitzers gibt.
+    	    // TODO: Anpassen an die Owner mit der Anzahl an Gebäuden
     	    if (buildings.size() >= 2) {
     	        boolean hasAdjacentRoad = false;
     	        for (Road road : roads) {
@@ -258,24 +257,27 @@ public class GameBoard {
         for (int i = 0; i < 6; i++) {
             HexCorner c1 = corners[i];
             HexCorner c2 = corners[(i + 1) % 6]; // Ringstruktur
-
+            
             if (c1 != null && c2 != null) {
+            	HexEdgeOrientation orientation = null;
             	switch(i % 3) {
                 case 0:
-                    hexEdges.add(new HexEdge(c1, c2, HexEdgeOrientation.LEFT_TO_RIGHT));
+                	orientation = HexEdgeOrientation.LEFT_TO_RIGHT;
                     break;
                 case 1:
-                    hexEdges.add(new HexEdge(c1, c2, HexEdgeOrientation.STRAIGHT));
+                	orientation = HexEdgeOrientation.STRAIGHT;
                     break;
                 case 2:
-                    hexEdges.add(new HexEdge(c1, c2, HexEdgeOrientation.RIGHT_TO_LEFT));
+                    orientation = HexEdgeOrientation.RIGHT_TO_LEFT;
                     break;
-            }
-            
+            	}
+            	hexEdges.add(new HexEdge(c1, c2, orientation));
+            	
+
             }
         }
 
-   }
+    }
     private Hex getHexByPosition(HexPosition pos) {
         for (Hex hex : hexes) {
             if (hex.getPosition().equals(pos)) {
