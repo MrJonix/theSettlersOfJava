@@ -63,8 +63,9 @@ public class HexEdge {
 
 	    // Klick-Handler für die Linie
 	    line.setOnMouseClicked(event -> {
-	    	App.getGameController().getGameBoard().buildRoad(new Road(this, null));
-	        StringBuilder message = new StringBuilder("HexEdge verbindet zwei Ecken:\n");
+	    	App.getGameController().getGameBoard().buildRoad(new Road(this, App.getGameController().getCurrentPlayer()));
+	        /*
+	    	StringBuilder message = new StringBuilder("HexEdge verbindet zwei Ecken:\n");
 
 	        message.append("Ecke 1:\n");
 	        for (Hex hex : start.getAdjacentHexes()) {
@@ -81,7 +82,17 @@ public class HexEdge {
 	        }
 
 	        FXGL.getDialogService().showMessageBox(message.toString());
+	        */
 	    });
 	}
+
+    public boolean isAdjacentTo(HexEdge otherEdge) {
+        return this.start.equals(otherEdge.getCorners()[0]) || this.start.equals(otherEdge.getCorners()[1]) ||
+               this.end.equals(otherEdge.getCorners()[0]) || this.end.equals(otherEdge.getCorners()[1]);
+    }
+
+    public boolean isAdjacentToCorner(HexCorner corner) {
+        return start.equals(corner) || end.equals(corner);
+    }
 
 }

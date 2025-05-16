@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import com.almasb.fxgl.dsl.FXGL;
+
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.Building;
-import de.dhbw_ravensburg.theSettlersOfJava.buildings.City;
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.Road;
-import de.dhbw_ravensburg.theSettlersOfJava.buildings.Settlement;
 import de.dhbw_ravensburg.theSettlersOfJava.map.Hex;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexCorner;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexEdge;
@@ -78,16 +78,18 @@ public class GameBoard {
         	calculateCornersAndEdgesForHex(hex);
         }
         /*
-         * Test Code for Development
+         * Test Code for Developmenty
          */
+        /*
         List<HexEdge> l = new ArrayList<>(hexEdges);
 	    Player owner = new Player("Jonas");
 	    roads.add(new Road(l.get(3), owner));
 	    buildings.add(new City(l.get(3).getCorners()[0], owner));
 	    
 	    buildings.add(new City(l.get(3).getCorners()[1],owner));
-	    
+	    */
 	    robber.visualize();
+	    
 	    
         for (HexEdge edge: hexEdges) {
     		edge.visualizeEdge(Color.WHITE);
@@ -102,29 +104,124 @@ public class GameBoard {
 	    	b.visualize();
 	    }
     }
-    	public boolean buildRoad(Road road) {
-    	for (Road r: roads) {
-    		if (r.getLocation().equals(road.getLocation())) {
-    			return false;
-    		}
-    	}
-    	roads.add(road);
-    	road.visualize();
-		return true;
+    public boolean buildRoad(Road road) {
+        // Check if there's already a road at this location to prevent duplicate roads
+        for (Road existingRoad : roads) {
+            if (existingRoad.getLocation().equals(road.getLocation())) {
+                FXGL.getDialogService().showMessageBox("Road already exists at this location!");
+                return false;
+            }
+        }
+
+        HexEdge roadLocation = road.getLocation();
+        Player owner = road.getOwner();
+        boolean isAdjacentToStructure = false;
+
+        // Check adjacency with existing buildings
+        for (Building building : buildings) {
+            HexCorner buildingCorner = building.getLocation();
+            if(building.getOwner().equals(owner)) {
+	            if (roadLocation.isAdjacentToCorner(buildingCorner)) {
+	                isAdjacentToStructure = true;
+	                break;
+	            }
+            }
+        }
+
+        // Check adjacency with existing roads
+        if (!isAdjacentToStructure) {
+            for (Road existingRoad : roads) {
+	            if (existingRoad.getOwner().equals(owner) && roadLocation.isAdjacentTo(existingRoad.getLocation())) {
+	                 isAdjacentToStructure = true;
+	                 break;
+	            }
+	        }
+        }
+
+        // If the road is not adjacent to any building or roadway, construction is not allowed
+        if (!isAdjacentToStructure) {
+            FXGL.getDialogService().showMessageBox("Road must be built adjacent to an existing building or road!");
+            return false;
+        }
+
+        // Add the road if all checks pass
+        roads.add(road);
+        road.visualize();
+        return true;
     }
     
     public boolean buildBuilding(Building building) {
-    	for (Building b : buildings) {
-    		if (b.getLocation().equals(building.getLocation())) {
-    			return false;
-    		}
-    	}
-    	buildings.add(building);
-    	building.visualize();
-		return true;
-		
-    }
+    	    HexCorner corner = building.getLocation();
+    	    Player owner = building.getOwner();
+    	    List<HexCorner> adjacentList = new ArrayList<>();
+    	    
+    	    // Erstellen der Liste der Ecken, die an die übergebene Ecke angrenzen
+    	    for (HexEdge edge : hexEdges) {
+    	        HexCorner[] corners = edge.getCorners();
+    	        if (corners[0].equals(corner)) {
+    	            adjacentList.add(corners[1]);
+    	        } else if (corners[1].equals(corner)) {
+    	            adjacentList.add(corners[0]);
+    	        }
+    	    }
+    	    
+    	    // Überprüfen, ob es bereits ein Gebäude an der Ecke gibt oder ob ein angrenzendes Gebäude vorhanden ist
+    	    for (Building existingBuilding : buildings) {
+    	        HexCorner buildingLocation = existingBuilding.getLocation();
+    	        if (buildingLocation.equals(corner)) {
+    	            return false; // Ein Gebäude existiert bereits an dieser Ecke
+    	        }
+    	        if (adjacentList.contains(buildingLocation)) {
+    	            FXGL.getDialogService().showMessageBox("Kein Gebäudebau möglich - zu nahe an einem anderen Gebäude!");
+    	            return false; // Ein angrenzendes Gebäude verhindert den Bau
+    	        }
+    	    }
 
+    	    // Zusätzliche Überprüfung: Wenn bereits zwei oder mehr Gebäude in der Liste sind,
+    	    // prüfe, ob es eine anliegende Straße des gleichen Besitzers gibt.
+    	    // TODO: Anpassen an die Owner mit der Anzahl an Gebäuden
+    	    if (buildings.size() >= 2) {
+    	        boolean hasAdjacentRoad = false;
+    	        for (Road road : roads) {
+    	            HexCorner[] corners = road.getLocation().getCorners();
+    	            if ((corners[0].equals(corner) || corners[1].equals(corner)) && road.getOwner().equals(owner)) {
+    	                hasAdjacentRoad = true;
+    	                break;
+    	            }
+    	        }
+    	        if (!hasAdjacentRoad) {
+    	            FXGL.getDialogService().showMessageBox("Kein Gebäudebau möglich - es muss eine anliegende Straße des gleichen Besitzers geben!");
+    	            return false;
+    	        }
+    	    }
+
+    	    // Wenn alle Überprüfungen bestanden sind, füge das Gebäude hinzu und visualisiere es
+    	    buildings.add(building);
+    	    building.visualize();
+    	    return true;
+    	}
+    
+    public HexCorner[] getConnectedCorners(HexCorner corner) {
+        List<HexCorner> connectedCorners = new ArrayList<>();
+
+        // Iterate through each edge to find those connected to our given corner
+        for (HexEdge edge : hexEdges) {
+            // If the edge is connected to the given corner, add both corners of the edge
+            if (edge.getCorners()[0].equals(corner) || edge.getCorners()[1].equals(corner)) {
+                // Add the corner from the edge that isn't the input corner
+                if (!edge.getCorners()[0].equals(corner)) {
+                    connectedCorners.add(edge.getCorners()[0]);
+                }
+                if (!edge.getCorners()[1].equals(corner)) {
+                    connectedCorners.add(edge.getCorners()[1]);
+                }
+            }
+        }
+
+        // Return as an array
+        return connectedCorners.toArray(new HexCorner[0]);
+    }
+    	
     private void calculateCornersAndEdgesForHex(Hex hex) {
     	HexPosition pos = hex.getPosition();
         int q = pos.getQ();
@@ -160,24 +257,27 @@ public class GameBoard {
         for (int i = 0; i < 6; i++) {
             HexCorner c1 = corners[i];
             HexCorner c2 = corners[(i + 1) % 6]; // Ringstruktur
-
+            
             if (c1 != null && c2 != null) {
+            	HexEdgeOrientation orientation = null;
             	switch(i % 3) {
                 case 0:
-                    hexEdges.add(new HexEdge(c1, c2, HexEdgeOrientation.LEFT_TO_RIGHT));
+                	orientation = HexEdgeOrientation.LEFT_TO_RIGHT;
                     break;
                 case 1:
-                    hexEdges.add(new HexEdge(c1, c2, HexEdgeOrientation.STRAIGHT));
+                	orientation = HexEdgeOrientation.STRAIGHT;
                     break;
                 case 2:
-                    hexEdges.add(new HexEdge(c1, c2, HexEdgeOrientation.RIGHT_TO_LEFT));
+                    orientation = HexEdgeOrientation.RIGHT_TO_LEFT;
                     break;
-            }
-            
+            	}
+            	hexEdges.add(new HexEdge(c1, c2, orientation));
+            	
+
             }
         }
 
-   }
+    }
     private Hex getHexByPosition(HexPosition pos) {
         for (Hex hex : hexes) {
             if (hex.getPosition().equals(pos)) {
@@ -186,5 +286,8 @@ public class GameBoard {
         }
         return null; // falls nicht vorhanden
     }
+
+   
+  
 }
 
