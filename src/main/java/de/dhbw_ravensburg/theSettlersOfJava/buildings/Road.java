@@ -2,7 +2,9 @@ package de.dhbw_ravensburg.theSettlersOfJava.buildings;
 
 
 
+import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.almasb.fxgl.dsl.FXGL;
@@ -10,6 +12,7 @@ import com.almasb.fxgl.texture.Texture;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexCorner;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexEdge;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexEdgeOrientation;
+import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
 
 public class Road {
@@ -20,6 +23,15 @@ public class Road {
 	    IMAGE_PATH.put(HexEdgeOrientation.STRAIGHT, "pink_roadStraight1.png");
 	    IMAGE_PATH.put(HexEdgeOrientation.RIGHT_TO_LEFT, "PINK_road.png");
 	}
+	
+	private static final Map<ResourceType, Integer> ROAD_COST;
+
+	static {
+	    Map<ResourceType, Integer> cost = new HashMap<>();
+	    cost.put(ResourceType.WOOD, 1);
+	    cost.put(ResourceType.BRICK, 1);
+	    ROAD_COST = Collections.unmodifiableMap(cost);
+	}
 
 	private final HexEdge location;
 	private final Player owner;
@@ -27,6 +39,10 @@ public class Road {
 	public Road(HexEdge hexEdges, Player owner) {
 		this.location = hexEdges;
 		this.owner = owner;
+	}
+	
+	public Map<ResourceType,Integer> getRoadCost() {
+		return ROAD_COST;
 	}
 	
 	public void visualize() {

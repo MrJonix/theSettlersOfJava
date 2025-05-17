@@ -4,6 +4,7 @@ import java.util.Map;
 
 import de.dhbw_ravensburg.theSettlersOfJava.App;
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.Building;
+import de.dhbw_ravensburg.theSettlersOfJava.buildings.Road;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
 import javafx.beans.binding.IntegerBinding;
 import javafx.beans.property.*;
@@ -65,6 +66,29 @@ public class Player {
         App.getGameController().getGameBoard().buildBuilding(b);
         return true;
     }
+    
+    public boolean build(Road r) {
+        Map<ResourceType, Integer> cost = r.getRoadCost();
+
+        // Prüfen, ob der Spieler alle benötigten Ressourcen hat
+        if (!hasResources(cost)) {
+            return false;
+        }
+
+        // Ressourcen entfernen
+        for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
+            ResourceType type = entry.getKey();
+            int requiredAmount = entry.getValue();
+            removeResources(type, requiredAmount);
+        }
+
+        // Straße bauen (z.B. auf dem Spielbrett platzieren)
+        App.getGameController().getGameBoard().buildRoad(r);
+
+        return true;
+    }
+
+    
 
     public boolean hasResources(Map<ResourceType,Integer> cost) {
         for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
