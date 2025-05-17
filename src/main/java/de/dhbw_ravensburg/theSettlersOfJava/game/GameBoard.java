@@ -20,6 +20,7 @@ import de.dhbw_ravensburg.theSettlersOfJava.map.HexEdge;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexEdgeOrientation;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexPosition;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.HexType;
+import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Robber;
 import javafx.scene.paint.Color;
@@ -192,10 +193,7 @@ public class GameBoard {
     	        }
     	    }
 
-    	    // Zusätzliche Überprüfung: Wenn bereits zwei oder mehr Gebäude in der Liste sind,
-    	    // prüfe, ob es eine anliegende Straße des gleichen Besitzers gibt.
-    	    // TODO: Anpassen an die Owner mit der Anzahl an Gebäuden
-    	    if (buildings.size() >= 2) {
+    	    if (getBuildingsFromPlayer(owner).size() >= 2) {
     	        boolean hasAdjacentRoad = false;
     	        for (Road road : roads) {
     	            HexCorner[] corners = road.getLocation().getCorners();
@@ -238,6 +236,28 @@ public class GameBoard {
         // Return as an array
         return connectedCorners.toArray(new HexCorner[0]);
     }
+    
+    public void distributeResources(int total) {
+        for (Hex h : hexes) {
+            if (h.getNumberToken() == total && !h.equals(robber.getLocation())) {
+                ResourceType resource = h.getHexType().getResourceType();
+                for (HexCorner c : h.getAdjacentHexCorners()) {
+                	for (Building building : buildings) {
+                		if (c.equals(building.getLocation())) {
+                			Player owner = building.getOwner();
+     	                    if (owner == null || resource == null) continue;
+     	                    int amount = building.getVictoryPoints();
+     	                    owner.addResources(resource, amount);
+     	                    System.out.println(owner.getName() + " erhält " + amount + "x " + resource);
+                		}
+	                   
+                	}
+                }
+            }
+        }
+    }
+
+    
     	
     private void calculateCornersAndEdgesForHex(Hex hex) {
     	HexPosition pos = hex.getPosition();
@@ -267,11 +287,14 @@ public class GameBoard {
 			if (h1 != null && h2 != null) {
 				HexCorner corner = new HexCorner(hex, h1, h2);
 				hexCorners.add(corner);
+				
 				corners[i] = corner;
+				hex.setAdjacentCorner(corner, i);
 			}
         }
         
         for (int i = 0; i < 6; i++) {
+        	
             HexCorner c1 = corners[i];
             HexCorner c2 = corners[(i + 1) % 6]; // Ringstruktur
             
@@ -303,6 +326,18 @@ public class GameBoard {
         }
         return null; // falls nicht vorhanden
     }
+    
+    private Set<Building> getBuildingsFromPlayer(Player player) {
+    	Set<Building> set = new HashSet<>();
+    	for(Building b : buildings) {
+    		if(b.getOwner().equals(player)) {
+    			set.add(b);
+    		}
+    	}
+		return set;
+    }
+
+
 
    
   

@@ -59,7 +59,7 @@ public class Dice {
     	GameController c = App.getGameController();
         // Nur würfeln, wenn der aktuelle State ROLL_DICE ist
         if (c.getCurrentGameState() != GameState.ROLL_DICE) {
-        	FXGL.getDialogService().showMessageBox("Du kannst jetzt nicht würfeln!");
+            FXGL.getNotificationService().pushNotification("Du kannst jetzt nicht würfeln!");
             return;
         }
 
@@ -67,7 +67,7 @@ public class Dice {
         int roll2 = random.nextInt(6) + 1;
         int total = roll1 + roll2;
         
-        FXGL.getDialogService().showMessageBox("Würfelergebnis: " + total); 
+        FXGL.getNotificationService().pushNotification("Würfelergebnis: " + total);
         c.onDiceRolled(total); // Delegiere Ergebnis an GameController
     }
 

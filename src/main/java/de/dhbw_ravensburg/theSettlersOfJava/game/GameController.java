@@ -56,13 +56,16 @@ public class GameController {
     }
 
     private void debugStartResources() {
-        Player player = getCurrentPlayer();
-        player.setVictoryPoints(3);
-        player.addResources(ResourceType.WOOD, 5);
-        player.addResources(ResourceType.BRICK, 5);
-        player.addResources(ResourceType.WHEAT, 5);
-        player.addResources(ResourceType.WOOL, 2);
-        player.addResources(ResourceType.ORE, 3);
+        
+        for (Player player : players) {
+        	player.addResources(ResourceType.WOOD, 5);
+            player.addResources(ResourceType.BRICK, 5);
+            player.addResources(ResourceType.WHEAT, 5);
+            player.addResources(ResourceType.WOOL, 2);
+            player.addResources(ResourceType.ORE, 3);
+            player.setVictoryPoints(2);
+        }
+        
     }
 
     /* ------------------ Game Phase Control ------------------ */
@@ -77,14 +80,13 @@ public class GameController {
 	        case ROLL_DICE:
 	            rollDice();
 	            break;
-	        case RESOURCE_DISTRIBUTION:
-	            distributeResources();
-	            break;
+	        // Fowarding Logic in onDiceRolled(int total)
 	        case ROBBER_PHASE:
 	            robberPhase();
+	            endTurn(); //DEBUG
 	            break;
 	        case END_TURN:
-	            endTurn();
+	            endTurn(); //DEBUG
 	            break;
 	        default:
 	            System.out.println("Unbekannter Zustand: " + currentState);
@@ -97,11 +99,6 @@ public class GameController {
     private void rollDice() {
         System.out.println("Würfeln...");
         // Nur noch von Dice-Objekt ausgelöst
-    }
-
-    private void distributeResources() {
-        System.out.println("Ressourcen verteilen...");
-        // Ressourcenverteilung basierend auf Würfelergebnis
     }
 
     private void robberPhase() {
@@ -141,11 +138,13 @@ public class GameController {
         System.out.println("Wurf: " + total);
         if (total == 7) {
             currentState = GameState.ROBBER_PHASE;
+            
         } else {
-            // Ressourcenverteilung könnte hier ausgelöst werden
-            distributeResources(); // optional: über Event/Delay
+            board.distributeResources(total); 
             currentState = GameState.ACTION_PHASE;
+            endTurn();
         }
+        FXGL.getNotificationService().pushNotification(currentState.toString());
     }
 
     private boolean isActionPhase() {
