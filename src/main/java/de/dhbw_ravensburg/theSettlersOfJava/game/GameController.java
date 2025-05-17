@@ -38,8 +38,16 @@ public class GameController {
 		FXGL.addUINode(playerUIPanel, 20, 20);
 		
 		board = new GameBoard(HexType.generateHexTypeList());
+		
 		dice = new Dice();
+		
+		
 		getCurrentPlayer().setVictoryPoints(3);
+		getCurrentPlayer().addResources(ResourceType.WOOD, 2);
+		getCurrentPlayer().addResources(ResourceType.BRICK, 2);
+		getCurrentPlayer().addResources(ResourceType.WHEAT, 5);
+		getCurrentPlayer().addResources(ResourceType.WOOL, 2);
+		getCurrentPlayer().addResources(ResourceType.ORE, 3);
 		
 	}
 	

@@ -1,5 +1,9 @@
 package de.dhbw_ravensburg.theSettlersOfJava.units;
 
+import java.util.Map;
+
+import de.dhbw_ravensburg.theSettlersOfJava.App;
+import de.dhbw_ravensburg.theSettlersOfJava.buildings.Building;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
 import javafx.beans.binding.IntegerBinding;
 import javafx.beans.property.*;
@@ -39,6 +43,39 @@ public class Player {
     public Player(String name, Color color) {
         this.name.set(name);
         this.color.set(color);
+    }
+    
+    public boolean build(Building b) {
+        Map<ResourceType, Integer> cost = b.getBuildingCost();
+
+        // Check if player has all required resources
+        if(!hasResources(cost)) {
+        	return false;
+        }
+
+        // Remove resources
+        for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
+            ResourceType type = entry.getKey();
+            int requiredAmount = entry.getValue();
+            int current = resources.getOrDefault(type, 0);
+            removeResources(type, requiredAmount);
+        }
+
+        // Add building logic here, e.g. add building to player's buildings list (if you have one)
+        App.getGameController().getGameBoard().buildBuilding(b);
+        return true;
+    }
+
+    public boolean hasResources(Map<ResourceType,Integer> cost) {
+        for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
+            ResourceType type = entry.getKey();
+            int requiredAmount = entry.getValue();
+            int available = resources.getOrDefault(type, 0);
+            if (available < requiredAmount) {
+                return false; // Not enough resources
+            }
+        }
+        return true;
     }
 
     // Name Property

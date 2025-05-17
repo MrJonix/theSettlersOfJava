@@ -27,6 +27,10 @@ public abstract class Building {
 		return owner;
 	}
 	
+	public Map<ResourceType,Integer> getBuildingCost() {
+		return buildingCost;
+	}
+	
 	public abstract int getVictoryPoints();
 	
 	public abstract String getImagePath();
