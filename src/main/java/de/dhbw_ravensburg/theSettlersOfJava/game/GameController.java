@@ -7,6 +7,7 @@ import java.util.Random;
 
 import com.almasb.fxgl.dsl.FXGL;
 
+import de.dhbw_ravensburg.theSettlersOfJava.graphics.CurrentPlayerInfoUI;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.PlayerInfoUI;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.HexType;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
@@ -49,6 +50,9 @@ public class GameController {
 	    PlayerInfoUI playerInfoUI = new PlayerInfoUI();
 	    Pane playerUIPanel = playerInfoUI.createPlayerListPanel(players, currentPlayer);
 	    FXGL.addUINode(playerUIPanel, 20, 20);
+
+	    CurrentPlayerInfoUI currentPlayerUI = new CurrentPlayerInfoUI(currentPlayer);
+	    FXGL.addUINode(currentPlayerUI.getRoot(), 20, 800); // Adjust position as needed
 	}
 
 	private void initializeBoard() {

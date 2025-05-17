@@ -44,6 +44,9 @@ public class Player {
     public Player(String name, Color color) {
         this.name.set(name);
         this.color.set(color);
+        for (ResourceType type : ResourceType.values()) {
+            resources.put(type, 0);
+        }
     }
     
     public boolean build(Building b) {

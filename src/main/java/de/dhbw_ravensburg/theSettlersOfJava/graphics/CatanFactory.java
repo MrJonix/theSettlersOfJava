@@ -28,6 +28,7 @@ public class CatanFactory implements EntityFactory {
 
     @Spawns("hexagon")
     public Entity newHexagon(SpawnData data) {
+    	
     	Hex hex = (Hex) data.get("hex");
         int number = hex.getNumberToken();
         

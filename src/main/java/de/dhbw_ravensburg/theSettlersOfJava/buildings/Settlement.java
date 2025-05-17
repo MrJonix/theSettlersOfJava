@@ -52,9 +52,11 @@ public class Settlement extends Building {
 	    entity = FXGL.entityBuilder()
 	        .at(x, y)
 	        .view(texture)
-	        .onClick(entity -> getOwner().build(
-	        	    new City(getLocation(), getOwner())
-	        	))
+	        .onClick(entity -> {
+	            if (getOwner().equals(App.getGameController().getCurrentPlayer())) {
+	                getOwner().build(new City(getLocation(), getOwner()));
+	            }
+	        })
 	        .buildAndAttach();
 	}
 
