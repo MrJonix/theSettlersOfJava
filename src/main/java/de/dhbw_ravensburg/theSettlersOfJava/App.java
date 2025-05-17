@@ -4,6 +4,8 @@ import static com.almasb.fxgl.dsl.FXGL.getGameScene;
 import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
 import static com.almasb.fxgl.dsl.FXGL.onKey;
 
+import java.awt.Button;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.Taskbar;
 import java.awt.Toolkit;
@@ -17,6 +19,7 @@ import com.almasb.fxgl.dsl.FXGL;
 import de.dhbw_ravensburg.theSettlersOfJava.game.GameController;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.CatanFactory;
 import javafx.scene.input.KeyCode;
+
 
 public class App extends GameApplication {
     private static final int WIDTH = 1920;

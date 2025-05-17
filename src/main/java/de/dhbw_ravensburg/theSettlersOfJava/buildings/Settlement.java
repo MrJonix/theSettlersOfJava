@@ -1,18 +1,35 @@
 package de.dhbw_ravensburg.theSettlersOfJava.buildings;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.texture.Texture;
 
 import de.dhbw_ravensburg.theSettlersOfJava.App;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexCorner;
+import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
 
 public class Settlement extends Building {
+	
 	private final static String IMAGE_PATH = "settlement.png";
 
-	public Settlement(HexCorner position, Player owner) {
-		super(position, owner);
-	}
+	private static final Map<ResourceType, Integer> SETTLEMENT_COST;
+	
+	static {
+        Map<ResourceType, Integer> cost = new HashMap<>();
+        cost.put(ResourceType.WOOD, 1);
+        cost.put(ResourceType.BRICK, 1);
+        cost.put(ResourceType.WHEAT, 1);
+        cost.put(ResourceType.WOOL, 1);
+        SETTLEMENT_COST = Collections.unmodifiableMap(cost);
+    }
+
+    public Settlement(HexCorner location, Player owner) {
+        super(location, owner, SETTLEMENT_COST);
+    }
 
 	@Override
 	public int getVictoryPoints() {

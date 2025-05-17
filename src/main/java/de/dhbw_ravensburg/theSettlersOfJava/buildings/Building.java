@@ -1,10 +1,13 @@
 package de.dhbw_ravensburg.theSettlersOfJava.buildings;
 
+import java.util.Map;
+
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.texture.Texture;
 
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexCorner;
+import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
 
 public abstract class Building {
@@ -12,10 +15,12 @@ public abstract class Building {
 	private final HexCorner location;
 	private final Player owner;
 	protected Entity entity;
+	protected Map<ResourceType,Integer> buildingCost;
 	
-	public Building (HexCorner location, Player owner) {
+	public Building (HexCorner location, Player owner, Map<ResourceType,Integer> buildingCost) {
 		this.location = location;
 		this.owner = owner;
+		this.buildingCost = buildingCost;
 	}
 	
 	public Player getOwner() {
