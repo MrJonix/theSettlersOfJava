@@ -4,6 +4,7 @@ import java.util.Random;
 
 import com.almasb.fxgl.dsl.FXGL;
 
+import de.dhbw_ravensburg.theSettlersOfJava.App;
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -55,12 +56,21 @@ public class Dice {
 
 
     private void rollDice() {
+    	GameController c = App.getGameController();
+        // Nur würfeln, wenn der aktuelle State ROLL_DICE ist
+        if (c.getCurrentGameState() != GameState.ROLL_DICE) {
+        	FXGL.getDialogService().showMessageBox("Du kannst jetzt nicht würfeln!");
+            return;
+        }
+
         int roll1 = random.nextInt(6) + 1;
         int roll2 = random.nextInt(6) + 1;
         int total = roll1 + roll2;
-
-        FXGL.getDialogService().showMessageBox("Dice Roll: " + total);
+        
+        FXGL.getDialogService().showMessageBox("Würfelergebnis: " + total); 
+        c.onDiceRolled(total); // Delegiere Ergebnis an GameController
     }
+
 
     public StackPane getView() {
         return diceView;
