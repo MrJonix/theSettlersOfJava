@@ -36,10 +36,7 @@ public class Hex {
 	
 	public SpawnData getSpawnData() {
         return new SpawnData(position.getX(), position.getY())
-                .put("size", HEX_SIZE)
-                .put("position", position)
-        		.put("numberToken", numberToken)
-        		.put("hexType", type);
+        		.put("hex", this);
     }
 	public HexCorner[] getAdjacentHexCorners() {
 		return adjacentCorners;

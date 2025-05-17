@@ -10,6 +10,8 @@ import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 
+import de.dhbw_ravensburg.theSettlersOfJava.App;
+import de.dhbw_ravensburg.theSettlersOfJava.game.GameState;
 import de.dhbw_ravensburg.theSettlersOfJava.map.Hex;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.HexType;
 import javafx.scene.image.Image;
@@ -26,10 +28,11 @@ public class CatanFactory implements EntityFactory {
 
     @Spawns("hexagon")
     public Entity newHexagon(SpawnData data) {
-    	
-        int number = data.get("numberToken");
+    	Hex hex = (Hex) data.get("hex");
+        int number = hex.getNumberToken();
         
-        HexType type = data.get("hexType");
+        HexType type = hex.getHexType();
+        
         // Load the selected image
         URL resourceUrl = getClass().getResource(type.getImagePath());
         if (resourceUrl == null) {
@@ -37,7 +40,7 @@ public class CatanFactory implements EntityFactory {
         }
 
 
-        Polygon hex = createHexagon(Hex.HEX_SIZE);
+        Polygon hexagon = createHexagon(Hex.HEX_SIZE);
         // Load the selected image
         Image image = new Image(resourceUrl.toExternalForm());
         ImageView imageView = new ImageView(image);
@@ -80,14 +83,17 @@ public class CatanFactory implements EntityFactory {
         
         // Build the entity with the hexagon, the selected image as a view, and the number in the center
         Entity box = entityBuilder(data)
-                .viewWithBBox(hex) // Add the hexagon shape as background
+                .viewWithBBox(hexagon) // Add the hexagon shape as background
                 .view(imageView)  // Add the selected image on top of the hexagon
                 .view(stack)
                 .build();
         
         box.getViewComponent().getChildren().forEach(node -> {
             node.setOnMouseClicked(e -> {
-                FXGL.getDialogService().showMessageBox("You clicked the box with the Material " + type);
+            	if(App.getGameController().getCurrentGameState().equals(GameState.ROBBER_PHASE) && !type.equals(HexType.WATER)) {
+                	App.getGameController().getGameBoard().getRobber().moveRobber(hex);
+                	App.getGameController().nextPhase();
+                }
             });
         });
 

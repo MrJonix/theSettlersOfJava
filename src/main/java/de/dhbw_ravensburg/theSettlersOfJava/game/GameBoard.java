@@ -336,10 +336,9 @@ public class GameBoard {
     	}
 		return set;
     }
-
-
-
-   
+    public Robber getRobber() {
+    	return robber;
+    }
   
 }
 

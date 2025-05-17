@@ -11,161 +11,163 @@ import de.dhbw_ravensburg.theSettlersOfJava.graphics.PlayerInfoUI;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.HexType;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 public class GameController {
 
-    private GameBoard board;
-    private Dice dice;
-    private final List<Player> players = new ArrayList<>();
-    private int currentPlayerIndex = 0;
-    private GameState currentState = GameState.ROLL_DICE;
-    private boolean turnEnded = false;
+	private GameBoard board;
+	private Dice dice;
+	private final List<Player> players = new ArrayList<>();
+	private final ObjectProperty<Player> currentPlayer = new SimpleObjectProperty<>();
+	private GameState currentState = GameState.ROLL_DICE;
 
-    public GameController() {
-        initializePlayers();
-        initializeUI();
-        initializeBoard();
-        initializeDice();
-        debugStartResources();
-    }
+	public GameController() {
+	    initializePlayers();
+	    currentPlayer.set(players.get(0)); // Set initial player after shuffling
+	    initializeUI();
+	    initializeBoard();
+	    initializeDice();
+	    debugStartResources();
+	}
 
-    /* ------------------ Initialization Methods ------------------ */
+	/* ------------------ Initialization Methods ------------------ */
 
-    private void initializePlayers() {
-        players.add(new Player("Jonas", Color.RED));
-        players.add(new Player("Nico", Color.BLUE));
-        players.add(new Player("Arthur", Color.GREEN));
-        players.add(new Player("Kim", Color.AQUA));
-        Collections.shuffle(players);
-    }
+	private void initializePlayers() {
+	    players.add(new Player("Jonas", Color.RED));
+	    players.add(new Player("Nico", Color.BLUE));
+	    players.add(new Player("Arthur", Color.GREEN));
+	    players.add(new Player("Kim", Color.AQUA));
+	    Collections.shuffle(players);
+	}
 
-    private void initializeUI() {
-        PlayerInfoUI playerInfoUI = new PlayerInfoUI();
-        Pane playerUIPanel = playerInfoUI.createPlayerListPanel(players);
-        FXGL.addUINode(playerUIPanel, 20, 20);
-    }
+	private void initializeUI() {
+	    PlayerInfoUI playerInfoUI = new PlayerInfoUI();
+	    Pane playerUIPanel = playerInfoUI.createPlayerListPanel(players, currentPlayer);
+	    FXGL.addUINode(playerUIPanel, 20, 20);
+	}
 
-    private void initializeBoard() {
-        board = new GameBoard(HexType.generateHexTypeList());
-    }
+	private void initializeBoard() {
+	    board = new GameBoard(HexType.generateHexTypeList());
+	}
 
-    private void initializeDice() {
-        dice = new Dice(); // übergebe GameController für State-Check
-    }
+	private void initializeDice() {
+	    dice = new Dice(); // Übergabe für State-Check
+	}
 
-    private void debugStartResources() {
-        
-        for (Player player : players) {
-        	player.addResources(ResourceType.WOOD, 5);
-            player.addResources(ResourceType.BRICK, 5);
-            player.addResources(ResourceType.WHEAT, 5);
-            player.addResources(ResourceType.WOOL, 2);
-            player.addResources(ResourceType.ORE, 3);
-            player.setVictoryPoints(2);
-        }
-        
-    }
+	private void debugStartResources() {
+	    for (Player player : players) {
+	        player.addResources(ResourceType.WOOD, 5);
+	        player.addResources(ResourceType.BRICK, 5);
+	        player.addResources(ResourceType.WHEAT, 5);
+	        player.addResources(ResourceType.WOOL, 2);
+	        player.addResources(ResourceType.ORE, 3);
+	        player.setVictoryPoints(2);
+	    }
+	}
 
-    /* ------------------ Game Phase Control ------------------ */
+	/* ------------------ Game Phase Control ------------------ */
 
-    public void nextPhase() {
-        if (currentState == GameState.ACTION_PHASE) {
-            System.out.println("Du kannst handeln oder bauen oder deinen Zug beenden.");
-            return;
-        }
+	public void nextPhase() {
+	    if (currentState == GameState.ACTION_PHASE) {
+	        System.out.println("Du kannst handeln oder bauen oder deinen Zug beenden.");
+	        return;
+	    }
 
-        switch (currentState) {
+	    switch (currentState) {
 	        case ROLL_DICE:
 	            rollDice();
 	            break;
-	        // Fowarding Logic in onDiceRolled(int total)
 	        case ROBBER_PHASE:
 	            robberPhase();
-	            endTurn(); //DEBUG
+	            endTurn(); // DEBUG
 	            break;
 	        case END_TURN:
-	            endTurn(); //DEBUG
+	            endTurn(); // DEBUG
 	            break;
 	        default:
 	            System.out.println("Unbekannter Zustand: " + currentState);
-	            break;
-        }
+	    }
+	}
 
+	private void rollDice() {
+	    System.out.println("Würfeln...");
+	    // Würfeln wird durch Dice-Objekt ausgelöst
+	}
 
-    }
+	private void robberPhase() {
+	    System.out.println("Räuberphase...");
+	    for (Player p : players) {
+	        if (p.getResourceSize() > 7) {
+	            // TODO: Karten abwerfen Logik
+	        }
+	    }
+	    currentState = GameState.ACTION_PHASE;
+	}
 
-    private void rollDice() {
-        System.out.println("Würfeln...");
-        // Nur noch von Dice-Objekt ausgelöst
-    }
+	public void trade() {
+	    if (!isActionPhase()) return;
+	    System.out.println("Handeln...");
+	}
 
-    private void robberPhase() {
-        System.out.println("Räuberphase...");
-        // Räuber versetzen, Karten abwerfen
-        currentState = GameState.ACTION_PHASE;
-        turnEnded = false;
-    }
+	public void build() {
+	    if (!isActionPhase()) return;
+	    System.out.println("Bauen...");
+	}
 
-    public void trade() {
-        if (!isActionPhase()) return;
-        System.out.println("Handeln...");
-        // Handelslogik
-    }
+	public void endTurnActionPhase() {
+	    if (!isActionPhase()) return;
+	    System.out.println("Zug wird beendet...");
+	    currentState = GameState.END_TURN;
+	    endTurn();
+	}
 
-    public void build() {
-        if (!isActionPhase()) return;
-        System.out.println("Bauen...");
-        // Baulogik
-    }
+	private void endTurn() {
+	    System.out.println("Nächster Spieler ist dran.");
+	    int currentIndex = players.indexOf(currentPlayer.get());
+	    int nextIndex = (currentIndex + 1) % players.size();
+	    currentPlayer.set(players.get(nextIndex));
+	    currentState = GameState.ROLL_DICE;
+	}
 
-    public void endTurnActionPhase() {
-        if (!isActionPhase()) return;
-        System.out.println("Zug wird beendet...");
-        turnEnded = true;
-        currentState = GameState.END_TURN;
-        endTurn();
-    }
+	public void onDiceRolled(int total) {
+	    if (total == 7) {
+	        currentState = GameState.ROBBER_PHASE;
+	    } else {
+	        board.distributeResources(total);
+	        currentState = GameState.ACTION_PHASE;
+	        endTurn(); // DEBUG
+	    }
+	    FXGL.getNotificationService().pushNotification(currentState.toString());
+	}
 
-    private void endTurn() {
-        System.out.println("Nächster Spieler ist dran.");
-        currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
-        currentState = GameState.ROLL_DICE;
-    }
+	private boolean isActionPhase() {
+	    if (currentState != GameState.ACTION_PHASE) {
+	        System.out.println("Diese Aktion ist nur in der ACTION_PHASE erlaubt.");
+	        return false;
+	    }
+	    return true;
+	}
 
-    public void onDiceRolled(int total) {
-        System.out.println("Wurf: " + total);
-        if (total == 7) {
-            currentState = GameState.ROBBER_PHASE;
-            
-        } else {
-            board.distributeResources(total); 
-            currentState = GameState.ACTION_PHASE;
-            endTurn();
-        }
-        FXGL.getNotificationService().pushNotification(currentState.toString());
-    }
+	/* ------------------ Getters ------------------ */
 
-    private boolean isActionPhase() {
-        if (currentState != GameState.ACTION_PHASE) {
-            System.out.println("Diese Aktion ist nur in der ACTION_PHASE erlaubt.");
-            return false;
-        }
-        return true;
-    }
+	public GameBoard getGameBoard() {
+	    return board;
+	}
 
-    /* ------------------ Getters ------------------ */
+	public Player getCurrentPlayer() {
+	    return currentPlayer.get();
+	}
 
-    public GameBoard getGameBoard() {
-        return board;
-    }
+	public ObjectProperty<Player> currentPlayerProperty() {
+	    return currentPlayer;
+	}
 
-    public Player getCurrentPlayer() {
-        return players.get(currentPlayerIndex);
-    }
-
-    public GameState getCurrentGameState() {
-        return currentState;
-    }
+	public GameState getCurrentGameState() {
+	    return currentState;
+	}
 }
