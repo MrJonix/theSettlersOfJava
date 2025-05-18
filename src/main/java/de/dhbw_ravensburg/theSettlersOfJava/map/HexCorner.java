@@ -1,44 +1,60 @@
 package de.dhbw_ravensburg.theSettlersOfJava.map;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.almasb.fxgl.dsl.FXGL;
-import com.almasb.fxgl.entity.Entity;
-
 import de.dhbw_ravensburg.theSettlersOfJava.App;
-import de.dhbw_ravensburg.theSettlersOfJava.buildings.City;
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.Settlement;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * Represents a corner between hexagonal tiles, calculated from the centers of adjacent hexes.
+ */
 public class HexCorner {
 
-    private double x;
-    private double y;
-    private Hex[] adjacentHexes;
+    private final double x;
+    private final double y;
+    private final List<Hex> adjacentHexes;
 
+    /**
+     * Initializes a HexCorner given three adjacent hexes.
+     *
+     * @param hex1 the first adjacent hex
+     * @param hex2 the second adjacent hex
+     * @param hex3 the third adjacent hex
+     */
     public HexCorner(Hex hex1, Hex hex2, Hex hex3) {
-        this.adjacentHexes = new Hex[]{hex1, hex2, hex3};
-        calculateCorner();
+        if (hex1 == null || hex2 == null || hex3 == null) {
+            throw new IllegalArgumentException("Adjacent hexes cannot be null");
+        }
+
+        // Initialize adjacent hexes as an unmodifiable list
+        adjacentHexes = List.of(hex1, hex2, hex3);
+
+        // Calculate the corner position
+        double[] xy = calculateCornerPosition();
+        this.x = xy[0];
+        this.y = xy[1];
     }
-    
-    private void calculateCorner() {
 
-        double x1 = adjacentHexes[0].getPosition().getX();
-        double y1 = adjacentHexes[0].getPosition().getY();
-        double x2 = adjacentHexes[1].getPosition().getX();
-        double y2 = adjacentHexes[1].getPosition().getY();
-        double x3 = adjacentHexes[2].getPosition().getX();
-        double y3 = adjacentHexes[2].getPosition().getY();
-
-        // Berechne den Durchschnitt der drei Mittelpunkte (Ecke)
-        this.x = (x1 + x2 + x3) / 3;
-        this.y = (y1 + y2 + y3) / 3;
+    /**
+     * Calculates the average position of the three hex centers to find the corner.
+     *
+     * @return an array containing x and y coordinates of the corner
+     */
+    private double[] calculateCornerPosition() {
+        double xSum = 0;
+        double ySum = 0;
+        for (Hex hex : adjacentHexes) {
+            xSum += hex.getPosition().getX();
+            ySum += hex.getPosition().getY();
+        }
+        return new double[]{xSum / 3, ySum / 3};
     }
 
     public double getX() {
@@ -49,63 +65,46 @@ public class HexCorner {
         return y;
     }
 
-    public Hex[] getAdjacentHexes() {
-        return adjacentHexes;
+    public List<Hex> getAdjacentHexes() {
+        return Collections.unmodifiableList(adjacentHexes);
     }
-    
+
+    /**
+     * Visualizes this hex corner using a circle with the specified color.
+     *
+     * @param color the color of the circle
+     */
     public void visualizeCorner(Color color) {
-
         Circle circle = new Circle(10, color);
-
         FXGL.entityBuilder()
             .at(x, y)
             .view(circle)
             .buildAndAttach();
 
-        // Klick-Handler hinzufügen
-        circle.setOnMouseClicked(event -> {
-        	Player currentPlayer = App.getGameController().getCurrentPlayer();
-        	if(currentPlayer.build(new Settlement(this, currentPlayer))) {
-        		FXGL.getDialogService().showMessageBox("Build");
-        	} else {
-        		FXGL.getDialogService().showMessageBox("didn't build");
-        	}
-        	
-            /*
-        	StringBuilder message = new StringBuilder("Benachbarte Hexes:\n");
-            for (Hex hex : this.getAdjacentHexes()) {
-            	HexPosition pos = hex.getPosition();
-                message.append(String.format("- Typ: %s | Position: (%d, %d)\n",
-                        hex.getHexType(), pos.getQ(), pos.getR()));
-            }
-            FXGL.getDialogService().showMessageBox(message.toString());
-            */
-        });
+        circle.setOnMouseClicked(event -> handleMouseClick());
+    }
+
+    private void handleMouseClick() {
+        Player currentPlayer = App.getGameController().getCurrentPlayer();
+        currentPlayer.build(new Settlement(this, currentPlayer));
     }
 
     @Override
     public String toString() {
-        return String.format("Ecke Koordinaten: (%.2f, %.2f)", x, y);
+        return String.format("Corner Coordinates: (%.2f, %.2f)", x, y);
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-
+        if (!(obj instanceof HexCorner)) return false;
         HexCorner other = (HexCorner) obj;
 
-        Set<Hex> thisSet = new HashSet<>(Arrays.asList(this.adjacentHexes));
-        Set<Hex> otherSet = new HashSet<>(Arrays.asList(other.adjacentHexes));
-
-        return thisSet.equals(otherSet);
+        return new HashSet<>(adjacentHexes).equals(new HashSet<>(other.adjacentHexes));
     }
 
     @Override
     public int hashCode() {
-        Set<Hex> set = new HashSet<>(Arrays.asList(adjacentHexes));
-        return set.hashCode();
+        return Objects.hash(new HashSet<>(adjacentHexes));
     }
 }
-
-

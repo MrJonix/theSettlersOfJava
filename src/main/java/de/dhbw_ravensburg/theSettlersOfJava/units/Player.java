@@ -56,17 +56,16 @@ public class Player {
         if(!hasResources(cost)) {
         	return false;
         }
-
-        // Remove resources
-        for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
-            ResourceType type = entry.getKey();
-            int requiredAmount = entry.getValue();
-            int current = resources.getOrDefault(type, 0);
-            removeResources(type, requiredAmount);
+        
+        if(App.getGameController().getGameBoard().buildBuilding(b)) {
+            // Remove resources
+            for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
+                ResourceType type = entry.getKey();
+                int requiredAmount = entry.getValue();
+                int current = resources.getOrDefault(type, 0);
+                removeResources(type, requiredAmount);
+            }
         }
-
-        // Add building logic here, e.g. add building to player's buildings list (if you have one)
-        App.getGameController().getGameBoard().buildBuilding(b);
         return true;
     }
     
