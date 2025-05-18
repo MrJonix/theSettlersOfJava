@@ -9,21 +9,30 @@ import java.util.Map;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.texture.Texture;
+
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexCorner;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexEdge;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexEdgeOrientation;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
+import javafx.scene.paint.Color;
 
 public class Road {
-	private static final Map<HexEdgeOrientation, String> IMAGE_PATH = new EnumMap<>(HexEdgeOrientation.class);
+	private static final Map<HexEdgeOrientation, String> IMAGE_PATHS = new EnumMap<>(HexEdgeOrientation.class);
 
 	static {
-	    IMAGE_PATH.put(HexEdgeOrientation.LEFT_TO_RIGHT, "BLUE_road.png");
-	    IMAGE_PATH.put(HexEdgeOrientation.STRAIGHT, "pink_roadStraight1.png");
-	    IMAGE_PATH.put(HexEdgeOrientation.RIGHT_TO_LEFT, "PINK_road.png");
+	    IMAGE_PATHS.put(HexEdgeOrientation.LEFT_TO_RIGHT, "road_lr.png");
+	    IMAGE_PATHS.put(HexEdgeOrientation.STRAIGHT, "road_straight.png");
+	    IMAGE_PATHS.put(HexEdgeOrientation.RIGHT_TO_LEFT, "road_rl.png");
 	}
 	
+    private static final Map<Color, String> IMAGE_COLOR = Map.of(
+            Color.BLUE, "BLUE",
+            Color.RED, "RED",
+            Color.GREEN, "GREEN",
+            Color.ORANGE, "ORANGE"
+        );
+    
 	private static final Map<ResourceType, Integer> ROAD_COST;
 
 	static {
@@ -61,8 +70,9 @@ public class Road {
 	    //TODO Fix angle with diffrent assets
 	    
 	    // Bild laden und drehen
-	    
-	    Texture texture = FXGL.getAssetLoader().loadTexture(IMAGE_PATH.get(location.getHexEdgeOrientation()));
+	    String imagePath = IMAGE_COLOR.get(owner.getColor()) + "_" + IMAGE_PATHS.get(location.getHexEdgeOrientation());
+	    System.out.println(imagePath);
+	    Texture texture = FXGL.getAssetLoader().loadTexture(imagePath);
 	    texture.setRotate(angle);
 
 	    // Optionale Skalierung

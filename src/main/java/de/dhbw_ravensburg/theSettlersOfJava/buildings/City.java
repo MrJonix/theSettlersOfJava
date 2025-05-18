@@ -7,10 +7,17 @@ import java.util.Map;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexCorner;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
+import javafx.scene.paint.Color;
 
 public class City extends Building {
-	private final static String IMAGE_PATH = "city 2.png";
 	
+    private final static Map<Color, String> IMAGE_PATHS = Map.of(
+            Color.RED, "RED_city.png",
+            Color.BLUE, "BLUE_city.png",
+            Color.ORANGE, "ORANGE_city.png",
+            Color.GREEN, "GREEN_city.png"
+        );
+    
 	private static final Map<ResourceType, Integer> CITY_COST;
 
 	static {
@@ -31,7 +38,7 @@ public class City extends Building {
 
 	@Override
 	public String getImagePath() {
-		return IMAGE_PATH;
+		return IMAGE_PATHS.get(owner.getColor());
 	}
 	
 

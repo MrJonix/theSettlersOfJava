@@ -11,10 +11,16 @@ import de.dhbw_ravensburg.theSettlersOfJava.App;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexCorner;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
+import javafx.scene.paint.Color;
 
 public class Settlement extends Building {
 	
-	private final static String IMAGE_PATH = "settlement.png";
+	private final static Map<Color, String> IMAGE_PATHS = Map.of(
+	            Color.RED, "RED_settlement.png",
+	            Color.BLUE, "BLUE_settlement.png",
+	            Color.ORANGE, "ORANGE_settlement.png",
+	            Color.GREEN, "GREEN_settlement.png"
+	        );
 
 	private static final Map<ResourceType, Integer> SETTLEMENT_COST;
 	
@@ -38,7 +44,7 @@ public class Settlement extends Building {
 
 	@Override
 	public String getImagePath() {
-		return IMAGE_PATH;
+		return IMAGE_PATHS.get(owner.getColor());
 	}
 	@Override
 	public void visualize() {
@@ -59,6 +65,4 @@ public class Settlement extends Building {
 	        })
 	        .buildAndAttach();
 	}
-
-	
 }
