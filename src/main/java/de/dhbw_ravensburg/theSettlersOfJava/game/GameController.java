@@ -42,7 +42,7 @@ public class GameController {
 	    players.add(new Player("Jonas", Color.RED));
 	    players.add(new Player("Nico", Color.BLUE));
 	    players.add(new Player("Arthur", Color.GREEN));
-	    players.add(new Player("Kim", Color.AQUA));
+	    players.add(new Player("Kim", Color.ORANGE));
 	    Collections.shuffle(players);
 	}
 

@@ -13,7 +13,7 @@ import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
 public abstract class Building {
 	
 	private final HexCorner location;
-	private final Player owner;
+	protected final Player owner;
 	protected Entity entity;
 	protected Map<ResourceType,Integer> buildingCost;
 	
