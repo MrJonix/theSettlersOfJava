@@ -27,3 +27,4 @@ target/
 .DS_Store
 .classpath
 dependency-reduced-pom.xml
+doc/

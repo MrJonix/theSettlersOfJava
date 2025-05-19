@@ -4,7 +4,7 @@
 
   <groupId>de.dhbw-ravensburg</groupId>
   <artifactId>theSettlersOfJava</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.2</version>
   <packaging>jar</packaging>
 
   <name>catan</name>
@@ -72,6 +72,8 @@
                 <mainClass>de.dhbw_ravensburg.theSettlersOfJava.App</mainClass>
               </transformer>
             </transformers>
+            <source>15</source>
+        	<target>15</target>
           </configuration>
         </execution>
       </executions>

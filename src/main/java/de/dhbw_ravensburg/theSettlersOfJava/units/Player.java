@@ -63,7 +63,6 @@ public class Player {
             for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
                 ResourceType type = entry.getKey();
                 int requiredAmount = entry.getValue();
-                int current = resources.getOrDefault(type, 0);
                 removeResources(type, requiredAmount);
             }
         }
