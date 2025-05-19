@@ -90,7 +90,7 @@ public class CatanMainMenu extends FXGLMenu {
         Button exitBtn = createStyledButton("EXIT", this::fireExit, "#E0E0E0", "#888");
 
         // Create half-size buttons for Settings and Credits
-        Button settingsBtn = createHalfSizeButton("SETTINGS", this::fireSettings, "#E0E0E0", "#888");
+        Button settingsBtn = createHalfSizeButton("RULES", this::fireSettings, "#E0E0E0", "#888");
         Button creditsBtn = createHalfSizeButton("CREDITS", this::showCredits, "#E0E0E0", "#888");
 
         HBox settingsAndCredits = new HBox(10, settingsBtn, creditsBtn);
