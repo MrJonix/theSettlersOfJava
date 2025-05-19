@@ -14,11 +14,11 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.app.scene.Viewport;
-import com.almasb.fxgl.dsl.FXGL;
 
 import de.dhbw_ravensburg.theSettlersOfJava.game.GameController;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.CatanFactory;
-import de.dhbw_ravensburg.theSettlersOfJava.CatanMainMenu;
+import de.dhbw_ravensburg.theSettlersOfJava.graphics.CatanMainMenu;
+import de.dhbw_ravensburg.theSettlersOfJava.map.HexPosition;
 import javafx.scene.input.KeyCode;
 
 
@@ -35,6 +35,7 @@ public class App extends GameApplication {
         settings.setTitle("SettlersOfJava");
         settings.setAppIcon("icon.png");
         settings.setMainMenuEnabled(true);
+        setTaskbar("/assets/textures/icon.png");
         settings.setSceneFactory(new SceneFactory() {
             @Override
             public FXGLMenu newMainMenu() {
@@ -91,8 +92,13 @@ public class App extends GameApplication {
     @Override
     protected void initGame() {
         getGameWorld().addEntityFactory(new CatanFactory());
-        setTaskbar("/assets/textures/icon.png");
         controller = new GameController();
+        
+        Viewport viewport = getGameScene().getViewport();
+        HexPosition pos = controller.getGameBoard().getHexByPosition(new HexPosition(0,0)).getPosition();
+        
+        viewport.setX(pos.getX() - WIDTH / 2);
+        viewport.setY(pos.getY() - HEIGHT / 2);
     }
     
     public static GameController getGameController() {

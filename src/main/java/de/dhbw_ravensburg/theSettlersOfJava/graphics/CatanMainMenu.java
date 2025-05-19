@@ -1,4 +1,4 @@
-package de.dhbw_ravensburg.theSettlersOfJava;
+package de.dhbw_ravensburg.theSettlersOfJava.graphics;
 
 import java.awt.Desktop;
 import java.io.InputStream;
@@ -29,6 +29,7 @@ public class CatanMainMenu extends FXGLMenu {
 
     private VBox mainMenu;
     private VBox creditsView;
+    private VBox rulesView;
 
     public CatanMainMenu() {
         super(MenuType.MAIN_MENU);
@@ -58,8 +59,11 @@ public class CatanMainMenu extends FXGLMenu {
         // Credits view setup
         creditsView = setupCreditsView();
 
-        // StackPane to hold both main menu and credits view
-        StackPane root = new StackPane(backgroundView, mainMenu, creditsView);
+        // Rules view setup
+        rulesView = setupRulesView(); // Setup rules view
+
+        // StackPane to hold main menu, credits view, and rules view
+        StackPane root = new StackPane(backgroundView, mainMenu, creditsView, rulesView);
         root.setAlignment(Pos.CENTER);
 
         // Initially show main menu
@@ -89,14 +93,14 @@ public class CatanMainMenu extends FXGLMenu {
         Button playBtn = createStyledButton("PLAY", this::fireNewGame, "#FFD700", "#000");
         Button exitBtn = createStyledButton("EXIT", this::fireExit, "#E0E0E0", "#888");
 
-        // Create half-size buttons for Settings and Credits
-        Button settingsBtn = createHalfSizeButton("RULES", this::fireSettings, "#E0E0E0", "#888");
+        // Create half-size buttons for Rules and Credits (Replacing Settings with Rules)
+        Button rulesBtn = createHalfSizeButton("RULES", this::showRules, "#E0E0E0", "#888");
         Button creditsBtn = createHalfSizeButton("CREDITS", this::showCredits, "#E0E0E0", "#888");
 
-        HBox settingsAndCredits = new HBox(10, settingsBtn, creditsBtn);
-        settingsAndCredits.setAlignment(Pos.CENTER);
+        HBox rulesAndCredits = new HBox(10, rulesBtn, creditsBtn);
+        rulesAndCredits.setAlignment(Pos.CENTER);
         
-        VBox buttons = new VBox(12, playBtn, settingsAndCredits, exitBtn);
+        VBox buttons = new VBox(12, playBtn, rulesAndCredits, exitBtn);
         buttons.setAlignment(Pos.CENTER);
 
         card.getChildren().addAll(title, subtitle, buttons);
@@ -111,12 +115,10 @@ public class CatanMainMenu extends FXGLMenu {
         credits.setStyle("-fx-background-color: white; -fx-background-radius: 18; -fx-padding: 35;" +
                          "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 16, 0.2, 0, 6);");
 
-        // Title with larger font size
         Text creditsTitle = new Text("CREDITS");
-        creditsTitle.setFont(Font.font("Myriad Pro", FontWeight.EXTRA_BOLD, 62)); // Increased font size
+        creditsTitle.setFont(Font.font("Myriad Pro", FontWeight.EXTRA_BOLD, 62));
         creditsTitle.setFill(Color.web("#FFC700"));
 
-        // Credits text with a larger font size
         String creditsText = """
             The Settlers of Java
             
@@ -126,11 +128,11 @@ public class CatanMainMenu extends FXGLMenu {
             - Arthur Nulet""";
 
         Label creditsLabel = new Label(creditsText);
-        creditsLabel.setFont(Font.font("Myriad Pro", 24)); // Increased font size for body text
+        creditsLabel.setFont(Font.font("Myriad Pro", 24));
         creditsLabel.setWrapText(true);
 
         Hyperlink githubLink = new Hyperlink("Visit our GitHub");
-        githubLink.setFont(Font.font("Myriad Pro", 24)); // Larger font size for the hyperlink
+        githubLink.setFont(Font.font("Myriad Pro", 24));
         githubLink.setOnAction(e -> openWebPage("https://github.com/MrJonix/theSettlersOfJava"));
 
         Button backButton = createStyledButton("BACK", this::showMainMenu, "#E0E0E0", "#888");
@@ -139,14 +141,55 @@ public class CatanMainMenu extends FXGLMenu {
         return credits;
     }
 
+    // New method to setup Rules view
+    private VBox setupRulesView() {
+        VBox rules = new VBox(20);
+        rules.setMaxWidth(500);
+        rules.setMaxHeight(500);
+        rules.setAlignment(Pos.CENTER);
+        rules.setStyle("-fx-background-color: white; -fx-background-radius: 18; -fx-padding: 35;" +
+                       "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 16, 0.2, 0, 6);");
+
+        Text rulesTitle = new Text("RULES");
+        rulesTitle.setFont(Font.font("Myriad Pro", FontWeight.EXTRA_BOLD, 62));
+        rulesTitle.setFill(Color.web("#FFC700"));
+
+        String rulesText = """
+            Welcome to the Settlers of Java!
+            
+            The rules of the game are as follows:
+            
+            - Settle your territories.
+            - Build roads and settlements.
+            - Trade resources with other players.
+            - Aim to gather 10 points to win the game.""";
+
+        Label rulesLabel = new Label(rulesText);
+        rulesLabel.setFont(Font.font("Myriad Pro", 24));
+        rulesLabel.setWrapText(true);
+
+        Button backButton = createStyledButton("BACK", this::showMainMenu, "#E0E0E0", "#888");
+
+        rules.getChildren().addAll(rulesTitle, rulesLabel, backButton);
+        return rules;
+    }
+
     private void showMainMenu() {
         mainMenu.setVisible(true);
         creditsView.setVisible(false);
+        rulesView.setVisible(false); // Hide rules view when showing main menu
     }
 
     private void showCredits() {
         mainMenu.setVisible(false);
         creditsView.setVisible(true);
+        rulesView.setVisible(false); // Hide rules view when showing credits
+    }
+
+    private void showRules() { // New method to handle showing the Rules view
+        mainMenu.setVisible(false);
+        creditsView.setVisible(false);
+        rulesView.setVisible(true);
     }
 
     private void openWebPage(String urlString) {
@@ -213,9 +256,5 @@ public class CatanMainMenu extends FXGLMenu {
         return button;
     }
 
-
-    private void fireSettings() {
-        System.out.println("Opening settings...");
-    }
 
 }

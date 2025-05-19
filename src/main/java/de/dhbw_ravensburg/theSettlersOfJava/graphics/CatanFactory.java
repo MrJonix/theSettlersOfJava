@@ -14,6 +14,7 @@ import de.dhbw_ravensburg.theSettlersOfJava.App;
 import de.dhbw_ravensburg.theSettlersOfJava.game.GameState;
 import de.dhbw_ravensburg.theSettlersOfJava.map.Hex;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.HexType;
+import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -23,6 +24,7 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 public class CatanFactory implements EntityFactory {
 
@@ -67,18 +69,19 @@ public class CatanFactory implements EntityFactory {
         }
         StackPane stack = new StackPane();
         if (number != 0) {
-	        Circle circle = new Circle(25); // Radius 25
+        	int circleSize = 25; // Radius
+	        Circle circle = new Circle(circleSize); 
 	        circle.setFill(Color.WHITE);
 	
 	        Text text = new Text(String.valueOf(number));
 	        text.setFont(Font.font("Myriad Pro", FontWeight.BOLD, 30));
 	        
-	        
 	        text.setFill(color);
+	        text.setTextAlignment(TextAlignment.CENTER);
 	
 	        stack = new StackPane(circle, text);
-	        stack.setTranslateX(-25);
-	        stack.setTranslateY(-25);
+	        stack.setTranslateX(-circleSize);
+	        stack.setTranslateY(-circleSize);
         }
         
         
