@@ -70,7 +70,6 @@ public class GameController {
 	        player.addResources(ResourceType.WHEAT, 5);
 	        player.addResources(ResourceType.WOOL, 2);
 	        player.addResources(ResourceType.ORE, 3);
-	        player.setVictoryPoints(2);
 	    }
 	}
 

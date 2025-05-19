@@ -4,8 +4,6 @@ import static com.almasb.fxgl.dsl.FXGL.getGameScene;
 import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
 import static com.almasb.fxgl.dsl.FXGL.onKey;
 
-import java.awt.Button;
-import java.awt.Font;
 import java.awt.Image;
 import java.awt.Taskbar;
 import java.awt.Toolkit;
@@ -13,11 +11,14 @@ import java.awt.Taskbar.Feature;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.app.scene.FXGLMenu;
+import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.app.scene.Viewport;
 import com.almasb.fxgl.dsl.FXGL;
 
 import de.dhbw_ravensburg.theSettlersOfJava.game.GameController;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.CatanFactory;
+import de.dhbw_ravensburg.theSettlersOfJava.CatanMainMenu;
 import javafx.scene.input.KeyCode;
 
 
@@ -33,10 +34,17 @@ public class App extends GameApplication {
         settings.setHeight(HEIGHT);
         settings.setTitle("SettlersOfJava");
         settings.setAppIcon("icon.png");
+        settings.setMainMenuEnabled(true);
+        settings.setSceneFactory(new SceneFactory() {
+            @Override
+            public FXGLMenu newMainMenu() {
+                return new CatanMainMenu();
+            }
+        });
 	}
+    
     @Override
     protected void initInput() {
-
     	onKey(KeyCode.PLUS, () -> zoomBy(0.04)); // Zoom in
     	onKey(KeyCode.MINUS, () -> zoomBy(-0.04)); // Zoom out
     
@@ -68,10 +76,8 @@ public class App extends GameApplication {
 
         viewport.setX(centerX - appWidth / (2 * zoom));
         viewport.setY(centerY - appHeight / (2 * zoom));
-       
     }
 
-    
     private void setTaskbar(String res) {
         if (Taskbar.isTaskbarSupported()) {
             Taskbar taskbar = Taskbar.getTaskbar();
@@ -93,6 +99,7 @@ public class App extends GameApplication {
     	return controller;
     }
     	
-	public static void main( String[] args ) {launch(args);}
-
+	public static void main(String[] args) {
+	    launch(args);
+	}
 }
