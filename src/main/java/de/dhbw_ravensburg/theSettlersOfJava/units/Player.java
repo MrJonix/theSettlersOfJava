@@ -58,6 +58,7 @@ public class Player {
         }
         
         if(App.getGameController().getGameBoard().buildBuilding(b)) {
+        	victoryPoints.set(victoryPoints.get()+1);
             // Remove resources
             for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
                 ResourceType type = entry.getKey();
@@ -77,16 +78,16 @@ public class Player {
             return false;
         }
 
-        // Ressourcen entfernen
-        for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
-            ResourceType type = entry.getKey();
-            int requiredAmount = entry.getValue();
-            removeResources(type, requiredAmount);
-        }
-
         // Straße bauen (z.B. auf dem Spielbrett platzieren)
-        App.getGameController().getGameBoard().buildRoad(r);
-
+        if(App.getGameController().getGameBoard().buildRoad(r))
+        {
+            // Ressourcen entfernen
+            for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
+                ResourceType type = entry.getKey();
+                int requiredAmount = entry.getValue();
+                removeResources(type, requiredAmount);
+            }
+        }
         return true;
     }
 
