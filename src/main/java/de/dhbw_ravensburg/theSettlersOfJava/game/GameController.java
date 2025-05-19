@@ -49,7 +49,7 @@ public class GameController {
 	private void initializeUI() {
 	    PlayerInfoUI playerInfoUI = new PlayerInfoUI();
 	    Pane playerUIPanel = playerInfoUI.createPlayerListPanel(players, currentPlayer);
-	    FXGL.addUINode(playerUIPanel, 20, FXGL.getAppHeight()-150);
+	    FXGL.addUINode(playerUIPanel, 0, FXGL.getAppHeight()-150);
 
 	    CurrentPlayerInfoUI currentPlayerUI = new CurrentPlayerInfoUI(currentPlayer);
 	    FXGL.addUINode(currentPlayerUI.getRoot(), 20, 20); // Adjust position as needed

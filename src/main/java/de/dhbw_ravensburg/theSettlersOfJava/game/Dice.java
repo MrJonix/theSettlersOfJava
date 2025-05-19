@@ -32,7 +32,7 @@ public class Dice {
         diceBackground.setArcHeight(15);
 
         Text diceText = new Text("?");
-        diceText.setFont(Font.font("Arial", FontWeight.BOLD, 30));
+        diceText.setFont(Font.font("Myriad Pro", FontWeight.BOLD, 30));
         diceText.setFill(Color.BLACK);
 
         diceView = new StackPane(diceBackground, diceText);
@@ -44,7 +44,7 @@ public class Dice {
     private void addToUI() {
         // Berechne Position unten rechts mit Rand
         double x = FXGL.getAppWidth() - SIZE - 20;
-        double y = FXGL.getAppHeight() - SIZE - 20;
+        double y = 20;
 
         // Füge das UI-Element zum GameScene UI-Layer hinzu
         FXGL.getGameScene().addUINode(diceView);
