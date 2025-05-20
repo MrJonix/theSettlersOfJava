@@ -29,7 +29,7 @@ public class PlayerInfoUI {
     private static final Color ACTIVE_PLAYER_BACKGROUND = Color.web("#ecd28f");
     private static final Color INACTIVE_PLAYER_BACKGROUND = Color.WHITE;
     private static final double HEADER_SPACING = 10.0;
-    private double STAT_HBOX_SPACING;
+    private double stat_hbox_spacing;
 
     public Pane createPlayerListPanel(List<Player> players, ObjectProperty<Player> currentPlayer) {
         int appWidth = FXGL.getAppWidth();
@@ -40,9 +40,9 @@ public class PlayerInfoUI {
         double availableWidthForSpacing = appWidth - totalPlayerBoxWidth;
 
         // Ensure spacing is non-negative
-        STAT_HBOX_SPACING = Math.max(0, availableWidthForSpacing / numberOfGaps);
+        stat_hbox_spacing = Math.max(0, availableWidthForSpacing / numberOfGaps);
 
-        HBox playerListBox = new HBox(STAT_HBOX_SPACING);
+        HBox playerListBox = new HBox(stat_hbox_spacing);
         playerListBox.setStyle("-fx-background-color: rgba(255, 255, 255, 0.1); -fx-padding: 20;");
         playerListBox.setPrefWidth(appWidth); // Ensure playerListBox uses all available app width
 
@@ -96,7 +96,7 @@ public class PlayerInfoUI {
     }
 
     private HBox createStatLine(Player player) {
-        HBox stats = new HBox(STAT_HBOX_SPACING);
+        HBox stats = new HBox();
 
         Text vp = createBoundText(player.victoryPointsProperty().asString("🏆 %d"), 18);
         Region spacer = new Region();
