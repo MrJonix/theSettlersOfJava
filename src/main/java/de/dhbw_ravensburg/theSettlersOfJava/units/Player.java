@@ -18,7 +18,8 @@ public class Player {
     private final StringProperty name = new SimpleStringProperty();
     private final PlayerColor color;
     private final IntegerProperty victoryPoints = new SimpleIntegerProperty(0);
-
+    private final IntegerProperty longestRoad = new SimpleIntegerProperty(0);
+    
     private final MapProperty<ResourceType, Integer> resources =
         new SimpleMapProperty<>(FXCollections.observableHashMap());
 
@@ -113,6 +114,9 @@ public class Player {
     public PlayerColor getPlayerColor() {
     	return color;
     }
+    // Longest Road
+    public IntegerProperty longestRoadProperty() { return longestRoad; }
+    
     // VictoryPoints Property
     public IntegerProperty victoryPointsProperty() { return victoryPoints; }
     public int getVictoryPoints() { return victoryPoints.get(); }

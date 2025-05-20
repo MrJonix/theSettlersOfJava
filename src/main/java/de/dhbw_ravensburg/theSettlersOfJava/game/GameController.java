@@ -9,6 +9,7 @@ import com.almasb.fxgl.dsl.FXGL;
 import de.dhbw_ravensburg.theSettlersOfJava.App;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.CurrentPlayerInfoUI;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.PlayerInfoUI;
+import de.dhbw_ravensburg.theSettlersOfJava.map.HexCorner;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.HexType;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
@@ -23,7 +24,8 @@ public class GameController {
 	private Dice dice;
 	private List<Player> players = GameStatus.getPlayerNames();
 	private final ObjectProperty<Player> currentPlayer = new SimpleObjectProperty<>();
-	private GameState currentState = GameState.ROLL_DICE;
+	private GameState currentState = GameState.SETUP_PHASE;
+	private boolean firstSetup = true;
 
 	public GameController() {
 	    initializePlayers();
@@ -32,9 +34,47 @@ public class GameController {
 	    initializeBoard();
 	    initializeDice();
 	    debugStartResources();
+	    
+	    setupPhase();
 	}
 
 	/* ------------------ Initialization Methods ------------------ */
+
+	private void setupPhase() {
+		for(HexCorner c : board.getPossibleStartPositions()) {
+			c.highlight();
+		}
+	}
+	public void finishedPlayerSetup(Player owner) {
+	    int currentIndex = players.indexOf(currentPlayer.get());
+	    int nextIndex;
+
+	    if (firstSetup) {
+	        // Nach hinten durchgehen
+	        nextIndex = currentIndex + 1;
+	    } else {
+	        // Vorwärts durchgehen
+	        nextIndex = currentIndex - 1;
+	    }
+
+	    // Zyklisch von vorne starten, wenn am Ende
+	    if (nextIndex >= players.size()) {
+	        // Wechsel zum Rückwärtsgehen nach Abschluss der ersten Phase
+	        firstSetup = false;
+	        nextIndex = players.size() - 1;
+	    }
+
+	    // Wenn rückwärts gehen und am Anfang
+	    if (!firstSetup && nextIndex < 0) {
+	        // Beende die Setup-Phase
+	        System.out.println("Setup-Phase abgeschlossen.");
+	        return;
+	    }
+
+	    // Setze den aktuellen Spieler und beginne die Setup-Phase erneut
+	    currentPlayer.set(players.get(nextIndex));
+	    setupPhase();
+	}
 
 	private void initializePlayers() {
 		Collections.shuffle(players);
@@ -43,7 +83,7 @@ public class GameController {
 	private void initializeUI() {
 	    PlayerInfoUI playerInfoUI = new PlayerInfoUI();
 	    Pane playerUIPanel = playerInfoUI.createPlayerListPanel(players, currentPlayer);
-	    FXGL.addUINode(playerUIPanel, 0, FXGL.getAppHeight()-150);
+	    FXGL.addUINode(playerUIPanel, 0, FXGL.getAppHeight()-120);
 
 	    CurrentPlayerInfoUI currentPlayerUI = new CurrentPlayerInfoUI(currentPlayer);
 	    FXGL.addUINode(currentPlayerUI.getRoot(), 20, 20); // Adjust position as needed
@@ -56,7 +96,8 @@ public class GameController {
 	private void initializeDice() {
         double x = FXGL.getAppWidth() - Dice.SIZE - 20;
         double y = 20;
-	    dice = new Dice(x,y); // Übergabe für State-Check
+	    dice = new Dice(x,y);
+	    dice.getView().setVisible(false);
 	}
 
 	private void debugStartResources() {
@@ -78,15 +119,22 @@ public class GameController {
 	    }
 
 	    switch (currentState) {
+	    	case SETUP_PHASE:
+	    		currentState = GameState.ROLL_DICE;
+	    		rollDice();
+	    		break;
 	        case ROLL_DICE:
-	            rollDice();
 	            break;
 	        case ROBBER_PHASE:
-	            robberPhase();
-	            endTurn(); // DEBUG
+	        	currentState = GameState.ACTION_PHASE;
 	            break;
+	        case ACTION_PHASE:
+	        	currentState = GameState.END_TURN;
+	        	nextPhase();
+	        	break;
 	        case END_TURN:
-	            endTurn(); // DEBUG
+	            endTurn();
+
 	            break;
 	        default:
 	            System.out.println("Unbekannter Zustand: " + currentState);
@@ -95,17 +143,18 @@ public class GameController {
 
 	private void rollDice() {
 	    System.out.println("Würfeln...");
-	    // Würfeln wird durch Dice-Objekt ausgelöst
+	    dice.getView().setVisible(true);
 	}
 
 	private void robberPhase() {
+		currentState = GameState.ROBBER_PHASE;
 	    System.out.println("Räuberphase...");
 	    for (Player p : players) {
 	        if (p.getResourceSize() > 7) {
 	            // TODO: Karten abwerfen Logik
 	        }
 	    }
-	    currentState = GameState.ACTION_PHASE;
+	    nextPhase();
 	}
 
 	public void trade() {
@@ -122,7 +171,7 @@ public class GameController {
 	    if (!isActionPhase()) return;
 	    System.out.println("Zug wird beendet...");
 	    currentState = GameState.END_TURN;
-	    endTurn();
+	    nextPhase();
 	}
 
 	private void endTurn() {
@@ -130,18 +179,19 @@ public class GameController {
 	    int currentIndex = players.indexOf(currentPlayer.get());
 	    int nextIndex = (currentIndex + 1) % players.size();
 	    currentPlayer.set(players.get(nextIndex));
+	    
 	    currentState = GameState.ROLL_DICE;
+        rollDice();
 	}
 
 	public void onDiceRolled(int total) {
+		dice.getView().setVisible(false);
 	    if (total == 7) {
-	        currentState = GameState.ROBBER_PHASE;
+	    	robberPhase();
 	    } else {
 	        board.distributeResources(total);
 	        currentState = GameState.ACTION_PHASE;
-	        endTurn(); // DEBUG
 	    }
-	    FXGL.getNotificationService().pushNotification(currentState.toString());
 	}
 
 	private boolean isActionPhase() {
@@ -169,4 +219,8 @@ public class GameController {
 	public GameState getCurrentGameState() {
 	    return currentState;
 	}
+
+
+
+
 }

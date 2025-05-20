@@ -1,11 +1,18 @@
 package de.dhbw_ravensburg.theSettlersOfJava.map;
 
+import com.almasb.fxgl.animation.Animation;
+import com.almasb.fxgl.animation.AnimationBuilder.ScaleAnimationBuilder;
+import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.entity.Entity;
+
 import de.dhbw_ravensburg.theSettlersOfJava.App;
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.Settlement;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
+import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.util.Duration;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -20,7 +27,6 @@ public class HexCorner {
     private final double x;
     private final double y;
     private final List<Hex> adjacentHexes;
-
     /**
      * Initializes a HexCorner given three adjacent hexes.
      *
@@ -107,4 +113,58 @@ public class HexCorner {
     public int hashCode() {
         return Objects.hash(new HashSet<>(adjacentHexes));
     }
+
+ // fields in your class
+    private Entity highlightEntity;
+    private Animation<?> highlightAnimation;
+
+    public void highlight() {
+        Circle highlightCircle = new Circle(14, Color.TRANSPARENT);
+        highlightCircle.setStroke(Color.RED);
+        highlightCircle.setStrokeWidth(2);
+
+        // create and store the highlight entity
+        highlightEntity = FXGL.entityBuilder()
+            .at(x, y)
+            .view(highlightCircle)
+            .zIndex(99).build();
+        FXGL.getGameWorld().addEntity(highlightEntity);
+        // create and store the animation
+        FXGL.animationBuilder()
+            .autoReverse(true)
+            .repeatInfinitely()
+            .duration(Duration.seconds(1))
+            .interpolator(javafx.animation.Interpolator.EASE_BOTH)
+            .scale(highlightCircle)
+            .from(new Point2D(1.0, 1.0))
+            .to(new Point2D(1.3, 1.3))
+            .buildAndPlay();
+        
+
+        // optional: click to remove
+        highlightCircle.setOnMouseClicked(event -> {
+        	handleMouseClick();
+        });
+    }
+
+    public void removeHighlight() {
+        if (highlightAnimation != null) {
+            highlightAnimation.stop();
+            highlightAnimation = null;
+        }
+
+        if (highlightEntity != null) {
+            if (highlightEntity.isActive()) {  // Prüfen, ob die Entität aktiv ist
+                highlightEntity.removeFromWorld();
+                highlightEntity = null;
+            } else {
+                System.err.println("Fehler: Die Entität ist bereits entfernt oder nicht aktiv.");
+            }
+        } else {
+            System.err.println("Fehler: highlightEntity ist null.");
+        }
+    }
+
+
+
 }

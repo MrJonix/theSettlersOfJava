@@ -1,11 +1,16 @@
 package de.dhbw_ravensburg.theSettlersOfJava.map;
 
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.entity.Entity;
+
 import de.dhbw_ravensburg.theSettlersOfJava.App;
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.Road;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
+import javafx.animation.ScaleTransition;
+import javafx.animation.Timeline;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.util.Duration;
 
 import java.util.Objects;
 
@@ -17,6 +22,7 @@ public class HexEdge {
     private final HexCorner start;
     private final HexCorner end;
     private final HexEdgeOrientation orientation;
+    private Entity highlightEntity;
 
     /**
      * Constructs a HexEdge given two corners and an orientation.
@@ -104,5 +110,46 @@ public class HexEdge {
 
     public boolean isAdjacentToCorner(HexCorner corner) {
         return start.equals(corner) || end.equals(corner);
+    }
+
+
+
+    public void highlight() {
+        double x1 = start.getX();
+        double y1 = start.getY();
+        double x2 = end.getX();
+        double y2 = end.getY();
+
+        Line highlightLine = new Line(x1, y1, x2, y2);
+        highlightLine.setStroke(Color.GOLD);
+        highlightLine.setStrokeWidth(5);
+        highlightLine.setMouseTransparent(false);
+
+        highlightEntity = FXGL.entityBuilder()
+            .at(0, 0)
+            .view(highlightLine)
+            .zIndex(10) // draw above other elements
+            .buildAndAttach();
+
+        // Pulsing stroke width animation
+        ScaleTransition pulse = new ScaleTransition(Duration.seconds(1), highlightLine);
+        pulse.setFromX(1.0);
+        pulse.setFromY(1.0);
+        pulse.setToX(1.3);
+        pulse.setToY(1.3);
+        pulse.setCycleCount(Timeline.INDEFINITE);
+        pulse.setAutoReverse(true);
+        pulse.play();
+
+        highlightLine.setOnMouseClicked(event -> {
+            handleMouseClick();
+        });
+    }
+
+    public void removeHighlight() {
+        if (highlightEntity != null) {
+            highlightEntity.removeFromWorld();
+            highlightEntity = null;
+        }
     }
 }

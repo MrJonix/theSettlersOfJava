@@ -5,6 +5,8 @@ import static com.almasb.fxgl.dsl.FXGL.spawn;
 import java.util.*;
 import java.util.stream.Collectors;
 import com.almasb.fxgl.dsl.FXGL;
+
+import de.dhbw_ravensburg.theSettlersOfJava.App;
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.*;
 import de.dhbw_ravensburg.theSettlersOfJava.map.*;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.HexType;
@@ -88,7 +90,14 @@ public class GameBoard {
             FXGL.getDialogService().showMessageBox("Road must be built adjacent to an existing building or road!");
             return false;
         }
-
+        
+        if(App.getGameController().getCurrentGameState().equals(GameState.SETUP_PHASE)) {
+        	for(HexEdge e : hexEdges) {
+        		e.removeHighlight();
+        	}
+        	App.getGameController().finishedPlayerSetup(road.getOwner());
+        }
+        
         roads.add(road);
         road.visualize();
         return true;
@@ -115,8 +124,27 @@ public class GameBoard {
 
         buildings.add(building);
         building.visualize();
+
+        if(App.getGameController().getCurrentGameState().equals(GameState.SETUP_PHASE)) {
+            for (HexCorner c : hexCorners) {
+            	c.removeHighlight();
+            }
+            buildSetupRoad(building.getLocation());
+        }
+        
         return true;
     }
+    
+	private void buildSetupRoad(HexCorner loc) {
+
+		for(HexEdge e : hexEdges) {
+			HexCorner[] corners = e.getCorners();
+			if(corners[0].equals(loc) || corners[1].equals(loc)) {
+				e.highlight();
+			}
+		}
+		
+	}
 
     private boolean isExistingBuildingBlocking(HexCorner corner, Player owner, Building building) {
         for (Building existingBuilding : buildings) {
@@ -162,6 +190,30 @@ public class GameBoard {
             .filter(connectedCorner -> !connectedCorner.equals(corner))
             .collect(Collectors.toList());
     }
+    
+    public List<HexCorner> getPossibleStartPositions() {
+        List<HexCorner> list = new ArrayList<>();
+        for (HexCorner c : hexCorners) {
+            boolean isBlocked = false;
+
+            // Check c and all connected corners for existing buildings
+            for (HexCorner n : getConnectedCorners(c)) {
+                for (Building b : buildings) {
+                    if (b.getLocation().equals(c) || b.getLocation().equals(n)) {
+                        isBlocked = true;
+                        break;
+                    }
+                }
+                if (isBlocked) break;
+            }
+
+            if (!isBlocked) {
+                list.add(c);
+            }
+        }
+        return list;
+    }
+
 
     public void distributeResources(int total) {
         hexes.stream()

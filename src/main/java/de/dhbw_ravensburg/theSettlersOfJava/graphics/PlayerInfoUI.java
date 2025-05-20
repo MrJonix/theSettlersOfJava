@@ -21,7 +21,7 @@ public class PlayerInfoUI {
 
     private static final Insets PLAYER_BOX_PADDING = new Insets(15);
     private static final double PLAYER_BOX_MIN_WIDTH = 200.0;
-    private static final double PLAYER_BOX_MIN_HEIGHT = 100.0;
+    private static final double PLAYER_BOX_MIN_HEIGHT = 50.0;
     private static final CornerRadii CORNER_RADII = new CornerRadii(8);
     private static final BorderWidths BORDER_WIDTHS = new BorderWidths(2);
     private static final String FONT_FAMILY = "Myriad Pro";
@@ -99,11 +99,15 @@ public class PlayerInfoUI {
         HBox stats = new HBox();
 
         Text vp = createBoundText(player.victoryPointsProperty().asString("🏆 %d"), 18);
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
+        Text longR = createBoundText(player.longestRoadProperty().asString("🛣️ %d"), 18);
         Text resources = createBoundText(player.resourceSizeProperty().asString("🛠️ %d"), 16);
 
-        stats.getChildren().addAll(vp, spacer, resources);
+        Region spacer1 = new Region();
+        Region spacer2 = new Region();
+        HBox.setHgrow(spacer1, Priority.ALWAYS);
+        HBox.setHgrow(spacer2, Priority.ALWAYS);
+
+        stats.getChildren().addAll(vp, spacer1, longR, spacer2, resources);
         return stats;
     }
 
