@@ -17,6 +17,7 @@ import com.almasb.fxgl.app.scene.Viewport;
 import com.almasb.fxgl.dsl.FXGL;
 
 import de.dhbw_ravensburg.theSettlersOfJava.game.GameController;
+import de.dhbw_ravensburg.theSettlersOfJava.game.GameStatus;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.CatanFactory;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.CatanMainMenu;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexPosition;
@@ -29,6 +30,7 @@ public class App extends GameApplication {
     private static final int HEIGHT = 1080;
     private static GameController controller;
     private double zoom = 1.0;
+    private static GameStatus status = new GameStatus();
     
 	@Override
 	protected void initSettings(GameSettings settings) {
@@ -107,6 +109,9 @@ public class App extends GameApplication {
     
     public static GameController getGameController() {
     	return controller;
+    }
+    public static GameStatus getGameStatus() {
+		return status;
     }
     	
 	public static void main(String[] args) {

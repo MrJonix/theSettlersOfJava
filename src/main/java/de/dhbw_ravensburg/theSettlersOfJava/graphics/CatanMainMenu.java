@@ -4,6 +4,8 @@ package de.dhbw_ravensburg.theSettlersOfJava.graphics;
 import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.MenuType;
 
+import de.dhbw_ravensburg.theSettlersOfJava.App;
+import de.dhbw_ravensburg.theSettlersOfJava.game.GameState;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.view.CreditsView;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.view.MainMenuView;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.view.PlayerSetupView;
@@ -15,6 +17,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import java.io.InputStream;
+import java.util.List;
 
 public class CatanMainMenu extends FXGLMenu {
 
@@ -57,10 +60,8 @@ public class CatanMainMenu extends FXGLMenu {
         	playerSetupView = PlayerSetupView.create(
         	    this::showMainMenu, // Back button handler
         	    players -> {
-        	        // Handle confirmed player list
-        	        // You can store this in a shared state or pass it into your game logic
-        	        players.forEach(p -> System.out.println(p.name() + " selected " + p.color()));
-        	        fireNewGame(); // Start the game
+        	        players.forEach(p -> App.getGameStatus().addPlayer(p));
+        	        fireNewGame(); 
         	    }
         	);
         	

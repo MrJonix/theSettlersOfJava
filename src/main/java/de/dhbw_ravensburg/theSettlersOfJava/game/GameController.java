@@ -3,27 +3,25 @@ package de.dhbw_ravensburg.theSettlersOfJava.game;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import com.almasb.fxgl.dsl.FXGL;
 
+import de.dhbw_ravensburg.theSettlersOfJava.App;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.CurrentPlayerInfoUI;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.PlayerInfoUI;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.HexType;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
-import javafx.beans.property.IntegerProperty;
+import de.dhbw_ravensburg.theSettlersOfJava.units.PlayerColor;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 
 public class GameController {
 
 	private GameBoard board;
 	private Dice dice;
-	private final List<Player> players = new ArrayList<>();
+	private List<Player> players = GameStatus.getPlayerNames();
 	private final ObjectProperty<Player> currentPlayer = new SimpleObjectProperty<>();
 	private GameState currentState = GameState.ROLL_DICE;
 
@@ -39,11 +37,7 @@ public class GameController {
 	/* ------------------ Initialization Methods ------------------ */
 
 	private void initializePlayers() {
-	    players.add(new Player("Jonas", Color.RED));
-	    players.add(new Player("Nico", Color.BLUE));
-	    players.add(new Player("Arthur", Color.GREEN));
-	    players.add(new Player("Kim", Color.ORANGE));
-	    Collections.shuffle(players);
+		Collections.shuffle(players);
 	}
 
 	private void initializeUI() {
