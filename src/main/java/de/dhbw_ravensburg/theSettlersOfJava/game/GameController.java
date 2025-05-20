@@ -60,7 +60,9 @@ public class GameController {
 	}
 
 	private void initializeDice() {
-	    dice = new Dice(); // Übergabe für State-Check
+        double x = FXGL.getAppWidth() - Dice.SIZE - 20;
+        double y = 20;
+	    dice = new Dice(x,y); // Übergabe für State-Check
 	}
 
 	private void debugStartResources() {

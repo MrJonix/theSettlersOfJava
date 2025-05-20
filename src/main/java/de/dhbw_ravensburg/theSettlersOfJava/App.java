@@ -14,11 +14,13 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.app.scene.Viewport;
+import com.almasb.fxgl.dsl.FXGL;
 
 import de.dhbw_ravensburg.theSettlersOfJava.game.GameController;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.CatanFactory;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.CatanMainMenu;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexPosition;
+import javafx.scene.Cursor;
 import javafx.scene.input.KeyCode;
 
 
@@ -39,6 +41,7 @@ public class App extends GameApplication {
         settings.setSceneFactory(new SceneFactory() {
             @Override
             public FXGLMenu newMainMenu() {
+            	
                 return new CatanMainMenu();
             }
         });
@@ -46,6 +49,7 @@ public class App extends GameApplication {
     
     @Override
     protected void initInput() {
+    	FXGL.getGameScene().getRoot().setCursor(Cursor.DEFAULT);
     	onKey(KeyCode.PLUS, () -> zoomBy(0.04)); // Zoom in
     	onKey(KeyCode.MINUS, () -> zoomBy(-0.04)); // Zoom out
     
