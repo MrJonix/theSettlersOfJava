@@ -20,7 +20,6 @@ import java.util.Map;
 public class Road {
 
     private static final Map<HexEdgeOrientation, String> IMAGE_PATHS = createImagePaths();
-    private static final Map<Color, String> IMAGE_COLOR = createImageColorMap();
     private static final Map<ResourceType, Integer> ROAD_COST = createRoadCost();
 
     private final HexEdge location;
@@ -60,7 +59,7 @@ public class Road {
         double centerY = (y1 + y2) / 2;
         
         // Load and rotate the texture
-        String imagePath = IMAGE_COLOR.get(owner.getColor()) + "_" + IMAGE_PATHS.get(location.getHexEdgeOrientation());
+        String imagePath = owner.getPlayerColor() + "_" + IMAGE_PATHS.get(location.getHexEdgeOrientation());
         Texture texture = FXGL.getAssetLoader().loadTexture(imagePath);
         texture.setScaleX(0.4);
         texture.setScaleY(0.4);
@@ -93,19 +92,6 @@ public class Road {
         return paths;
     }
 
-    /**
-     * Initializes the image color map.
-     *
-     * @return a map for image color prefixes based on player color
-     */
-    private static Map<Color, String> createImageColorMap() {
-        return Map.of(
-            Color.BLUE, "BLUE",
-            Color.RED, "RED",
-            Color.GREEN, "GREEN",
-            Color.ORANGE, "ORANGE"
-        );
-    }
 
     /**
      * Initializes the road cost map.

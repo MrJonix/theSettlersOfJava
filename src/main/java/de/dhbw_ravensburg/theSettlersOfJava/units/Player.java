@@ -110,7 +110,9 @@ public class Player {
     public void setName(String name) { this.name.set(name); }
 
     public Color getColor() { return color.getColor(); }
-
+    public PlayerColor getPlayerColor() {
+    	return color;
+    }
     // VictoryPoints Property
     public IntegerProperty victoryPointsProperty() { return victoryPoints; }
     public int getVictoryPoints() { return victoryPoints.get(); }

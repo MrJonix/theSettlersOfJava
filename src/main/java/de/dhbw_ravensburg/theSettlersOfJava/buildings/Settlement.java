@@ -18,7 +18,6 @@ import java.util.Map;
  */
 public class Settlement extends Building {
 
-    private static final Map<Color, String> IMAGE_PATHS = createImagePaths();
     private static final Map<ResourceType, Integer> SETTLEMENT_COST = createSettlementCost();
 
     /**
@@ -48,7 +47,7 @@ public class Settlement extends Building {
      */
     @Override
     public String getImagePath() {
-        return IMAGE_PATHS.getOrDefault(owner.getColor(), "default_settlement.png");
+        return owner.getPlayerColor() +  "_settlement.png";
     }
 
     /**
@@ -100,17 +99,4 @@ public class Settlement extends Building {
         return Collections.unmodifiableMap(cost);
     }
 
-    /**
-     * Initializes the image path map.
-     *
-     * @return a map representing image paths for each player color
-     */
-    private static Map<Color, String> createImagePaths() {
-        Map<Color, String> imagePaths = new HashMap<>();
-        imagePaths.put(Color.RED, "RED_settlement.png");
-        imagePaths.put(Color.BLUE, "BLUE_settlement.png");
-        imagePaths.put(Color.ORANGE, "ORANGE_settlement.png");
-        imagePaths.put(Color.GREEN, "GREEN_settlement.png");
-        return Collections.unmodifiableMap(imagePaths);
-    }
 }
