@@ -33,7 +33,7 @@ public class GameController {
 	    initializeUI();
 	    initializeBoard();
 	    initializeDice();
-	    debugStartResources();
+	    //debugStartResources();
 	    
 	    setupPhase();
 	}
@@ -68,6 +68,8 @@ public class GameController {
 	    if (!firstSetup && nextIndex < 0) {
 	        // Beende die Setup-Phase
 	        System.out.println("Setup-Phase abgeschlossen.");
+	        nextPhase();
+	        
 	        return;
 	    }
 
@@ -115,6 +117,8 @@ public class GameController {
 	public void nextPhase() {
 	    if (currentState == GameState.ACTION_PHASE) {
 	        System.out.println("Du kannst handeln oder bauen oder deinen Zug beenden.");
+	        currentState = GameState.END_TURN;
+        	nextPhase();
 	        return;
 	    }
 
@@ -122,16 +126,14 @@ public class GameController {
 	    	case SETUP_PHASE:
 	    		currentState = GameState.ROLL_DICE;
 	    		rollDice();
+	    		
 	    		break;
 	        case ROLL_DICE:
 	            break;
 	        case ROBBER_PHASE:
 	        	currentState = GameState.ACTION_PHASE;
+	        	nextPhase(); //DEBUG
 	            break;
-	        case ACTION_PHASE:
-	        	currentState = GameState.END_TURN;
-	        	nextPhase();
-	        	break;
 	        case END_TURN:
 	            endTurn();
 
@@ -148,13 +150,13 @@ public class GameController {
 
 	private void robberPhase() {
 		currentState = GameState.ROBBER_PHASE;
-	    System.out.println("Räuberphase...");
+		FXGL.getNotificationService().pushNotification("Du musst jetzt den Räuber versetzen");
 	    for (Player p : players) {
 	        if (p.getResourceSize() > 7) {
 	            // TODO: Karten abwerfen Logik
+	        	System.out.println(p.getName() + " muss die Hälfte seiner Karten abgeben.");
 	        }
 	    }
-	    nextPhase();
 	}
 
 	public void trade() {
@@ -191,6 +193,7 @@ public class GameController {
 	    } else {
 	        board.distributeResources(total);
 	        currentState = GameState.ACTION_PHASE;
+	        nextPhase();
 	    }
 	}
 
