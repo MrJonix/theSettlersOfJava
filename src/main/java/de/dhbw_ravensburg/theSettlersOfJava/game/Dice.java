@@ -14,13 +14,13 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 public class Dice {
-    private static final int SIZE = 60;
+    public static final int SIZE = 60;
     private final Random random = new Random();
     private StackPane diceView;
     
-    public Dice() {
+    public Dice(double x, double y) {
         createDiceView();
-        addToUI();
+        addToUI(x,y);
     }
 
     private void createDiceView() {
@@ -32,7 +32,7 @@ public class Dice {
         diceBackground.setArcHeight(15);
 
         Text diceText = new Text("?");
-        diceText.setFont(Font.font("Arial", FontWeight.BOLD, 30));
+        diceText.setFont(Font.font("Myriad Pro", FontWeight.BOLD, 30));
         diceText.setFill(Color.BLACK);
 
         diceView = new StackPane(diceBackground, diceText);
@@ -41,10 +41,9 @@ public class Dice {
         diceView.setOnMouseClicked(e -> rollDice());
     }
 
-    private void addToUI() {
+    private void addToUI(double x, double y) {
         // Berechne Position unten rechts mit Rand
-        double x = FXGL.getAppWidth() - SIZE - 20;
-        double y = FXGL.getAppHeight() - SIZE - 20;
+
 
         // Füge das UI-Element zum GameScene UI-Layer hinzu
         FXGL.getGameScene().addUINode(diceView);

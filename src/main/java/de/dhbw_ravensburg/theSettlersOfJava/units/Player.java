@@ -16,7 +16,7 @@ import javafx.scene.paint.Color;
 public class Player {
 
     private final StringProperty name = new SimpleStringProperty();
-    private final ObjectProperty<Color> color = new SimpleObjectProperty<>();
+    private final PlayerColor color;
     private final IntegerProperty victoryPoints = new SimpleIntegerProperty(0);
 
     private final MapProperty<ResourceType, Integer> resources =
@@ -41,9 +41,9 @@ public class Player {
     };
 
     // Konstruktor
-    public Player(String name, Color color) {
+    public Player(String name, PlayerColor color) {
         this.name.set(name);
-        this.color.set(color);
+        this.color = color;
         for (ResourceType type : ResourceType.values()) {
             resources.put(type, 0);
         }
@@ -63,7 +63,6 @@ public class Player {
             for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
                 ResourceType type = entry.getKey();
                 int requiredAmount = entry.getValue();
-                int current = resources.getOrDefault(type, 0);
                 removeResources(type, requiredAmount);
             }
         }
@@ -110,11 +109,10 @@ public class Player {
     public String getName() { return name.get(); }
     public void setName(String name) { this.name.set(name); }
 
-    // Color Property
-    public ObjectProperty<Color> colorProperty() { return color; }
-    public Color getColor() { return color.get(); }
-    public void setColor(Color color) { this.color.set(color); }
-
+    public Color getColor() { return color.getColor(); }
+    public PlayerColor getPlayerColor() {
+    	return color;
+    }
     // VictoryPoints Property
     public IntegerProperty victoryPointsProperty() { return victoryPoints; }
     public int getVictoryPoints() { return victoryPoints.get(); }

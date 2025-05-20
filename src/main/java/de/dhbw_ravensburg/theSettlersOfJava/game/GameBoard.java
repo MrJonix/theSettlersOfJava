@@ -58,7 +58,7 @@ public class GameBoard {
     private int generateRandomNumber(Random random) {
         int number;
         do {
-            number = random.nextInt(2, 13);
+            number = random.nextInt(11) + 2;
         } while (number == 7);
         return number;
     }
@@ -251,7 +251,7 @@ public class GameBoard {
         }
     }
 
-    private Hex getHexByPosition(HexPosition pos) {
+    public Hex getHexByPosition(HexPosition pos) {
         return hexes.stream().filter(hex -> hex.getPosition().equals(pos)).findFirst().orElse(null);
     }
 

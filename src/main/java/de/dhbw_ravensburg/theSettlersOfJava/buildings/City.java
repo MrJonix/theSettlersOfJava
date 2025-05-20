@@ -15,7 +15,6 @@ import javafx.scene.paint.Color;
  */
 public class City extends Building {
 
-    private static final Map<Color, String> IMAGE_PATHS = createImagePaths();
     private static final Map<ResourceType, Integer> CITY_COST = createCityCost();
 
     /**
@@ -45,7 +44,7 @@ public class City extends Building {
      */
     @Override
     public String getImagePath() {
-        return IMAGE_PATHS.getOrDefault(owner.getColor(), "default_city.png");
+        return owner.getPlayerColor() + "_city.png";
     }
 
     /**
@@ -60,17 +59,4 @@ public class City extends Building {
         return Collections.unmodifiableMap(cost);
     }
 
-    /**
-     * Initializes the image path map.
-     *
-     * @return a map representing image paths for each player color
-     */
-    private static Map<Color, String> createImagePaths() {
-        Map<Color, String> imagePaths = new HashMap<>();
-        imagePaths.put(Color.RED, "RED_city.png");
-        imagePaths.put(Color.BLUE, "BLUE_city.png");
-        imagePaths.put(Color.ORANGE, "ORANGE_city.png");
-        imagePaths.put(Color.GREEN, "GREEN_city.png");
-        return Collections.unmodifiableMap(imagePaths);
-    }
 }

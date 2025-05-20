@@ -114,7 +114,7 @@ public class CurrentPlayerInfoUI {
         this.currentPlayer = player;
 
         nameLabel.textProperty().bind(player.nameProperty().concat(": "));
-        colorIndicator.fillProperty().bind(player.colorProperty());
+        colorIndicator.setFill(player.getColor());
         pointsLabel.textProperty().bind(player.victoryPointsProperty().asString("Siegpunkte: %d"));
     }
 
