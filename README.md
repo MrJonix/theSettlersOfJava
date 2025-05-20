@@ -7,7 +7,7 @@ A Java-based recreation of the classic board game [The Settlers of Catan (Die Si
 ## 🎯 Project Scope
 
 - Faithful core gameplay implementation
-- Offline local multiplayer (2–4 players on one device)
+- Offline local multiplayer (3–4 players on one device)
 - Focused on essential mechanics: resource generation, trading, building, and robber rules
 - Minimal dependencies, portable, and easy to run
 
@@ -31,7 +31,7 @@ A Java-based recreation of the classic board game [The Settlers of Catan (Die Si
 
 ## 🧰 Tech Stack
 
-- **Language:** Java 17+
+- **Language:** Java 21+
 - **GUI:** FXGL
 - **Build Tool:** Maven
 
@@ -41,7 +41,7 @@ A Java-based recreation of the classic board game [The Settlers of Catan (Die Si
 
 ### Prerequisites
 
-- Java 17 or newer
+- Java 21 or newer
 - Maven
 - Git
 
