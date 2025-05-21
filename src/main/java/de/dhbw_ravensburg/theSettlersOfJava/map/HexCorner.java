@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Represents a corner between hexagonal tiles, calculated from the centers of adjacent hexes.
@@ -26,7 +27,7 @@ public class HexCorner {
 
     private final double x;
     private final double y;
-    private final List<Hex> adjacentHexes;
+    private final Set<Hex> adjacentHexes;
     /**
      * Initializes a HexCorner given three adjacent hexes.
      *
@@ -40,7 +41,7 @@ public class HexCorner {
         }
 
         // Initialize adjacent hexes as an unmodifiable list
-        adjacentHexes = List.of(hex1, hex2, hex3);
+        adjacentHexes = Set.of(hex1, hex2, hex3);
 
         // Calculate the corner position
         double[] xy = calculateCornerPosition();
@@ -71,8 +72,8 @@ public class HexCorner {
         return y;
     }
 
-    public List<Hex> getAdjacentHexes() {
-        return Collections.unmodifiableList(adjacentHexes);
+    public Set<Hex> getAdjacentHexes() {
+        return Collections.unmodifiableSet(adjacentHexes);
     }
 
     /**

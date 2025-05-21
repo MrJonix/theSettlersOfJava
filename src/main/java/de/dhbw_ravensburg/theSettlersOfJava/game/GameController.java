@@ -45,6 +45,7 @@ public class GameController {
 			c.highlight();
 		}
 	}
+	
 	public void finishedPlayerSetup(Player owner) {
 	    int currentIndex = players.indexOf(currentPlayer.get());
 	    int nextIndex;
@@ -221,6 +222,10 @@ public class GameController {
 
 	public GameState getCurrentGameState() {
 	    return currentState;
+	}
+	
+	public boolean getFirstSetup() {
+		return firstSetup;
 	}
 
 

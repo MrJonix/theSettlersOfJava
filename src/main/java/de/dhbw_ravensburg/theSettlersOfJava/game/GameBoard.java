@@ -129,7 +129,14 @@ public class GameBoard {
             for (HexCorner c : hexCorners) {
             	c.removeHighlight();
             }
-            buildSetupRoad(building.getLocation());
+            buildSetupRoad(corner);
+            
+            if (!App.getGameController().getFirstSetup()) {
+                for (Hex h : corner.getAdjacentHexes()) {
+                	owner.addResources(h.getHexType().getResourceType(), 1);
+                }
+            }
+
         }
         
         return true;
