@@ -17,25 +17,26 @@ import javafx.scene.paint.Color;
 
 public class GameBoard {
 
-	private static final int[][] coords = {
-		    {0, -2},
-		    {1, -2},
-		    {2, -2},
-		    {2, -1},
-		    {2, 0},
-		    {1, 1},
-		    {0, 2},
-		    {-1, 2},
-		    {-2, 2},
-		    {-2, 1},
-		    {-2, 0},
+	private static int[][] coords = {
+			{0, -2},
 		    {-1, -1},
+		    {-2, 0},
+		    {-2, 1},
+		    {-2, 2},
+		    {-1, 2},
+		    {0, 2},
+		    {1, 1},
+		    {2, 0},
+		    {2, -1},
+		    {2, -2},
+		    {1, -2},
+		   //Border end
 		    {0, -1},
-		    {1, -1},
-		    {1, 0},
-		    {0, 1},
-		    {-1, 1},
 		    {-1, 0},
+		    {-1, 1},
+		    {0, 1},
+		    {1, 0},
+		    {1, -1},
 		    {0, 0}
 		};
 
@@ -86,15 +87,28 @@ public class GameBoard {
     private void initializeHexes(List<HexType> hexTypeList) {
         Random random = new Random();
         boolean desert = false;
+        int startingPosition = random.nextInt(5);
+
         for (int i = 0; i < coords.length; i++) {
             int[] coord = coords[i];
-            HexType type = hexTypeList.get(i);
-            int number = type == HexType.DESERT ? 0 : desert ? numberTokens[i-1] : numberTokens[i];
-            if (type.equals(HexType.DESERT)) {
-            	desert = true;
+
+            // Rotate the coordinate 'startingPosition' times
+            for (int j = 0; j < startingPosition; j++) {
+                coord = rotateCCW60(coord);
             }
+
+            HexType type = hexTypeList.get(i);
+            int number = -1; // Initialize with a default invalid number
+
+            if (type.equals(HexType.DESERT)) {
+                number = 0; // Desert does not have a number
+                desert = true;
+            } else {
+                number = desert ? numberTokens[i - 1] : numberTokens[i]; // Adjust for the shifted index due to desert
+            }
+
             Hex tile = new Hex(type, number, new HexPosition(coord[0], coord[1]));
-            if (type == HexType.DESERT) {
+            if (type.equals(HexType.DESERT)) {
                 robber = new Robber(tile);
             }
             hexes.add(tile);
@@ -102,6 +116,11 @@ public class GameBoard {
         }
     }
 
+    private static int[] rotateCCW60(int[] coord) {
+        int newQ = -coord[1];
+        int newR = coord[0] + coord[1];
+        return new int[]{newQ, newR};
+    }
 
     private void initializeWaterTiles() {
         Arrays.stream(waterCoords).forEach(coord -> {
