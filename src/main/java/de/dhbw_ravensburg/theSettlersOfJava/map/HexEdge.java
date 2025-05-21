@@ -6,10 +6,12 @@ import com.almasb.fxgl.entity.Entity;
 import de.dhbw_ravensburg.theSettlersOfJava.App;
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.Road;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
-import javafx.animation.ScaleTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.effect.Glow;
 import javafx.util.Duration;
 
 import java.util.Objects;
@@ -112,34 +114,52 @@ public class HexEdge {
         return start.equals(corner) || end.equals(corner);
     }
 
-
-
     public void highlight() {
-        double x1 = start.getX();
-        double y1 = start.getY();
-        double x2 = end.getX();
-        double y2 = end.getY();
+    	double x1 = start.getX();
+    	double y1 = start.getY();
+    	double x2 = end.getX();
+    	double y2 = end.getY();
 
-        Line highlightLine = new Line(x1, y1, x2, y2);
-        highlightLine.setStroke(Color.GOLD);
+    	// Mittelpunkt berechnen
+    	double midX = (x1 + 3*x2) / 4;
+    	double midY = (y1 + 3*y2) / 4;
+    	
+    	double mid1X = (3*x1 + x2) / 4;
+    	double mid1Y = (3*y1 + y2) / 4;
+
+        Line highlightLine = new Line(mid1X, mid1Y, midX, midY);
+        highlightLine.setStroke(App.getGameController().getCurrentPlayer().getColor());
         highlightLine.setStrokeWidth(5);
         highlightLine.setMouseTransparent(false);
+
+        // Glow-Effekt hinzufügen
+        Glow glow = new Glow(0.3);
+        highlightLine.setEffect(glow);
 
         highlightEntity = FXGL.entityBuilder()
             .at(0, 0)
             .view(highlightLine)
-            .zIndex(10) // draw above other elements
+            .zIndex(1)
             .buildAndAttach();
 
-        // Pulsing stroke width animation
-        ScaleTransition pulse = new ScaleTransition(Duration.seconds(1), highlightLine);
-        pulse.setFromX(1.0);
-        pulse.setFromY(1.0);
-        pulse.setToX(1.3);
-        pulse.setToY(1.3);
-        pulse.setCycleCount(Timeline.INDEFINITE);
-        pulse.setAutoReverse(true);
-        pulse.play();
+        // Animation: strokeWidth pulsieren lassen
+        Timeline animation = new Timeline(
+            new KeyFrame(Duration.ZERO,
+                new KeyValue(highlightLine.strokeWidthProperty(), 5),
+                new KeyValue(glow.levelProperty(), 0.3)
+            ),
+            new KeyFrame(Duration.seconds(0.5),
+                new KeyValue(highlightLine.strokeWidthProperty(), 8),
+                new KeyValue(glow.levelProperty(), 0.8)
+            ),
+            new KeyFrame(Duration.seconds(1),
+                new KeyValue(highlightLine.strokeWidthProperty(), 5),
+                new KeyValue(glow.levelProperty(), 0.3)
+            )
+        );
+        animation.setCycleCount(Timeline.INDEFINITE);
+        animation.setAutoReverse(true);
+        animation.play();
 
         highlightLine.setOnMouseClicked(event -> {
             handleMouseClick();

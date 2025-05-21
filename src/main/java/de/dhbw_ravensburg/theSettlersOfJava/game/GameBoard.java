@@ -32,6 +32,7 @@ public class GameBoard {
     private Set<Building> buildings = new HashSet<>();
     private Set<Road> roads = new HashSet<>();
     private Robber robber;
+    private Building setupBuilding;
 
     public GameBoard(List<HexType> hexTypeList) {
         initializeHexes(hexTypeList);
@@ -92,9 +93,16 @@ public class GameBoard {
         }
         
         if(App.getGameController().getCurrentGameState().equals(GameState.SETUP_PHASE)) {
+        	HexCorner[] corners = road.getLocation().getCorners();
+        	if (!(corners[0].equals(setupBuilding.getLocation()) || corners[1].equals(setupBuilding.getLocation()))){
+        		FXGL.getDialogService().showMessageBox("Road musst be adjacent to a your placed building");
+        		return false;
+        	}
+        	
         	for(HexEdge e : hexEdges) {
         		e.removeHighlight();
         	}
+        	
         	App.getGameController().finishedPlayerSetup(road.getOwner());
         }
         
@@ -134,8 +142,10 @@ public class GameBoard {
             if (!App.getGameController().getFirstSetup()) {
                 for (Hex h : corner.getAdjacentHexes()) {
                 	owner.addResources(h.getHexType().getResourceType(), 1);
+                	
                 }
             }
+            setupBuilding = building;
 
         }
         

@@ -121,7 +121,7 @@ public class HexCorner {
 
     public void highlight() {
         Circle highlightCircle = new Circle(14, Color.TRANSPARENT);
-        highlightCircle.setStroke(Color.RED);
+        highlightCircle.setStroke(App.getGameController().getCurrentPlayer().getColor());
         highlightCircle.setStrokeWidth(2);
 
         // create and store the highlight entity

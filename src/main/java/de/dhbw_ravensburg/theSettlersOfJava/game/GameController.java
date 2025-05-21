@@ -7,6 +7,7 @@ import java.util.List;
 import com.almasb.fxgl.dsl.FXGL;
 
 import de.dhbw_ravensburg.theSettlersOfJava.App;
+import de.dhbw_ravensburg.theSettlersOfJava.buildings.Building;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.CurrentPlayerInfoUI;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.PlayerInfoUI;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexCorner;
@@ -26,6 +27,7 @@ public class GameController {
 	private final ObjectProperty<Player> currentPlayer = new SimpleObjectProperty<>();
 	private GameState currentState = GameState.SETUP_PHASE;
 	private boolean firstSetup = true;
+	
 
 	public GameController() {
 	    initializePlayers();
@@ -35,12 +37,12 @@ public class GameController {
 	    initializeDice();
 	    //debugStartResources();
 	    
-	    setupPhase();
+	    
 	}
 
 	/* ------------------ Initialization Methods ------------------ */
 
-	private void setupPhase() {
+	public void setupPhase() {
 		for(HexCorner c : board.getPossibleStartPositions()) {
 			c.highlight();
 		}
@@ -70,7 +72,6 @@ public class GameController {
 	        // Beende die Setup-Phase
 	        System.out.println("Setup-Phase abgeschlossen.");
 	        nextPhase();
-	        
 	        return;
 	    }
 
@@ -227,6 +228,7 @@ public class GameController {
 	public boolean getFirstSetup() {
 		return firstSetup;
 	}
+
 
 
 

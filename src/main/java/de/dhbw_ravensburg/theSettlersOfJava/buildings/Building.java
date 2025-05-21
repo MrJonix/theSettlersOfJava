@@ -82,6 +82,7 @@ public abstract class Building {
         // Create and attach entity
         entity = FXGL.entityBuilder()
                 .at(x, y)
+                .zIndex(10)
                 .view(texture)
                 .buildAndAttach();
     }

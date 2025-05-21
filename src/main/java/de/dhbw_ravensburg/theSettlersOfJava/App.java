@@ -100,6 +100,7 @@ public class App extends GameApplication {
     protected void initGame() {
         getGameWorld().addEntityFactory(new CatanFactory());
         controller = new GameController();
+        controller.setupPhase();
         
         Viewport viewport = getGameScene().getViewport();
         HexPosition pos = controller.getGameBoard().getHexByPosition(new HexPosition(0,0)).getPosition();
