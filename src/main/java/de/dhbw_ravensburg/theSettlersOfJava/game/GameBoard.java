@@ -17,9 +17,50 @@ import javafx.scene.paint.Color;
 
 public class GameBoard {
 
-    private static final int[][] coords = {
-        {0,-2},{-2,0},{-1,-1},{0,-1},{-1,0},{0,0},{0,2},{2,0},{1,1},{0,1},{1,0},{-1,1},{1,-1},{-1,2},{2,-1},{-2,1},{-2,2},{1,-2},{2,-2}
-    };
+	private static final int[][] coords = {
+		    {0, -2},
+		    {1, -2},
+		    {2, -2},
+		    {2, -1},
+		    {2, 0},
+		    {1, 1},
+		    {0, 2},
+		    {-1, 2},
+		    {-2, 2},
+		    {-2, 1},
+		    {-2, 0},
+		    {-1, -1},
+		    {0, -1},
+		    {1, -1},
+		    {1, 0},
+		    {0, 1},
+		    {-1, 1},
+		    {-1, 0},
+		    {0, 0}
+		};
+
+    
+    private static final int[] numberTokens = {
+    	    5,  // A
+    	    2,  // B
+    	    6,  // C
+    	    3,  // D
+    	    8,  // E
+    	    10, // F
+    	    9,  // G
+    	    12, // H
+    	    11, // I
+    	    4,  // J
+    	    8,  // K
+    	    10, // L
+    	    9,  // M
+    	    4,  // N
+    	    5,  // O
+    	    6,  // P
+    	    3,  // Q
+    	    11  // R
+    	};
+
     
     private static final int[][] waterCoords = {
         {-3,0},{-2,-1},{-1,-2},{0,-3},{1,-3},{2,-3},{3,-3},{3,-2},{3,-1},
@@ -44,11 +85,14 @@ public class GameBoard {
 
     private void initializeHexes(List<HexType> hexTypeList) {
         Random random = new Random();
+        boolean desert = false;
         for (int i = 0; i < coords.length; i++) {
             int[] coord = coords[i];
             HexType type = hexTypeList.get(i);
-            int number = type == HexType.DESERT ? 0 : generateRandomNumber(random);
-
+            int number = type == HexType.DESERT ? 0 : desert ? numberTokens[i-1] : numberTokens[i];
+            if (type.equals(HexType.DESERT)) {
+            	desert = true;
+            }
             Hex tile = new Hex(type, number, new HexPosition(coord[0], coord[1]));
             if (type == HexType.DESERT) {
                 robber = new Robber(tile);
@@ -58,13 +102,6 @@ public class GameBoard {
         }
     }
 
-    private int generateRandomNumber(Random random) {
-        int number;
-        do {
-            number = random.nextInt(11) + 2;
-        } while (number == 7);
-        return number;
-    }
 
     private void initializeWaterTiles() {
         Arrays.stream(waterCoords).forEach(coord -> {
