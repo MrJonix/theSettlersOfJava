@@ -40,6 +40,7 @@ public class App extends GameApplication {
         settings.setAppIcon("icon.png");
         settings.setMainMenuEnabled(true);
         setTaskbar("/assets/textures/icon.png");
+        
         settings.setSceneFactory(new SceneFactory() {
             @Override
             public FXGLMenu newMainMenu() {

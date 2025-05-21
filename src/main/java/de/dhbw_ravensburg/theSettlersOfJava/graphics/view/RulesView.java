@@ -41,35 +41,44 @@ public class RulesView {
         content.setPadding(new Insets(20));
 
         content.getChildren().addAll(
-            sectionTitle("🎯 Ziel des Spiels"),
-            paragraph("Erreiche als Erster 10 Siegpunkte durch Bauwerke, Straßen und Entwicklungskarten."),
+            sectionTitle("🎯 Goal of the Game"),
+            paragraph("Be the first to reach 10 victory points through constructions, roads, and development cards."),
 
-            sectionTitle("🧩 Spielmaterial"),
-            bullet("- 19 Landschaftsfelder (Wald, Weide, Acker, Hügel, Gebirge, Wüste)"),
-            bullet("- Zahlenchips (2–12, außer 7)"),
-            bullet("- Räuber, Rohstoffkarten, Entwicklungskarten"),
-            bullet("- Spielsteine: Straßen, Siedlungen, Städte"),
+            sectionTitle("🧩 Game Material"),
+            bullet("19 terrain hexes (Forest, Pasture, Field, Hill, Mountain, Desert)"),
+            bullet("Number tokens (2–12, except 7)"),
+            bullet("Robber, Resource Cards, Development Cards"),
+            bullet("Game pieces: roads, settlements, cities"),
 
-            sectionTitle("🏝️ Spielaufbau"),
-            bullet("- Landschaft und Zahlenchips auslegen, Räuber auf die Wüste setzen"),
-            bullet("- Jeder Spieler baut 2 Siedlungen + je 1 Straße (eine in umgekehrter Reihenfolge)"),
-            bullet("- Rohstoffe für 2. Siedlung einsammeln"),
+            sectionTitle("🏝️ Game Setup"),
+            bullet("Lay out hexes and number tokens, place robber on the desert"),
+            bullet("Each player builds 2 settlements + 1 road (one in reverse order)"),
+            bullet("Collect resources for 2nd settlement"),
 
-            sectionTitle("🧱 Spielablauf pro Zug:"),
-            numbered("1. Würfeln:",
-                "- Alle Spieler erhalten Rohstoffe von angrenzenden Feldern mit dieser Zahl\n" +
-                "- Bei 7: Räuber bewegt sich, Karten abwerfen (ab 8), Karte stehlen"),
-            numbered("2. Handeln:",
-                "- Mit Mitspielern oder dem Vorrat (4:1, 3:1 oder 2:1 bei Hafen)"),
-            numbered("3. Bauen:",
-                "- Straße: Holz + Lehm\n" +
-                "- Siedlung (1 Siegpunkt): Holz + Lehm + Getreide + Wolle\n" +
-                "- Stadt (2 Siegpunkte): 2 Getreide + 3 Erz\n"),
-            sectionTitle("🛑 Spielende"),
-            paragraph("Der erste Spieler mit 10 Siegpunkten gewinnt sofort.")
+            sectionTitle("🧱 Turn Sequence:"),
+            numbered("1. Roll Dice:",
+                "All players receive resources from adjacent hexes with this number\n" +
+                "On a roll of 7: move robber, discard cards (if 8 or more), steal a card"),
+            numbered("2. Trading:",
+                "With other players or the supply (4:1, 3:1, or 2:1 if at a port)"),
+            numbered("3. Building:",
+                "Road: wood + brick\n" +
+                "Settlement (1 victory point): wood + brick + grain + wool\n" +
+                "City (2 victory points): 2 grain + 3 ore"),
+
+            sectionTitle("🏆 Longest Road"),
+            bullet("The player with the longest continuous road of at least 5 segments gains 2 victory points."),
+            bullet("The longest road can change hands if another player builds a longer one."),
+
+            sectionTitle("🛠️ Settlement Placement"),
+            paragraph("Settlements can only be placed at intersections where you have no adjacent buildings."),
+            paragraph("Settlements cannot be placed next to each other without space in between (distance rule)."),
+
+            sectionTitle("🛑 End of the Game"),
+            paragraph("The first player to reach 10 victory points wins immediately.")
         );
 
-        // ScrollPane für Regeltext
+        // ScrollPane for rule text
         ScrollPane scrollPane = new ScrollPane(content);
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -83,7 +92,7 @@ public class RulesView {
         	""");
 
 
-        // Wrapper mit weißem Hintergrund und DropShadow
+        // Wrapper with white background and DropShadow
         VBox scrollContainer = new VBox(scrollPane);
         scrollContainer.setPadding(new Insets(10));
         scrollContainer.setMaxHeight(580);
