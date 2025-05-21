@@ -63,9 +63,8 @@ public class RulesView {
                 "- Mit Mitspielern oder dem Vorrat (4:1, 3:1 oder 2:1 bei Hafen)"),
             numbered("3. Bauen:",
                 "- Straße: Holz + Lehm\n" +
-                "- Siedlung: Holz + Lehm + Getreide + Wolle\n" +
-                "- Stadt: 2 Getreide + 3 Erz\n"),
-
+                "- Siedlung (1 Siegpunkt): Holz + Lehm + Getreide + Wolle\n" +
+                "- Stadt (2 Siegpunkte): 2 Getreide + 3 Erz\n"),
             sectionTitle("🛑 Spielende"),
             paragraph("Der erste Spieler mit 10 Siegpunkten gewinnt sofort.")
         );
