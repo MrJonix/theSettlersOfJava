@@ -17,7 +17,7 @@ import javafx.scene.paint.Color;
 
 public class GameBoard {
 
-	private static int[][] coords = {
+	private static final int[][] coords = {
 			{0, -2},
 		    {-1, -1},
 		    {-2, 0},
@@ -40,7 +40,6 @@ public class GameBoard {
 		    {0, 0}
 		};
 
-    
     private static final int[] numberTokens = {
     	    5,  // A
     	    2,  // B
@@ -62,7 +61,6 @@ public class GameBoard {
     	    11  // R
     	};
 
-    
     private static final int[][] waterCoords = {
         {-3,0},{-2,-1},{-1,-2},{0,-3},{1,-3},{2,-3},{3,-3},{3,-2},{3,-1},
         {3,0},{2,1},{1,2},{0,3},{-1,3},{-2,3},{-3,3},{-3,2},{-3,1}
@@ -374,6 +372,20 @@ public class GameBoard {
                 hexEdges.add(edge);
             }
         }
+    }
+    
+    public List<Player> getPlayersAdjacentToHex(Hex hex) {
+        // Sammle alle Spieler, die an den Ecken angrenzen, an denen Gebäude stehen
+        return buildings.stream()
+            // Filtere Gebäude, die an dem Hex angrenzen
+            .filter(building -> building.getLocation().getAdjacentHexes().contains(hex))
+            // Hole die Besitzer der Gebäude
+            .map(Building::getOwner)
+            // Entferne Duplikate
+            .distinct()
+            // Nur Spieler zurückgeben, die nicht null sind (Sicherheit)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 
     public Hex getHexByPosition(HexPosition pos) {

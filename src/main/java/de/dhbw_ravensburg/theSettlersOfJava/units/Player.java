@@ -158,4 +158,8 @@ public class Player {
         resources.put(type, current - amount);
         return true;
     }
+    @Override
+    public String toString() {
+    	return getName();
+    }
 }

@@ -3,6 +3,8 @@ package de.dhbw_ravensburg.theSettlersOfJava.game;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.almasb.fxgl.dsl.FXGL;
 
@@ -10,6 +12,9 @@ import de.dhbw_ravensburg.theSettlersOfJava.App;
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.Building;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.CurrentPlayerInfoUI;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.PlayerInfoUI;
+import de.dhbw_ravensburg.theSettlersOfJava.graphics.view.DiscardResourcesView;
+import de.dhbw_ravensburg.theSettlersOfJava.graphics.view.PlayerSelectionView;
+import de.dhbw_ravensburg.theSettlersOfJava.map.Hex;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexCorner;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.HexType;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
@@ -151,15 +156,83 @@ public class GameController {
 	}
 
 	private void robberPhase() {
-		currentState = GameState.ROBBER_PHASE;
-		FXGL.getNotificationService().pushNotification("Du musst jetzt den Räuber versetzen");
-	    for (Player p : players) {
-	        if (p.getResourceSize() > 7) {
-	            // TODO: Karten abwerfen Logik
-	        	System.out.println(p.getName() + " muss die Hälfte seiner Karten abgeben.");
+	    currentState = GameState.ROBBER_PHASE;
+	    FXGL.getNotificationService().pushNotification("Du musst jetzt den Räuber versetzen");
+
+	    // Liste der Spieler, die mehr als 7 Karten haben
+	    List<Player> toDiscard = players.stream()
+	            .filter(p -> p.getResourceSize() > 7)
+	            .collect(Collectors.toList());
+	    
+	    if (toDiscard.size() > 0) {
+	    	processNextDiscard(toDiscard, 0);
+	    } else {
+	    	FXGL.getNotificationService().pushNotification("Kein Spieler muss Karten abgegeben.");
+	    }
+	    
+	}
+	
+	public void moveRobber(Hex hex) {
+	    if (getCurrentGameState().equals(GameState.ROBBER_PHASE) &&
+	        !hex.getHexType().equals(HexType.WATER) &&
+	        !hex.equals(board.getRobber().getLocation())) {
+	        
+	        board.getRobber().moveRobber(hex);
+	        
+	        Player activePlayer = currentPlayer.get();
+	        List<Player> victims = board.getPlayersAdjacentToHex(hex).stream()
+	            .filter(p -> !p.equals(activePlayer))
+	            .filter(p -> p.getResourceSize() > 0) // Nur Spieler mit Ressourcen
+	            .collect(Collectors.toList());
+
+	        if (victims.isEmpty()) {
+	            // Keine Spieler zum Stehlen -> direkt nächste Phase
+	            nextPhase();
+	        } else if (victims.size() == 1) {
+	            // Nur einen Spieler -> automatisch stehlen
+	            board.getRobber().stealRandomResourceFromPlayer(activePlayer, victims.get(0));
+	            nextPhase();
+	        } else {
+	            // Mehrere Spieler -> Auswahl anzeigen
+	        	PlayerSelectionView view = new PlayerSelectionView(victims);
+	        	Optional<Player> chosen = view.showAndWait();
+	        	chosen.ifPresent(victim -> {
+	        		if (victim != null) {
+		            	board.getRobber().stealRandomResourceFromPlayer(activePlayer, victim);
+		            }
+	        	});
+
+	            nextPhase();
 	        }
 	    }
 	}
+
+
+	// Rekursive Verarbeitung der Spieler
+	private void processNextDiscard(List<Player> playersToDiscard, int index) {
+	    if (index >= playersToDiscard.size()) {
+	        // Alle Spieler durch – du kannst z.B. den Räuber versetzen lassen oder das Spiel fortsetzen
+	        FXGL.getNotificationService().pushNotification("Alle Spieler haben Karten abgegeben.");
+	        return;
+	    }
+
+	    Player player = playersToDiscard.get(index);
+	    DiscardResourcesView view = new DiscardResourcesView(player.getName(), player.getResources());
+
+	    view.showAndWait().ifPresent(discarded -> {
+	        // Ressourcen abziehen
+	        discarded.forEach((type, amount) -> {
+	            int current = player.getResources().getOrDefault(type, 0);
+	            player.getResources().put(type, current - amount);
+	        });
+
+	        FXGL.getNotificationService().pushNotification(player.getName() + " hat Karten abgegeben.");
+	    });
+
+	    // Nächster Spieler
+	    processNextDiscard(playersToDiscard, index + 1);
+	}
+
 
 	public void trade() {
 	    if (!isActionPhase()) return;
@@ -228,9 +301,5 @@ public class GameController {
 	public boolean getFirstSetup() {
 		return firstSetup;
 	}
-
-
-
-
 
 }
