@@ -32,7 +32,7 @@ public class GameController {
 	private final ObjectProperty<Player> currentPlayer = new SimpleObjectProperty<>();
 	private GameState currentState = GameState.SETUP_PHASE;
 	private boolean firstSetup = true;
-	
+	private Player currentLongestRoadPlayer = null;
 
 	public GameController() {
 	    initializePlayers();
@@ -279,6 +279,44 @@ public class GameController {
 	    }
 	    return true;
 	}
+	
+	public void setAllPlayersLongestRoad() {
+	    Player newLongestRoadPlayer = null;
+	    int maxRoadLength = 0;
+
+	    // Find the player with the longest road >= 5
+	    for (Player p : players) {
+	        int roadLength = board.getLongestRoadLength(p);
+	        p.longestRoadProperty().set(roadLength);
+
+	        if (roadLength >= 5 && roadLength > maxRoadLength) {
+	            maxRoadLength = roadLength;
+	            newLongestRoadPlayer = p;
+	        }
+	    }
+
+	    // If the longest road player changed, update victory points accordingly
+	    if (newLongestRoadPlayer != null && !newLongestRoadPlayer.equals(currentLongestRoadPlayer)) {
+	        // Remove 2 points from old longest road player
+	        if (currentLongestRoadPlayer != null) {
+	            currentLongestRoadPlayer.setVictoryPoints(currentLongestRoadPlayer.getVictoryPoints() - 2);
+	        }
+
+	        // Add 2 points to new longest road player
+	        newLongestRoadPlayer.setVictoryPoints(newLongestRoadPlayer.getVictoryPoints() + 2);
+
+	        // Update the tracker
+	        currentLongestRoadPlayer = newLongestRoadPlayer;
+	    }
+
+	    // If no player qualifies for longest road (road length < 5)
+	    else if (newLongestRoadPlayer == null && currentLongestRoadPlayer != null) {
+	        // Remove 2 points from old holder and clear the reference
+	        currentLongestRoadPlayer.setVictoryPoints(currentLongestRoadPlayer.getVictoryPoints() - 2);
+	        currentLongestRoadPlayer = null;
+	    }
+	}
+
 
 	/* ------------------ Getters ------------------ */
 

@@ -161,7 +161,7 @@ public class GameBoard {
         }
         
         roads.add(road);
-        road.getOwner().longestRoadProperty().set(getLongestRoadLength(road.getOwner()));;
+        App.getGameController().setAllPlayersLongestRoad();
         road.visualize();
         return true;
     }
@@ -186,6 +186,7 @@ public class GameBoard {
         }
 
         buildings.add(building);
+        App.getGameController().setAllPlayersLongestRoad();
         building.visualize();
 
         if(App.getGameController().getCurrentGameState().equals(GameState.SETUP_PHASE)) {
@@ -404,19 +405,13 @@ public class GameBoard {
         Map<HexCorner, Set<HexCorner>> graph = new HashMap<>();
 
         for (Road r : roads) {
-            if (!player.equals(r.getOwner())) {
-                continue;
-            }
+            if (!player.equals(r.getOwner())) continue;
+
             HexCorner[] corners = r.getLocation().getCorners();
             HexCorner node1 = corners[0];
             HexCorner node2 = corners[1];
 
-            // Check if either endpoint is blocked by enemy building
-            if (isBlockedByEnemyBuilding(node1, player) || isBlockedByEnemyBuilding(node2, player)) {
-                continue;
-            }
-
-            // Add edge in both directions
+            // Füge Kante hinzu (wir prüfen später auf gegnerische Blockaden)
             graph.computeIfAbsent(node1, k -> new HashSet<>()).add(node2);
             graph.computeIfAbsent(node2, k -> new HashSet<>()).add(node1);
         }
@@ -424,38 +419,81 @@ public class GameBoard {
         return graph;
     }
 
-    private boolean isBlockedByEnemyBuilding(HexCorner corner, Player currentPlayer) {
-        Building building = buildings.stream()
-            .filter(b -> b.getLocation().equals(corner))
-            .findFirst()
-            .orElse(null);
-
-        return building != null && !building.getOwner().equals(currentPlayer);
+    private boolean hasEnemyBuilding(HexCorner corner, Player currentPlayer) {
+        return buildings.stream()
+            .anyMatch(b -> b.getLocation().equals(corner) && !b.getOwner().equals(currentPlayer));
     }
 
-    private int dfs(HexCorner node, Map<HexCorner, Set<HexCorner>> graph, Set<HexCorner> visited) {
-        visited.add(node);
-        int maxDepth = 0;
+    private boolean dfs(Map<HexCorner, Set<HexCorner>> graph, Set<HexCorner> visited, HexCorner current, HexCorner target, Player player) {
+        if (current.equals(target)) return true;
 
-        for (HexCorner neighbor : graph.getOrDefault(node, Collections.emptySet())) {
-            if (!visited.contains(neighbor)) {
-                maxDepth = Math.max(maxDepth, dfs(neighbor, graph, visited));
-            }
+        visited.add(current);
+
+        for (HexCorner neighbor : graph.getOrDefault(current, Collections.emptySet())) {
+            if (visited.contains(neighbor)) continue;
+
+            // Blockiert nur, wenn gegnerisches Gebäude UND Spieler hat mehrere Straßen an diesem Knoten (Verbindung)
+            if (hasEnemyBuilding(neighbor, player) && graph.getOrDefault(neighbor, Collections.emptySet()).size() > 1) continue;
+
+            if (dfs(graph, visited, neighbor, target, player)) return true;
         }
 
-        visited.remove(node); // Backtrack
-        return maxDepth + 1;
+        return false;
+    }
+
+
+    private String makeEdgeKey(HexCorner a, HexCorner b) {
+        int id1 = a.hashCode();
+        int id2 = b.hashCode();
+        return (id1 < id2) ? id1 + "-" + id2 : id2 + "-" + id1;
     }
 
     public int getLongestRoadLength(Player player) {
         Map<HexCorner, Set<HexCorner>> roadGraph = buildPlayerRoadGraph(player);
         int longest = 0;
 
-        for (HexCorner start : roadGraph.keySet()) {
-            longest = Math.max(longest, dfs(start, roadGraph, new HashSet<>()) - 1);
+        List<HexCorner> nodes = new ArrayList<>(roadGraph.keySet());
+
+        for (HexCorner start : nodes) {
+            if (hasEnemyBuilding(start, player)) continue;
+
+            for (HexCorner target : nodes) {
+                if (start.equals(target)) continue;
+
+                if (dfs(roadGraph, new HashSet<>(), start, target, player)) {
+                    int length = shortestPathLength(roadGraph, start, target, player);
+                    longest = Math.max(longest, length);
+                }
+            }
         }
 
         return longest;
     }
+
+    // Beispiel-Methode für Pfadlänge mit BFS (kann angepasst werden)
+    private int shortestPathLength(Map<HexCorner, Set<HexCorner>> graph, HexCorner start, HexCorner target, Player player) {
+        Queue<HexCorner> queue = new LinkedList<>();
+        Map<HexCorner, Integer> distance = new HashMap<>();
+        queue.add(start);
+        distance.put(start, 0);
+
+        while (!queue.isEmpty()) {
+            HexCorner current = queue.poll();
+
+            if (current.equals(target)) return distance.get(current);
+
+            for (HexCorner neighbor : graph.getOrDefault(current, Collections.emptySet())) {
+                if (distance.containsKey(neighbor)) continue;
+                if (hasEnemyBuilding(neighbor, player) && graph.getOrDefault(neighbor, Collections.emptySet()).size() > 1) continue;
+
+                distance.put(neighbor, distance.get(current) + 1);
+                queue.add(neighbor);
+            }
+        }
+
+        return 0; // kein Pfad
+    }
+
+
 
 }
