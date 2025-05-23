@@ -161,6 +161,7 @@ public class GameBoard {
         }
         
         roads.add(road);
+        road.getOwner().longestRoadProperty().set(getLongestRoadLength(road.getOwner()));;
         road.visualize();
         return true;
     }
@@ -399,5 +400,67 @@ public class GameBoard {
     public Robber getRobber() {
         return robber;
     }
+    
+    private Map<HexCorner, List<HexCorner>> buildPlayerRoadGraph(Player player) {
+        Map<HexCorner, List<HexCorner>> graph = new HashMap<>();
+
+        for (Road road : roads) {
+            if (!road.getOwner().equals(player)) continue;
+
+            HexEdge edge = road.getLocation();
+            HexCorner[] corners = edge.getCorners();
+
+            // Verhindere, dass eine gegnerische Siedlung den Weg blockiert
+            boolean blocked = buildings.stream().anyMatch(b -> {
+                return !b.getOwner().equals(player) &&
+                        (b.getLocation().equals(corners[0]) || b.getLocation().equals(corners[1]));
+            });
+            if (blocked) continue;
+
+            graph.computeIfAbsent(corners[0], k -> new ArrayList<>()).add(corners[1]);
+            graph.computeIfAbsent(corners[1], k -> new ArrayList<>()).add(corners[0]);
+        }
+
+        return graph;
+    }
+    
+    private int findLongestPath(Map<HexCorner, List<HexCorner>> graph) {
+        int maxLength = 0;
+        Set<HexCorner> visited = new HashSet<>();
+
+        for (HexCorner corner : graph.keySet()) {
+            maxLength = Math.max(maxLength, dfs(corner, graph, visited));
+        }
+
+        return maxLength;
+    }
+
+    private int dfs(HexCorner current, Map<HexCorner, List<HexCorner>> graph, Set<HexCorner> visited) {
+        visited.add(current);
+        int maxDepth = 0;
+
+        for (HexCorner neighbor : graph.getOrDefault(current, Collections.emptyList())) {
+            if (!visited.contains(neighbor)) {
+                maxDepth = Math.max(maxDepth, dfs(neighbor, graph, visited));
+            }
+        }
+
+        visited.remove(current); // Backtracking!
+        return maxDepth + 1;
+    }
+    
+    public int getLongestRoadLength(Player player) {
+        Map<HexCorner, List<HexCorner>> roadGraph = buildPlayerRoadGraph(player);
+        int longest = 0;
+
+        for (HexCorner start : roadGraph.keySet()) {
+            longest = Math.max(longest, dfs(start, roadGraph, new HashSet<>()) - 1);
+        }
+
+        return longest;
+    }
+
+
+
 
 }

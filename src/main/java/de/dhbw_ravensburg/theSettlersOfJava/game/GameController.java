@@ -40,7 +40,7 @@ public class GameController {
 	    initializeUI();
 	    initializeBoard();
 	    initializeDice();
-	    //debugStartResources();
+	    debugStartResources();
 	    
 	    
 	}
@@ -111,8 +111,8 @@ public class GameController {
 
 	private void debugStartResources() {
 	    for (Player player : players) {
-	        player.addResources(ResourceType.WOOD, 5);
-	        player.addResources(ResourceType.BRICK, 5);
+	        player.addResources(ResourceType.WOOD, 10);
+	        player.addResources(ResourceType.BRICK, 10);
 	        player.addResources(ResourceType.WHEAT, 5);
 	        player.addResources(ResourceType.WOOL, 2);
 	        player.addResources(ResourceType.ORE, 3);

@@ -26,8 +26,8 @@ import javafx.scene.input.KeyCode;
 
 
 public class App extends GameApplication {
-    private static final int WIDTH = 1080;
-    private static final int HEIGHT = 1080;
+    private static final int WIDTH = 1000;
+    private static final int HEIGHT = 1000;
     private static GameController controller;
     private double zoom = 1.0;
     private static GameStatus status = new GameStatus();

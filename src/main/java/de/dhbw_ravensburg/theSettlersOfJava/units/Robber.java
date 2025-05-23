@@ -54,7 +54,7 @@ public class Robber {
 
 	    // Zufällige Ressource auswählen
 	    ResourceType stolenResource = availableResources.get(new Random().nextInt(availableResources.size()));
-
+	    if (stolenResource == null) return;
 	    // Ressource beim Opfer abziehen
 	    victimResources.put(stolenResource, victimResources.get(stolenResource) - 1);
 
