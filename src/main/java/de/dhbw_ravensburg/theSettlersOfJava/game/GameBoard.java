@@ -400,57 +400,55 @@ public class GameBoard {
     public Robber getRobber() {
         return robber;
     }
-    
-    private Map<HexCorner, List<HexCorner>> buildPlayerRoadGraph(Player player) {
-        Map<HexCorner, List<HexCorner>> graph = new HashMap<>();
+    private Map<HexCorner, Set<HexCorner>> buildPlayerRoadGraph(Player player) {
+        Map<HexCorner, Set<HexCorner>> graph = new HashMap<>();
 
-        for (Road road : roads) {
-            if (!road.getOwner().equals(player)) continue;
+        for (Road r : roads) {
+            if (!player.equals(r.getOwner())) {
+                continue;
+            }
+            HexCorner[] corners = r.getLocation().getCorners();
+            HexCorner node1 = corners[0];
+            HexCorner node2 = corners[1];
 
-            HexEdge edge = road.getLocation();
-            HexCorner[] corners = edge.getCorners();
+            // Check if either endpoint is blocked by enemy building
+            if (isBlockedByEnemyBuilding(node1, player) || isBlockedByEnemyBuilding(node2, player)) {
+                continue;
+            }
 
-            // Verhindere, dass eine gegnerische Siedlung den Weg blockiert
-            boolean blocked = buildings.stream().anyMatch(b -> {
-                return !b.getOwner().equals(player) &&
-                        (b.getLocation().equals(corners[0]) || b.getLocation().equals(corners[1]));
-            });
-            if (blocked) continue;
-
-            graph.computeIfAbsent(corners[0], k -> new ArrayList<>()).add(corners[1]);
-            graph.computeIfAbsent(corners[1], k -> new ArrayList<>()).add(corners[0]);
+            // Add edge in both directions
+            graph.computeIfAbsent(node1, k -> new HashSet<>()).add(node2);
+            graph.computeIfAbsent(node2, k -> new HashSet<>()).add(node1);
         }
 
         return graph;
     }
-    
-    private int findLongestPath(Map<HexCorner, List<HexCorner>> graph) {
-        int maxLength = 0;
-        Set<HexCorner> visited = new HashSet<>();
 
-        for (HexCorner corner : graph.keySet()) {
-            maxLength = Math.max(maxLength, dfs(corner, graph, visited));
-        }
+    private boolean isBlockedByEnemyBuilding(HexCorner corner, Player currentPlayer) {
+        Building building = buildings.stream()
+            .filter(b -> b.getLocation().equals(corner))
+            .findFirst()
+            .orElse(null);
 
-        return maxLength;
+        return building != null && !building.getOwner().equals(currentPlayer);
     }
 
-    private int dfs(HexCorner current, Map<HexCorner, List<HexCorner>> graph, Set<HexCorner> visited) {
-        visited.add(current);
+    private int dfs(HexCorner node, Map<HexCorner, Set<HexCorner>> graph, Set<HexCorner> visited) {
+        visited.add(node);
         int maxDepth = 0;
 
-        for (HexCorner neighbor : graph.getOrDefault(current, Collections.emptyList())) {
+        for (HexCorner neighbor : graph.getOrDefault(node, Collections.emptySet())) {
             if (!visited.contains(neighbor)) {
                 maxDepth = Math.max(maxDepth, dfs(neighbor, graph, visited));
             }
         }
 
-        visited.remove(current); // Backtracking!
+        visited.remove(node); // Backtrack
         return maxDepth + 1;
     }
-    
+
     public int getLongestRoadLength(Player player) {
-        Map<HexCorner, List<HexCorner>> roadGraph = buildPlayerRoadGraph(player);
+        Map<HexCorner, Set<HexCorner>> roadGraph = buildPlayerRoadGraph(player);
         int longest = 0;
 
         for (HexCorner start : roadGraph.keySet()) {
@@ -459,8 +457,5 @@ public class GameBoard {
 
         return longest;
     }
-
-
-
 
 }
