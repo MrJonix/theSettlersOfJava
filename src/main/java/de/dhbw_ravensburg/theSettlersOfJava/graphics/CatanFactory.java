@@ -93,10 +93,7 @@ public class CatanFactory implements EntityFactory {
         
         box.getViewComponent().getChildren().forEach(node -> {
             node.setOnMouseClicked(e -> {
-            	if(App.getGameController().getCurrentGameState().equals(GameState.ROBBER_PHASE) && !type.equals(HexType.WATER)) {
-                	App.getGameController().getGameBoard().getRobber().moveRobber(hex);
-                	App.getGameController().nextPhase();
-                }
+            	App.getGameController().moveRobber(hex);
             });
         });
 

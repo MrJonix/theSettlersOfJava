@@ -74,4 +74,5 @@ public class Dice {
     public StackPane getView() {
         return diceView;
     }
+    
 }

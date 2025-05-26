@@ -26,8 +26,8 @@ import javafx.scene.input.KeyCode;
 
 
 public class App extends GameApplication {
-    private static final int WIDTH = 1080;
-    private static final int HEIGHT = 1080;
+    private static final int WIDTH = 1000;
+    private static final int HEIGHT = 1000;
     private static GameController controller;
     private double zoom = 1.0;
     private static GameStatus status = new GameStatus();
@@ -40,6 +40,7 @@ public class App extends GameApplication {
         settings.setAppIcon("icon.png");
         settings.setMainMenuEnabled(true);
         setTaskbar("/assets/textures/icon.png");
+        
         settings.setSceneFactory(new SceneFactory() {
             @Override
             public FXGLMenu newMainMenu() {
@@ -99,6 +100,7 @@ public class App extends GameApplication {
     protected void initGame() {
         getGameWorld().addEntityFactory(new CatanFactory());
         controller = new GameController();
+        controller.setupPhase();
         
         Viewport viewport = getGameScene().getViewport();
         HexPosition pos = controller.getGameBoard().getHexByPosition(new HexPosition(0,0)).getPosition();

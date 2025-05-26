@@ -33,6 +33,7 @@ public class CatanMainMenu extends FXGLMenu {
     }
 
     private void setupUI() {
+    	
         // Background
         String backgroundImagePath = "/images/background.png";
         InputStream imageStream = getClass().getResourceAsStream(backgroundImagePath);

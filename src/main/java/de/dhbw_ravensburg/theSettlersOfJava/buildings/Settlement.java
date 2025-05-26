@@ -6,7 +6,6 @@ import de.dhbw_ravensburg.theSettlersOfJava.App;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexCorner;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
-import javafx.scene.paint.Color;
 
 import java.util.Collections;
 import java.util.HashMap;

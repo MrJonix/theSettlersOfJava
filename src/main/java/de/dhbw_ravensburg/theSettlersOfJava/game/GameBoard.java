@@ -5,6 +5,8 @@ import static com.almasb.fxgl.dsl.FXGL.spawn;
 import java.util.*;
 import java.util.stream.Collectors;
 import com.almasb.fxgl.dsl.FXGL;
+
+import de.dhbw_ravensburg.theSettlersOfJava.App;
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.*;
 import de.dhbw_ravensburg.theSettlersOfJava.map.*;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.HexType;
@@ -15,10 +17,50 @@ import javafx.scene.paint.Color;
 
 public class GameBoard {
 
-    private static final int[][] coords = {
-        {0,-2},{-2,0},{-1,-1},{0,-1},{-1,0},{0,0},{0,2},{2,0},{1,1},{0,1},{1,0},{-1,1},{1,-1},{-1,2},{2,-1},{-2,1},{-2,2},{1,-2},{2,-2}
-    };
-    
+	private static final int[][] coords = {
+			{0, -2},
+		    {-1, -1},
+		    {-2, 0},
+		    {-2, 1},
+		    {-2, 2},
+		    {-1, 2},
+		    {0, 2},
+		    {1, 1},
+		    {2, 0},
+		    {2, -1},
+		    {2, -2},
+		    {1, -2},
+		   //Border end
+		    {0, -1},
+		    {-1, 0},
+		    {-1, 1},
+		    {0, 1},
+		    {1, 0},
+		    {1, -1},
+		    {0, 0}
+		};
+
+    private static final int[] numberTokens = {
+    	    5,  // A
+    	    2,  // B
+    	    6,  // C
+    	    3,  // D
+    	    8,  // E
+    	    10, // F
+    	    9,  // G
+    	    12, // H
+    	    11, // I
+    	    4,  // J
+    	    8,  // K
+    	    10, // L
+    	    9,  // M
+    	    4,  // N
+    	    5,  // O
+    	    6,  // P
+    	    3,  // Q
+    	    11  // R
+    	};
+
     private static final int[][] waterCoords = {
         {-3,0},{-2,-1},{-1,-2},{0,-3},{1,-3},{2,-3},{3,-3},{3,-2},{3,-1},
         {3,0},{2,1},{1,2},{0,3},{-1,3},{-2,3},{-3,3},{-3,2},{-3,1}
@@ -30,6 +72,7 @@ public class GameBoard {
     private Set<Building> buildings = new HashSet<>();
     private Set<Road> roads = new HashSet<>();
     private Robber robber;
+    private Building setupBuilding;
 
     public GameBoard(List<HexType> hexTypeList) {
         initializeHexes(hexTypeList);
@@ -41,13 +84,29 @@ public class GameBoard {
 
     private void initializeHexes(List<HexType> hexTypeList) {
         Random random = new Random();
+        boolean desert = false;
+        int startingPosition = random.nextInt(5);
+
         for (int i = 0; i < coords.length; i++) {
             int[] coord = coords[i];
+
+            // Rotate the coordinate 'startingPosition' times
+            for (int j = 0; j < startingPosition; j++) {
+                coord = rotateCCW60(coord);
+            }
+
             HexType type = hexTypeList.get(i);
-            int number = type == HexType.DESERT ? 0 : generateRandomNumber(random);
+            int number = -1; // Initialize with a default invalid number
+
+            if (type.equals(HexType.DESERT)) {
+                number = 0; // Desert does not have a number
+                desert = true;
+            } else {
+                number = desert ? numberTokens[i - 1] : numberTokens[i]; // Adjust for the shifted index due to desert
+            }
 
             Hex tile = new Hex(type, number, new HexPosition(coord[0], coord[1]));
-            if (type == HexType.DESERT) {
+            if (type.equals(HexType.DESERT)) {
                 robber = new Robber(tile);
             }
             hexes.add(tile);
@@ -55,12 +114,10 @@ public class GameBoard {
         }
     }
 
-    private int generateRandomNumber(Random random) {
-        int number;
-        do {
-            number = random.nextInt(11) + 2;
-        } while (number == 7);
-        return number;
+    private static int[] rotateCCW60(int[] coord) {
+        int newQ = -coord[1];
+        int newR = coord[0] + coord[1];
+        return new int[]{newQ, newR};
     }
 
     private void initializeWaterTiles() {
@@ -88,8 +145,23 @@ public class GameBoard {
             FXGL.getDialogService().showMessageBox("Road must be built adjacent to an existing building or road!");
             return false;
         }
-
+        
+        if(App.getGameController().getCurrentGameState().equals(GameState.SETUP_PHASE)) {
+        	HexCorner[] corners = road.getLocation().getCorners();
+        	if (!(corners[0].equals(setupBuilding.getLocation()) || corners[1].equals(setupBuilding.getLocation()))){
+        		FXGL.getDialogService().showMessageBox("Road musst be adjacent to a your placed building");
+        		return false;
+        	}
+        	
+        	for(HexEdge e : hexEdges) {
+        		e.removeHighlight();
+        	}
+        	
+        	App.getGameController().finishedPlayerSetup(road.getOwner());
+        }
+        
         roads.add(road);
+        App.getGameController().setAllPlayersLongestRoad();
         road.visualize();
         return true;
     }
@@ -114,9 +186,38 @@ public class GameBoard {
         }
 
         buildings.add(building);
+        App.getGameController().setAllPlayersLongestRoad();
         building.visualize();
+
+        if(App.getGameController().getCurrentGameState().equals(GameState.SETUP_PHASE)) {
+            for (HexCorner c : hexCorners) {
+            	c.removeHighlight();
+            }
+            buildSetupRoad(corner);
+            
+            if (!App.getGameController().getFirstSetup()) {
+                for (Hex h : corner.getAdjacentHexes()) {
+                	owner.addResources(h.getHexType().getResourceType(), 1);
+                	
+                }
+            }
+            setupBuilding = building;
+
+        }
+        
         return true;
     }
+    
+	private void buildSetupRoad(HexCorner loc) {
+
+		for(HexEdge e : hexEdges) {
+			HexCorner[] corners = e.getCorners();
+			if(corners[0].equals(loc) || corners[1].equals(loc)) {
+				e.highlight();
+			}
+		}
+		
+	}
 
     private boolean isExistingBuildingBlocking(HexCorner corner, Player owner, Building building) {
         for (Building existingBuilding : buildings) {
@@ -162,6 +263,30 @@ public class GameBoard {
             .filter(connectedCorner -> !connectedCorner.equals(corner))
             .collect(Collectors.toList());
     }
+    
+    public List<HexCorner> getPossibleStartPositions() {
+        List<HexCorner> list = new ArrayList<>();
+        for (HexCorner c : hexCorners) {
+            boolean isBlocked = false;
+
+            // Check c and all connected corners for existing buildings
+            for (HexCorner n : getConnectedCorners(c)) {
+                for (Building b : buildings) {
+                    if (b.getLocation().equals(c) || b.getLocation().equals(n)) {
+                        isBlocked = true;
+                        break;
+                    }
+                }
+                if (isBlocked) break;
+            }
+
+            if (!isBlocked) {
+                list.add(c);
+            }
+        }
+        return list;
+    }
+
 
     public void distributeResources(int total) {
         hexes.stream()
@@ -250,6 +375,20 @@ public class GameBoard {
             }
         }
     }
+    
+    public List<Player> getPlayersAdjacentToHex(Hex hex) {
+        // Sammle alle Spieler, die an den Ecken angrenzen, an denen Gebäude stehen
+        return buildings.stream()
+            // Filtere Gebäude, die an dem Hex angrenzen
+            .filter(building -> building.getLocation().getAdjacentHexes().contains(hex))
+            // Hole die Besitzer der Gebäude
+            .map(Building::getOwner)
+            // Entferne Duplikate
+            .distinct()
+            // Nur Spieler zurückgeben, die nicht null sind (Sicherheit)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+    }
 
     public Hex getHexByPosition(HexPosition pos) {
         return hexes.stream().filter(hex -> hex.getPosition().equals(pos)).findFirst().orElse(null);
@@ -262,5 +401,99 @@ public class GameBoard {
     public Robber getRobber() {
         return robber;
     }
+    private Map<HexCorner, Set<HexCorner>> buildPlayerRoadGraph(Player player) {
+        Map<HexCorner, Set<HexCorner>> graph = new HashMap<>();
+
+        for (Road r : roads) {
+            if (!player.equals(r.getOwner())) continue;
+
+            HexCorner[] corners = r.getLocation().getCorners();
+            HexCorner node1 = corners[0];
+            HexCorner node2 = corners[1];
+
+            // Füge Kante hinzu (wir prüfen später auf gegnerische Blockaden)
+            graph.computeIfAbsent(node1, k -> new HashSet<>()).add(node2);
+            graph.computeIfAbsent(node2, k -> new HashSet<>()).add(node1);
+        }
+
+        return graph;
+    }
+
+    private boolean hasEnemyBuilding(HexCorner corner, Player currentPlayer) {
+        return buildings.stream()
+            .anyMatch(b -> b.getLocation().equals(corner) && !b.getOwner().equals(currentPlayer));
+    }
+
+    private boolean dfs(Map<HexCorner, Set<HexCorner>> graph, Set<HexCorner> visited, HexCorner current, HexCorner target, Player player) {
+        if (current.equals(target)) return true;
+
+        visited.add(current);
+
+        for (HexCorner neighbor : graph.getOrDefault(current, Collections.emptySet())) {
+            if (visited.contains(neighbor)) continue;
+
+            // Blockiert nur, wenn gegnerisches Gebäude UND Spieler hat mehrere Straßen an diesem Knoten (Verbindung)
+            if (hasEnemyBuilding(neighbor, player) && graph.getOrDefault(neighbor, Collections.emptySet()).size() > 1) continue;
+
+            if (dfs(graph, visited, neighbor, target, player)) return true;
+        }
+
+        return false;
+    }
+
+
+    private String makeEdgeKey(HexCorner a, HexCorner b) {
+        int id1 = a.hashCode();
+        int id2 = b.hashCode();
+        return (id1 < id2) ? id1 + "-" + id2 : id2 + "-" + id1;
+    }
+
+    public int getLongestRoadLength(Player player) {
+        Map<HexCorner, Set<HexCorner>> roadGraph = buildPlayerRoadGraph(player);
+        int longest = 0;
+
+        List<HexCorner> nodes = new ArrayList<>(roadGraph.keySet());
+
+        for (HexCorner start : nodes) {
+            if (hasEnemyBuilding(start, player)) continue;
+
+            for (HexCorner target : nodes) {
+                if (start.equals(target)) continue;
+
+                if (dfs(roadGraph, new HashSet<>(), start, target, player)) {
+                    int length = shortestPathLength(roadGraph, start, target, player);
+                    longest = Math.max(longest, length);
+                }
+            }
+        }
+
+        return longest;
+    }
+
+    // Beispiel-Methode für Pfadlänge mit BFS (kann angepasst werden)
+    private int shortestPathLength(Map<HexCorner, Set<HexCorner>> graph, HexCorner start, HexCorner target, Player player) {
+        Queue<HexCorner> queue = new LinkedList<>();
+        Map<HexCorner, Integer> distance = new HashMap<>();
+        queue.add(start);
+        distance.put(start, 0);
+
+        while (!queue.isEmpty()) {
+            HexCorner current = queue.poll();
+
+            if (current.equals(target)) return distance.get(current);
+
+            for (HexCorner neighbor : graph.getOrDefault(current, Collections.emptySet())) {
+                if (distance.containsKey(neighbor)) continue;
+                if (hasEnemyBuilding(neighbor, player) && graph.getOrDefault(neighbor, Collections.emptySet()).size() > 1) continue;
+
+                distance.put(neighbor, distance.get(current) + 1);
+                queue.add(neighbor);
+            }
+        }
+
+        return 0; // kein Pfad
+    }
+
+
 
 }

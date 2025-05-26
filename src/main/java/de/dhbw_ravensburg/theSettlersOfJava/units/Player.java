@@ -5,6 +5,8 @@ import java.util.Map;
 import de.dhbw_ravensburg.theSettlersOfJava.App;
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.Building;
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.Road;
+import de.dhbw_ravensburg.theSettlersOfJava.game.GameState;
+import de.dhbw_ravensburg.theSettlersOfJava.graphics.BuildingConfirmation;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
 import javafx.beans.binding.IntegerBinding;
 import javafx.beans.property.*;
@@ -18,7 +20,8 @@ public class Player {
     private final StringProperty name = new SimpleStringProperty();
     private final PlayerColor color;
     private final IntegerProperty victoryPoints = new SimpleIntegerProperty(0);
-
+    private final IntegerProperty longestRoad = new SimpleIntegerProperty(0);
+    
     private final MapProperty<ResourceType, Integer> resources =
         new SimpleMapProperty<>(FXCollections.observableHashMap());
 
@@ -50,44 +53,57 @@ public class Player {
     }
     
     public boolean build(Building b) {
-        Map<ResourceType, Integer> cost = b.getBuildingCost();
-
-        // Check if player has all required resources
-        if(!hasResources(cost)) {
-        	return false;
-        }
-        
-        if(App.getGameController().getGameBoard().buildBuilding(b)) {
-        	victoryPoints.set(victoryPoints.get()+1);
-            // Remove resources
-            for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
-                ResourceType type = entry.getKey();
-                int requiredAmount = entry.getValue();
-                removeResources(type, requiredAmount);
-            }
-        }
-        return true;
+    	if(BuildingConfirmation.askForBuildingConfirmation()) {
+	        Map<ResourceType, Integer> cost = b.getBuildingCost();
+	        boolean setupPhase = App.getGameController().getCurrentGameState().equals(GameState.SETUP_PHASE);
+	        // Check if player has all required resources
+	        if(!hasResources(cost) && !setupPhase) {
+	        	return false;
+	        }
+	        
+	        if(App.getGameController().getGameBoard().buildBuilding(b)) {
+	        	victoryPoints.set(victoryPoints.get()+1);
+	        	if(!setupPhase) {
+		            // Remove resources
+		            for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
+		                ResourceType type = entry.getKey();
+		                int requiredAmount = entry.getValue();
+		                removeResources(type, requiredAmount);
+		            }
+	        	}
+	        }
+	    	
+	        return true;
+    	}
+    	return false;
     }
     
     public boolean build(Road r) {
-        Map<ResourceType, Integer> cost = r.getRoadCost();
-
-        // Prüfen, ob der Spieler alle benötigten Ressourcen hat
-        if (!hasResources(cost)) {
-            return false;
-        }
-
-        // Straße bauen (z.B. auf dem Spielbrett platzieren)
-        if(App.getGameController().getGameBoard().buildRoad(r))
-        {
-            // Ressourcen entfernen
-            for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
-                ResourceType type = entry.getKey();
-                int requiredAmount = entry.getValue();
-                removeResources(type, requiredAmount);
-            }
-        }
-        return true;
+    	if(BuildingConfirmation.askForBuildingConfirmation()) {
+	        Map<ResourceType, Integer> cost = r.getRoadCost();
+	        boolean setupPhase = App.getGameController().getCurrentGameState().equals(GameState.SETUP_PHASE);
+	        
+	        // Prüfen, ob der Spieler alle benötigten Ressourcen hat
+	        if (!hasResources(cost) && !setupPhase) {
+	            return false;
+	        }
+	
+	        // Straße bauen (z.B. auf dem Spielbrett platzieren)
+	        if(App.getGameController().getGameBoard().buildRoad(r))
+	        {
+	        	if(!setupPhase) {
+		            // Ressourcen entfernen
+		            for (Map.Entry<ResourceType, Integer> entry : cost.entrySet()) {
+		                ResourceType type = entry.getKey();
+		                int requiredAmount = entry.getValue();
+		                removeResources(type, requiredAmount);
+		            }
+	        	}
+	        }
+	        return true;
+    	} else {
+    		return false;
+    	}
     }
 
     
@@ -113,6 +129,9 @@ public class Player {
     public PlayerColor getPlayerColor() {
     	return color;
     }
+    // Longest Road
+    public IntegerProperty longestRoadProperty() { return longestRoad; }
+    
     // VictoryPoints Property
     public IntegerProperty victoryPointsProperty() { return victoryPoints; }
     public int getVictoryPoints() { return victoryPoints.get(); }
@@ -138,5 +157,9 @@ public class Player {
         if (current < amount) return false;
         resources.put(type, current - amount);
         return true;
+    }
+    @Override
+    public String toString() {
+    	return getName();
     }
 }

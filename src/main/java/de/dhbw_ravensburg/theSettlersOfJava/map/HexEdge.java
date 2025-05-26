@@ -1,11 +1,18 @@
 package de.dhbw_ravensburg.theSettlersOfJava.map;
 
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.entity.Entity;
+
 import de.dhbw_ravensburg.theSettlersOfJava.App;
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.Road;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.effect.Glow;
+import javafx.util.Duration;
 
 import java.util.Objects;
 
@@ -17,6 +24,7 @@ public class HexEdge {
     private final HexCorner start;
     private final HexCorner end;
     private final HexEdgeOrientation orientation;
+    private Entity highlightEntity;
 
     /**
      * Constructs a HexEdge given two corners and an orientation.
@@ -104,5 +112,64 @@ public class HexEdge {
 
     public boolean isAdjacentToCorner(HexCorner corner) {
         return start.equals(corner) || end.equals(corner);
+    }
+
+    public void highlight() {
+    	double x1 = start.getX();
+    	double y1 = start.getY();
+    	double x2 = end.getX();
+    	double y2 = end.getY();
+
+    	// Mittelpunkt berechnen
+    	double midX = (x1 + 3*x2) / 4;
+    	double midY = (y1 + 3*y2) / 4;
+    	
+    	double mid1X = (3*x1 + x2) / 4;
+    	double mid1Y = (3*y1 + y2) / 4;
+
+        Line highlightLine = new Line(mid1X, mid1Y, midX, midY);
+        highlightLine.setStroke(App.getGameController().getCurrentPlayer().getColor());
+        highlightLine.setStrokeWidth(5);
+        highlightLine.setMouseTransparent(false);
+
+        // Glow-Effekt hinzufügen
+        Glow glow = new Glow(0.3);
+        highlightLine.setEffect(glow);
+
+        highlightEntity = FXGL.entityBuilder()
+            .at(0, 0)
+            .view(highlightLine)
+            .zIndex(1)
+            .buildAndAttach();
+
+        // Animation: strokeWidth pulsieren lassen
+        Timeline animation = new Timeline(
+            new KeyFrame(Duration.ZERO,
+                new KeyValue(highlightLine.strokeWidthProperty(), 5),
+                new KeyValue(glow.levelProperty(), 0.3)
+            ),
+            new KeyFrame(Duration.seconds(0.5),
+                new KeyValue(highlightLine.strokeWidthProperty(), 8),
+                new KeyValue(glow.levelProperty(), 0.8)
+            ),
+            new KeyFrame(Duration.seconds(1),
+                new KeyValue(highlightLine.strokeWidthProperty(), 5),
+                new KeyValue(glow.levelProperty(), 0.3)
+            )
+        );
+        animation.setCycleCount(Timeline.INDEFINITE);
+        animation.setAutoReverse(true);
+        animation.play();
+
+        highlightLine.setOnMouseClicked(event -> {
+            handleMouseClick();
+        });
+    }
+
+    public void removeHighlight() {
+        if (highlightEntity != null) {
+            highlightEntity.removeFromWorld();
+            highlightEntity = null;
+        }
     }
 }
