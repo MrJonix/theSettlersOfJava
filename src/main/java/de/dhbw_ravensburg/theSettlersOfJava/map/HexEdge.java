@@ -24,6 +24,7 @@ public class HexEdge {
     private final HexCorner start;
     private final HexCorner end;
     private final HexEdgeOrientation orientation;
+    private final HarborOrientation harborOrientation;
     private Entity highlightEntity;
 
     /**
@@ -33,13 +34,14 @@ public class HexEdge {
      * @param end         the end corner of the edge
      * @param orientation the orientation of the edge
      */
-    public HexEdge(HexCorner start, HexCorner end, HexEdgeOrientation orientation) {
+    public HexEdge(HexCorner start, HexCorner end, HexEdgeOrientation orientation, HarborOrientation harborOrientation) {
         if (start == null || end == null || orientation == null) {
             throw new IllegalArgumentException("Hex corners and orientation cannot be null");
         }
         this.start = start;
         this.end = end;
         this.orientation = orientation;
+        this.harborOrientation = harborOrientation;
     }
 
     public HexEdgeOrientation getHexEdgeOrientation() {
@@ -90,6 +92,23 @@ public class HexEdge {
             .buildAndAttach();
 
         line.setOnMouseClicked(event -> handleMouseClick());
+    }
+    
+    public void visualizeHarborEdge (Color color, double thickness) {
+    	double x1 = start.getX();
+        double y1 = start.getY();
+        double x2 = end.getX();
+        double y2 = end.getY();
+
+        Line line = new Line(x1, y1, x2, y2);
+        line.setStroke(color);
+        line.setStrokeWidth(thickness);
+        line.toFront(); // Make sure it's not hidden
+
+        FXGL.entityBuilder()
+            .at(0, 0)
+            .view(line)
+            .buildAndAttach();
     }
 
     /**
@@ -172,4 +191,8 @@ public class HexEdge {
             highlightEntity = null;
         }
     }
+
+	public HarborOrientation getHarborOrientation() {
+		return harborOrientation;
+	}
 }

@@ -95,4 +95,5 @@ public class Hex {
     public List<HexCorner> getAdjacentHexCorners() {
         return Collections.unmodifiableList(Arrays.asList(adjacentCorners));
     }
+    
 }
