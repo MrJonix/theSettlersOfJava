@@ -28,6 +28,7 @@ public class Dice {
     private final Random random = new Random();
     private StackPane diceView;
     private VBox rollResultView;
+
     
     public Dice(double x, double y) {
         createDiceView();
@@ -69,11 +70,9 @@ public class Dice {
     }
 
     private void createRollResultView() {
-        rollResultView = new VBox(20);
+        rollResultView = new VBox(10);
         rollResultView.setAlignment(Pos.CENTER);
-        rollResultView.setVisible(false);
-        
-        // Schatten-Effekt
+
         DropShadow shadow = new DropShadow();
         shadow.setColor(Color.BLACK);
         shadow.setOffsetX(3);
@@ -81,6 +80,7 @@ public class Dice {
         shadow.setRadius(10);
         rollResultView.setEffect(shadow);
     }
+
 
     private void addToUI(double x, double y) {
         // Füge beide UI-Elemente zum GameScene UI-Layer hinzu
@@ -91,9 +91,7 @@ public class Dice {
         diceView.setTranslateX(x);
         diceView.setTranslateY(y);
         
-        // Positioniere das Ergebnis-Display in der Bildschirmmitte
-        rollResultView.setTranslateX(FXGL.getAppWidth() / 2 - 100);
-        rollResultView.setTranslateY(FXGL.getAppHeight() / 2 - 100);
+
     }
 
     private void rollDice() {
@@ -143,8 +141,11 @@ public class Dice {
         contentBox.getChildren().addAll(diceContainer, resultText);
         
         StackPane completeView = new StackPane(background, contentBox);
+        // Positioniere das Ergebnis-Display in der Bildschirmmitte
+        rollResultView.setTranslateX(FXGL.getAppWidth() / 2 - 151.5);
+        rollResultView.setTranslateY(FXGL.getAppHeight() / 2 - 101.5);
         rollResultView.getChildren().add(completeView);
-        
+
         // Animation erstellen
         createRollAnimation();
     }
@@ -152,8 +153,8 @@ public class Dice {
     private ImageView createDiceImageView(int diceValue) {
         try {
             // Lade das entsprechende Würfelbild
-            Texture diceTexture = FXGL.getAssetLoader().loadTexture("dice/dice_" + diceValue + ".png");
-            ImageView imageView = new ImageView(diceTexture.getImage());
+        	Texture diceTexture = FXGL.getAssetLoader().loadTexture("/dice/dice_" + diceValue + ".png");
+        	ImageView imageView = new ImageView(diceTexture.getImage());
             
             // Skaliere das Bild auf eine angemessene Größe
             imageView.setFitWidth(80);
