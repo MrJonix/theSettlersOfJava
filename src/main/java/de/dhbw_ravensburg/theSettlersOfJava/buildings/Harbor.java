@@ -27,6 +27,7 @@ public class Harbor {
      */
 	public void visualize() {
 	    Color color;
+	    if (location == null) return;
 		switch (harborType) {
 	        case BRICK : color = Color.ORANGERED; break; //correct
 	        case WOOD : color = Color.FORESTGREEN; break; //correct

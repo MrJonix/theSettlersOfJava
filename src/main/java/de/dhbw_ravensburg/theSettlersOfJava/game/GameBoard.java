@@ -88,8 +88,8 @@ public class GameBoard {
     
     private void initalizeHarbors() {
     	// Angenommen waterCoords[1] enthält die gewünschten Koordinaten
-        int waterCoordQ = 0;
-        int waterCoordR = -3;
+        int waterCoordQ = -1;
+        int waterCoordR = -2;
 
         // Erzeugt eine neue HexPosition
         HexPosition harborPosition = new HexPosition(waterCoordQ, waterCoordR);
@@ -98,7 +98,7 @@ public class GameBoard {
         HexEdge harborEdge = getHarborPosition(harborPosition, HarborOrientation.BOTTOM_RIGHT);
         Harbor h = new Harbor(harborEdge, HarborType.THREE_TO_ONE);
         System.out.println(harborEdge);
-        //harborEdge.visualizeHarborEdge(Color.BLUE, 15);
+        harborEdge.visualizeHarborEdge(Color.BLUE, 15);
         h.visualize();
         harbors.add(h);
     }
@@ -539,28 +539,49 @@ public class GameBoard {
     
     private HexEdge getHarborPosition(HexPosition pos, HarborOrientation orientation) {
         Hex hex = getHexByPosition(pos);
+        HexCorner[] corners = hex.getAdjacentCornersArray();
 
-        if (hex == null) {
-            System.out.println("No hex found at position: " + pos);
+        if (corners == null || corners.length < 6) {
+            System.err.println("Hex at " + pos + " has invalid corner list: " + corners);
             return null;
         }
+        for(HexCorner c : corners) {
+        	System.out.print(c);
+        }
 
-        List<HexCorner> adjacentCorners = hex.getAdjacentHexCorners();
+        int i;
+        switch (orientation) {
+            case TOP_RIGHT:     i = 0; break;
+            case MIDDLE_RIGHT:  i = 1; break;
+            case BOTTOM_RIGHT:  i = 2; break;
+            case BOTTOM_LEFT:   i = 3; break;
+            case MIDDLE_LEFT:   i = 4; break;
+            case TOP_LEFT:      i = 5; break;
+            default:
+                System.err.println("Invalid orientation: " + orientation);
+                return null;
+        }
 
-        for (HexEdge edge : hexEdges) {
-            HexCorner[] corners = edge.getCorners();
+        HexCorner c1 = corners[i];
+        HexCorner c2 = corners[(i + 1) % 6];
 
-            boolean edgeMatches = Arrays.stream(corners)
-                                        .anyMatch(adjacentCorners::contains);
-            
-            if (edgeMatches && edge.getHarborOrientation().equals(orientation)) {
-                return edge;
+        if (c1 == null || c2 == null) {
+            System.err.println("Null corner(s) at i=" + i + ": c1=" + c1 + ", c2=" + c2);
+            return null;
+        }
+        
+        HexEdge edge = new HexEdge(c1, c2, HexEdgeOrientation.LEFT_TO_RIGHT, orientation);
+
+        for (HexEdge e : hexEdges) {
+            if (e.equals(edge)) {
+                return e;
             }
         }
 
-        System.out.println("No matching harbor edge found at position: " + pos + " with orientation: " + orientation);
+        System.err.println("No matching edge found for harbor at " + pos + " with orientation " + orientation);
         return null;
     }
+
 
 
 }
