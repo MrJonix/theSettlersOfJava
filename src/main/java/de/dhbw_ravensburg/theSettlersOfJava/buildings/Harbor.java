@@ -47,7 +47,7 @@ public class Harbor {
 
 	    }
 		try {
-		    Texture texture = FXGL.getAssetLoader().loadTexture("/ship/boat_WOOL.png");
+		    Texture texture = FXGL.getAssetLoader().loadTexture(harborType.getImagePath());
 		    
 
 		    // Originalgröße des Bildes
