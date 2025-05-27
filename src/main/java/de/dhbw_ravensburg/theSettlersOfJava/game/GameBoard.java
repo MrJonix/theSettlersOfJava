@@ -66,6 +66,18 @@ public class GameBoard {
         {-3,0},{-2,-1},{-1,-2},{0,-3},{1,-3},{2,-3},{3,-3},{3,-2},{3,-1},
         {3,0},{2,1},{1,2},{0,3},{-1,3},{-2,3},{-3,3},{-3,2},{-3,1}
     };
+    private static final HarborOrientation[] harborOrientations = {
+    	    HarborOrientation.MIDDLE_RIGHT,
+    	    HarborOrientation.BOTTOM_RIGHT,
+    	    HarborOrientation.BOTTOM_LEFT,
+    	    HarborOrientation.BOTTOM_LEFT,
+    	    HarborOrientation.BOTTOM_LEFT,
+    	    HarborOrientation.MIDDLE_LEFT,
+    	    HarborOrientation.TOP_LEFT,
+    	    HarborOrientation.TOP_LEFT,
+    	    HarborOrientation.TOP_RIGHT,
+    	};
+
 
     private Set<Hex> hexes = new HashSet<>();
     private Set<HexCorner> hexCorners = new HashSet<>();
@@ -87,21 +99,33 @@ public class GameBoard {
    }
     
     private void initalizeHarbors() {
-    	// Angenommen waterCoords[1] enthält die gewünschten Koordinaten
-        int waterCoordQ = -1;
-        int waterCoordR = -2;
+        for (int i = 0; i < 18; i = i +2) {
+            int q = waterCoords[i][0];
+            int r = waterCoords[i][1];
+            HarborOrientation orientation = harborOrientations[i/2];
 
-        // Erzeugt eine neue HexPosition
-        HexPosition harborPosition = new HexPosition(waterCoordQ, waterCoordR);
+            // Nur weiter machen, wenn eine gültige Orientierung vorhanden ist
+            if (orientation == null) {
+                System.out.println("Skipping harbor at [" + q + "," + r + "], no orientation defined.");
+                continue;
+            }
 
-        // Ruft die HexEdge für die spezifische HarborOrientation auf
-        HexEdge harborEdge = getHarborPosition(harborPosition, HarborOrientation.BOTTOM_RIGHT);
-        Harbor h = new Harbor(harborEdge, HarborType.THREE_TO_ONE);
-        System.out.println(harborEdge);
-        harborEdge.visualizeHarborEdge(Color.BLUE, 15);
-        h.visualize();
-        harbors.add(h);
+            HexPosition harborPosition = new HexPosition(q, r);
+            HexEdge harborEdge = getHarborPosition(harborPosition, orientation);
+
+            if (harborEdge == null) {
+                System.err.println("No edge found for harbor at " + harborPosition + " with orientation " + orientation);
+                continue;
+            }
+
+            Harbor harbor = new Harbor(harborEdge, HarborType.THREE_TO_ONE); // oder spezifischer Typ je nach Bedarf
+            System.out.println("Created harbor on edge: " + harborEdge);
+
+            harbor.visualize();
+            harbors.add(harbor);
+        }
     }
+
     
 
     private void initializeHexes(List<HexType> hexTypeList) {
@@ -381,39 +405,22 @@ public class GameBoard {
             if (corner1 != null && corner2 != null) {
                 HexEdgeOrientation orientation;
                 HarborOrientation harborOrientation;
-                switch (i % 6) {
+                switch (i % 3) {
                     case 0:
                         orientation = HexEdgeOrientation.LEFT_TO_RIGHT;
-                        harborOrientation = HarborOrientation.TOP_RIGHT;
                         break;
                     case 1:
                         orientation = HexEdgeOrientation.STRAIGHT;
-                        harborOrientation = HarborOrientation.MIDDLE_RIGHT;
                         break;
                     case 2:
                         orientation = HexEdgeOrientation.RIGHT_TO_LEFT;
-                        harborOrientation = HarborOrientation.BOTTOM_RIGHT;
                         break;
-                    case 3:
-                        orientation = HexEdgeOrientation.LEFT_TO_RIGHT;
-                        harborOrientation = HarborOrientation.BOTTOM_LEFT;
-                        break;
-                    case 4:
-                        orientation = HexEdgeOrientation.STRAIGHT;
-                        harborOrientation = HarborOrientation.MIDDLE_LEFT;
-                        break;
-                    case 5:
-                        orientation = HexEdgeOrientation.RIGHT_TO_LEFT;
-                        harborOrientation = HarborOrientation.TOP_LEFT;
-                        break;
-
-                    	
                     default:
                         throw new IllegalStateException("Unexpected value: " + (i % 3));
                 }
                 
                 
-                HexEdge edge = new HexEdge(corner1, corner2, orientation, harborOrientation);
+                HexEdge edge = new HexEdge(corner1, corner2, orientation);
                 hexEdges.add(edge);
             }
         }
@@ -570,7 +577,7 @@ public class GameBoard {
             return null;
         }
         
-        HexEdge edge = new HexEdge(c1, c2, HexEdgeOrientation.LEFT_TO_RIGHT, orientation);
+        HexEdge edge = new HexEdge(c1, c2, HexEdgeOrientation.LEFT_TO_RIGHT);
 
         for (HexEdge e : hexEdges) {
             if (e.equals(edge)) {

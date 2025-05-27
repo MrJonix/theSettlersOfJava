@@ -24,7 +24,6 @@ public class HexEdge {
     private final HexCorner start;
     private final HexCorner end;
     private final HexEdgeOrientation orientation;
-    private final HarborOrientation harborOrientation;
     private Entity highlightEntity;
 
     /**
@@ -34,14 +33,14 @@ public class HexEdge {
      * @param end         the end corner of the edge
      * @param orientation the orientation of the edge
      */
-    public HexEdge(HexCorner start, HexCorner end, HexEdgeOrientation orientation, HarborOrientation harborOrientation) {
+    public HexEdge(HexCorner start, HexCorner end, HexEdgeOrientation orientation) {
         if (start == null || end == null || orientation == null) {
             throw new IllegalArgumentException("Hex corners and orientation cannot be null");
         }
         this.start = start;
         this.end = end;
         this.orientation = orientation;
-        this.harborOrientation = harborOrientation;
+
     }
 
     public HexEdgeOrientation getHexEdgeOrientation() {
@@ -192,7 +191,4 @@ public class HexEdge {
         }
     }
 
-	public HarborOrientation getHarborOrientation() {
-		return harborOrientation;
-	}
 }
