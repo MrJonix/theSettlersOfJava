@@ -1,7 +1,11 @@
-package de.dhbw_ravensburg.theSettlersOfJava.buildings;import de.dhbw_ravensburg.theSettlersOfJava.map.HexEdge;
+package de.dhbw_ravensburg.theSettlersOfJava.buildings;import com.almasb.fxgl.dsl.FXGL;
+
+import de.dhbw_ravensburg.theSettlersOfJava.map.Hex;
+import de.dhbw_ravensburg.theSettlersOfJava.map.HexEdge;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.HarborType;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
 /**
  * Represents a harbor located on a specific hex edge, providing trade benefits for a specific resource type.
@@ -10,15 +14,18 @@ public class Harbor {
 
     private final HexEdge location;
     private final HarborType harborType;
+    private final Hex locationHex;
     /**
      * Constructs a Harbor at a specific location with a specified trade resource type.
      *
      * @param location    the hex edge location of the harbor
      * @param harborType the resource type associated with the harbor
      */
-    public Harbor(HexEdge location, HarborType harborType) {
+    public Harbor(HexEdge location, HarborType harborType, Hex locationHex) {
         this.location = location;
         this.harborType = harborType;
+        this.locationHex = locationHex;
+        visualize();
     }
 
     /**
@@ -38,6 +45,13 @@ public class Harbor {
 	        default : color = Color.BLACK; break;
 
 	    }
+	    FXGL.entityBuilder()
+	            .at(locationHex.getPosition().getX(), locationHex.getPosition().getY())
+	            .viewWithBBox(new Circle(15, color))
+	            .with("robber", this)
+	            .buildAndAttach();
+	
+		
 	    location.visualizeHarborEdge(color,15); // visual: draws a thick colored edge
 	}
 
@@ -49,7 +63,6 @@ public class Harbor {
     public HexEdge getLocation() {
         return location;
     }
-
     /**
      * Gets the resource type associated with the harbor for trading.
      *
@@ -58,4 +71,8 @@ public class Harbor {
     public HarborType getHarborType() {
         return harborType;
     }
+
+	public Hex getLocationHex() {
+		return locationHex;
+	}
 }

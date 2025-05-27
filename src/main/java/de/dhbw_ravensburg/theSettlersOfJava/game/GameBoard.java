@@ -66,6 +66,7 @@ public class GameBoard {
         {-3,0},{-2,-1},{-1,-2},{0,-3},{1,-3},{2,-3},{3,-3},{3,-2},{3,-1},
         {3,0},{2,1},{1,2},{0,3},{-1,3},{-2,3},{-3,3},{-3,2},{-3,1}
     };
+    
     private static final HarborOrientation[] harborOrientations = {
     	    HarborOrientation.MIDDLE_RIGHT,
     	    HarborOrientation.BOTTOM_RIGHT,
@@ -95,10 +96,10 @@ public class GameBoard {
         robber.visualize();
         visualizeEdgesAndCorners();
         initalizeHarbors();
-        
    }
     
     private void initalizeHarbors() {
+    		List<HarborType> types = HarborType.generateHarborTypes();
         for (int i = 0; i < 18; i = i +2) {
             int q = waterCoords[i][0];
             int r = waterCoords[i][1];
@@ -118,10 +119,9 @@ public class GameBoard {
                 continue;
             }
 
-            Harbor harbor = new Harbor(harborEdge, HarborType.THREE_TO_ONE); // oder spezifischer Typ je nach Bedarf
+            Harbor harbor = new Harbor(harborEdge, types.get(i/2), 				  getHexByPosition(harborPosition)); // oder spezifischer Typ je nach Bedarf
             System.out.println("Created harbor on edge: " + harborEdge);
 
-            harbor.visualize();
             harbors.add(harbor);
         }
     }
