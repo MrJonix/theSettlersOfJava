@@ -1,4 +1,5 @@
 package de.dhbw_ravensburg.theSettlersOfJava.buildings;import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.texture.Texture;
 
 import de.dhbw_ravensburg.theSettlersOfJava.map.Hex;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexEdge;
@@ -45,13 +46,33 @@ public class Harbor {
 	        default : color = Color.BLACK; break;
 
 	    }
-	    FXGL.entityBuilder()
-	            .at(locationHex.getPosition().getX(), locationHex.getPosition().getY())
-	            .viewWithBBox(new Circle(15, color))
-	            .with("robber", this)
-	            .buildAndAttach();
-	
-		
+		try {
+		    Texture texture = FXGL.getAssetLoader().loadTexture("/ship/boat_WOOL.png");
+		    
+
+		    // Originalgröße des Bildes
+		    double originalWidth = Hex.HEX_SIZE * 2 - 10;
+		    double originalHeight = Math.sqrt(3) * Hex.HEX_SIZE - 10;
+	        texture.setFitWidth(originalHeight);  
+	        texture.setFitHeight(originalWidth);
+
+	        texture.setPreserveRatio(true);
+
+		    // Positionieren, zentriert
+		    double drawX = locationHex.getPosition().getX() - originalHeight/2;
+		    double drawY = locationHex.getPosition().getY() - originalWidth/2;
+
+		    FXGL.entityBuilder()
+		        .at(drawX, drawY)
+		        .zIndex(10)
+		        .view(texture)
+		        .buildAndAttach();
+
+		} catch (Exception e) {
+		    System.err.println("Failed to load or display harbor ship texture: " + e.getMessage());
+		    e.printStackTrace();
+		}
+
 	    location.visualizeHarborEdge(color,15); // visual: draws a thick colored edge
 	}
 
