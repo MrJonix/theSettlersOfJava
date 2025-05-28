@@ -5,11 +5,11 @@ import java.util.Random;
 
 public enum ResourceType {
 	//TODO: Bilder einfügen
-    BRICK("Brick", Color.RED, "images/brick.png"),
-    WOOD("WOOD", Color.GREEN, "images/wood.png"),
-    WOOL("Wool", Color.WHITE, "images/wool.png"),
-    WHEAT("Wheat", Color.YELLOW, "images/wheat.png"),
-    ORE("Ore", Color.GRAY, "images/ore.png");
+    BRICK("Brick", Color.RED, "/cards/card_CLAY.png"),
+    WOOD("WOOD", Color.GREEN, "/cards/card_WOOD.png"),
+    WOOL("Wool", Color.WHITE, "/cards/card_WOOL.png"),
+    WHEAT("Wheat", Color.YELLOW, "/cards/card_WHEAT.png"),
+    ORE("Ore", Color.GRAY, "/cards/card_MOUNTAIN.png");
 
     private final String displayName;
     private final Color color;

@@ -16,6 +16,7 @@ public class Harbor {
     private final HexEdge location;
     private final HarborType harborType;
     private final Hex locationHex;
+    
     /**
      * Constructs a Harbor at a specific location with a specified trade resource type.
      *
@@ -49,7 +50,6 @@ public class Harbor {
 		try {
 		    Texture texture = FXGL.getAssetLoader().loadTexture(harborType.getImagePath());
 		    
-
 		    // Originalgröße des Bildes
 		    double originalWidth = Hex.HEX_SIZE * 2 - 10;
 		    double originalHeight = Math.sqrt(3) * Hex.HEX_SIZE - 10;
@@ -84,6 +84,7 @@ public class Harbor {
     public HexEdge getLocation() {
         return location;
     }
+    
     /**
      * Gets the resource type associated with the harbor for trading.
      *

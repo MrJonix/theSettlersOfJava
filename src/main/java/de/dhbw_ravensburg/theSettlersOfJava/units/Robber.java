@@ -7,6 +7,7 @@ import java.util.Random;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.texture.Texture;
 
 import de.dhbw_ravensburg.theSettlersOfJava.map.Hex;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
@@ -70,12 +71,31 @@ public class Robber {
 
 	
 	public void visualize() {
+	    if (robberEntity != null) {
+	        robberEntity.removeFromWorld(); // Alte Instanz entfernen
+	    }
+
+	    double hexCenterX = location.getPosition().getX();
+	    double hexCenterY = location.getPosition().getY();
+
+	    Texture robberTexture = FXGL.getAssetLoader().loadTexture("Robber.png");
+	    robberTexture.setFitWidth(Hex.HEX_SIZE);
+	    robberTexture.setFitHeight(Hex.HEX_SIZE);
+
+	    // Manuell zentrieren: links oben minus halbe Breite/Höhe
+	    double offsetX = hexCenterX - robberTexture.getFitWidth() / 2;
+	    double offsetY = hexCenterY - robberTexture.getFitHeight() / 2;
+
 	    robberEntity = FXGL.entityBuilder()
-	            .at(location.getPosition().getX(), location.getPosition().getY())
-	            .viewWithBBox(new Circle(15, Color.BLACK))
+	            .at(offsetX, offsetY)
+	            .viewWithBBox(robberTexture)
+	            .zIndex(10)
 	            .with("robber", this)
 	            .buildAndAttach();
+
+
 	}
+
 
 
 	

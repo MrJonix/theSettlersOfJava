@@ -7,14 +7,22 @@ import javafx.collections.MapChangeListener;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
 import java.util.EnumMap;
 import java.util.Map;
+
+import com.almasb.fxgl.dsl.FXGL;
+
+import static com.almasb.fxgl.dsl.FXGL.*;
 
 public class CurrentPlayerInfoUI {
 
@@ -26,14 +34,7 @@ public class CurrentPlayerInfoUI {
     private final Map<ResourceType, Label> resourceLabels = new EnumMap<>(ResourceType.class);
 
     private Player currentPlayer;
-    
-    private final Map<ResourceType, String> resourceIcons = Map.of(
-            ResourceType.BRICK, "🧱",
-            ResourceType.WOOD, "🪵",
-            ResourceType.WOOL, "🐑",
-            ResourceType.WHEAT, "🌾",
-            ResourceType.ORE, "🪨"
-    );
+
 
     // Listener für Ressourcenänderungen
     private final MapChangeListener<ResourceType, Integer> resourceListener = change -> {
@@ -43,37 +44,39 @@ public class CurrentPlayerInfoUI {
     };
 
     public CurrentPlayerInfoUI(ObjectProperty<Player> currentPlayerProperty) {
-        root = new VBox(15);  // Erhöhte Abstände für bessere Lesbarkeit
+        root = new VBox(15);
         root.setPadding(new Insets(15));
         root.setStyle("-fx-background-color: white; -fx-border-color: #ccc; -fx-border-radius: 6; -fx-background-radius: 6;");
 
         nameLabel.setStyle("-fx-font-size: 14; -fx-font-weight: bold;");
         pointsLabel.setStyle("-fx-font-size: 13;");
 
-        // Setup the layout
         root.getChildren().addAll(
-            createHeader(),
-            pointsLabel,
-            createResourceSection()
+                createHeader(),
+                pointsLabel,
+                createResourceSection()
         );
 
-        // Listener auf Spielerwechsel
+        // Spielerwechsel-Listener
         currentPlayerProperty.addListener((obs, oldPlayer, newPlayer) -> {
             if (oldPlayer != null) {
+                nameLabel.textProperty().unbind();
+                pointsLabel.textProperty().unbind();
                 oldPlayer.resourcesProperty().removeListener(resourceListener);
             }
             if (newPlayer != null) {
                 newPlayer.resourcesProperty().addListener(resourceListener);
                 updateInfo(newPlayer);
-                updateResourceDisplay(newPlayer);  // Ressourcen aktualisieren
+                updateResourceDisplay(newPlayer);
             }
         });
 
-        // Direkt initialisieren
+        // Initialisierung bei bestehendem Spieler
         if (currentPlayerProperty.get() != null) {
-            currentPlayerProperty.get().resourcesProperty().addListener(resourceListener);
-            updateInfo(currentPlayerProperty.get());
-            updateResourceDisplay(currentPlayerProperty.get());  // Ressourcen beim Start aktualisieren
+            Player p = currentPlayerProperty.get();
+            p.resourcesProperty().addListener(resourceListener);
+            updateInfo(p);
+            updateResourceDisplay(p);
         }
     }
 
@@ -90,20 +93,26 @@ public class CurrentPlayerInfoUI {
         titleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 13;");
         resourceSection.getChildren().add(titleLabel);
 
-        // Ressourcen-Grid vorbereiten
         resourceGrid.setHgap(10);
-        resourceGrid.setVgap(6);  // Vertikale Abstände
-        resourceGrid.getColumnConstraints().add(new ColumnConstraints(100));  // Feste Breite für die erste Spalte
+        resourceGrid.setVgap(6);
+        resourceGrid.getColumnConstraints().add(new ColumnConstraints(120));
 
         int row = 0;
         for (ResourceType type : ResourceType.values()) {
-            String icon = resourceIcons.get(type);
-            Label typeLabel = new Label(icon + " " + type.name() + ":");
+        	ImageView iconView = FXGL.getAssetLoader().loadTexture(type.getImagePath());
+        	iconView.setFitWidth(20);
+            iconView.setPreserveRatio(true);
+
+            Label typeLabel = new Label(type.name() + ":");
+            typeLabel.setFont(new Font("Myriad Pro", 20));
             typeLabel.setTooltip(new Tooltip("Anzahl der " + type.name()));
+
+            HBox labelBox = new HBox(5, iconView, typeLabel);
 
             Label countLabel = new Label("0");
             resourceLabels.put(type, countLabel);
-            resourceGrid.addRow(row++, typeLabel, countLabel);
+
+            resourceGrid.addRow(row++, labelBox, countLabel);
         }
 
         resourceSection.getChildren().add(resourceGrid);
@@ -114,7 +123,7 @@ public class CurrentPlayerInfoUI {
         this.currentPlayer = player;
 
         nameLabel.textProperty().bind(player.nameProperty().concat(": "));
-        colorIndicator.setFill(player.getColor());
+        colorIndicator.setFill(player.getColor() != null ? player.getColor() : Color.GRAY);
         pointsLabel.textProperty().bind(player.victoryPointsProperty().asString("Siegpunkte: %d"));
     }
 
