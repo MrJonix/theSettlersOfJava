@@ -1,12 +1,11 @@
-package de.dhbw_ravensburg.theSettlersOfJava.buildings;import com.almasb.fxgl.dsl.FXGL;
+package de.dhbw_ravensburg.theSettlersOfJava.buildings;
+import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.texture.Texture;
 
+import de.dhbw_ravensburg.theSettlersOfJava.map.HarborOrientation;
 import de.dhbw_ravensburg.theSettlersOfJava.map.Hex;
 import de.dhbw_ravensburg.theSettlersOfJava.map.HexEdge;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.HarborType;
-import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 
 /**
  * Represents a harbor located on a specific hex edge, providing trade benefits for a specific resource type.
@@ -15,6 +14,7 @@ public class Harbor {
 
     private final HexEdge location;
     private final HarborType harborType;
+    private final HarborOrientation orientation;
     private final Hex locationHex;
     
     /**
@@ -23,10 +23,11 @@ public class Harbor {
      * @param location    the hex edge location of the harbor
      * @param harborType the resource type associated with the harbor
      */
-    public Harbor(HexEdge location, HarborType harborType, Hex locationHex) {
+    public Harbor(HexEdge location, HarborType harborType, Hex locationHex, HarborOrientation orientation) {
         this.location = location;
         this.harborType = harborType;
         this.locationHex = locationHex;
+        this.orientation = orientation;
         visualize();
     }
 
@@ -35,18 +36,7 @@ public class Harbor {
      * Currently, this method does not perform any operations.
      */
 	public void visualize() {
-	    Color color;
 	    if (location == null) return;
-		switch (harborType) {
-	        case BRICK : color = Color.ORANGERED; break; //correct
-	        case WOOD : color = Color.FORESTGREEN; break; //correct
-	        case WOOL : color = Color.LIGHTGREEN; break;  //correct 
-	        case WHEAT : color = Color.GOLD; break; 
-	        case ORE : color = Color.DARKGRAY; break;
-	        case THREE_TO_ONE : color = Color.PURPLE; break; //3:1 trade ratio //1 out of 4
-	        default : color = Color.BLACK; break;
-
-	    }
 		try {
 		    Texture texture = FXGL.getAssetLoader().loadTexture(harborType.getImagePath());
 		    
@@ -55,7 +45,6 @@ public class Harbor {
 		    double originalHeight = Math.sqrt(3) * Hex.HEX_SIZE - 10;
 	        texture.setFitWidth(originalHeight);  
 	        texture.setFitHeight(originalWidth);
-
 	        texture.setPreserveRatio(true);
 
 		    // Positionieren, zentriert
@@ -73,7 +62,7 @@ public class Harbor {
 		    e.printStackTrace();
 		}
 
-	    location.visualizeHarborEdge(color,15); // visual: draws a thick colored edge
+	   // location.visualizeHarborEdge(orientation,color,15); // visual: draws a thick colored edge
 	}
 
     /**
@@ -96,5 +85,9 @@ public class Harbor {
 
 	public Hex getLocationHex() {
 		return locationHex;
+	}
+
+	public HarborOrientation getOrientation() {
+		return orientation;
 	}
 }

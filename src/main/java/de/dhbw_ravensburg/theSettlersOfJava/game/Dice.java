@@ -176,7 +176,7 @@ public class Dice {
             fallbackBg.setArcWidth(10);
             fallbackBg.setArcHeight(10);
             
-            StackPane fallbackPane = new StackPane(fallbackBg, fallbackText);
+            new StackPane(fallbackBg, fallbackText);
             
             // Konvertiere zu ImageView (vereinfacht)
             ImageView fallbackView = new ImageView();

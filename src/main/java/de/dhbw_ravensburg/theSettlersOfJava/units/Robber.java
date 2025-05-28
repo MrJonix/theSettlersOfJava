@@ -81,13 +81,11 @@ public class Robber {
 	    Texture robberTexture = FXGL.getAssetLoader().loadTexture("Robber.png");
 	    robberTexture.setFitWidth(Hex.HEX_SIZE);
 	    robberTexture.setFitHeight(Hex.HEX_SIZE);
-
-	    // Manuell zentrieren: links oben minus halbe Breite/Höhe
-	    double offsetX = hexCenterX - robberTexture.getFitWidth() / 2;
-	    double offsetY = hexCenterY - robberTexture.getFitHeight() / 2;
+	    robberTexture.setX( - robberTexture.getFitWidth() / 2);
+	    robberTexture.setY( -robberTexture.getFitHeight() / 2);
 
 	    robberEntity = FXGL.entityBuilder()
-	            .at(offsetX, offsetY)
+	            .at(hexCenterX, hexCenterY)
 	            .viewWithBBox(robberTexture)
 	            .zIndex(10)
 	            .with("robber", this)

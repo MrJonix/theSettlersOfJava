@@ -119,7 +119,7 @@ public class GameBoard {
                 continue;
             }
 
-            Harbor harbor = new Harbor(harborEdge, types.get(i/2), 				  getHexByPosition(harborPosition)); // oder spezifischer Typ je nach Bedarf
+            Harbor harbor = new Harbor(harborEdge, types.get(i/2),getHexByPosition(harborPosition),orientation); // oder spezifischer Typ je nach Bedarf
             System.out.println("Created harbor on edge: " + harborEdge);
 
             harbors.add(harbor);
@@ -404,7 +404,6 @@ public class GameBoard {
             
             if (corner1 != null && corner2 != null) {
                 HexEdgeOrientation orientation;
-                HarborOrientation harborOrientation;
                 switch (i % 3) {
                     case 0:
                         orientation = HexEdgeOrientation.LEFT_TO_RIGHT;
@@ -489,13 +488,6 @@ public class GameBoard {
         }
 
         return false;
-    }
-
-
-    private String makeEdgeKey(HexCorner a, HexCorner b) {
-        int id1 = a.hashCode();
-        int id2 = b.hashCode();
-        return (id1 < id2) ? id1 + "-" + id2 : id2 + "-" + id1;
     }
 
     public int getLongestRoadLength(Player player) {
