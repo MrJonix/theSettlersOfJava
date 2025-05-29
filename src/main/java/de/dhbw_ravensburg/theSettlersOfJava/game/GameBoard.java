@@ -209,6 +209,7 @@ public class GameBoard {
         
         roads.add(road);
         App.getGameController().setAllPlayersLongestRoad();
+        //System.out.println(buildPlayerRoadGraph(road.getOwner()));
         road.visualize();
         return true;
     }
@@ -450,6 +451,7 @@ public class GameBoard {
     public Robber getRobber() {
         return robber;
     }
+    
     private Map<HexCorner, Set<HexCorner>> buildPlayerRoadGraph(Player player) {
         Map<HexCorner, Set<HexCorner>> graph = new HashMap<>();
 
@@ -473,68 +475,49 @@ public class GameBoard {
             .anyMatch(b -> b.getLocation().equals(corner) && !b.getOwner().equals(currentPlayer));
     }
 
-    private boolean dfs(Map<HexCorner, Set<HexCorner>> graph, Set<HexCorner> visited, HexCorner current, HexCorner target, Player player) {
-        if (current.equals(target)) return true;
-
-        visited.add(current);
-
-        for (HexCorner neighbor : graph.getOrDefault(current, Collections.emptySet())) {
-            if (visited.contains(neighbor)) continue;
-
-            // Blockiert nur, wenn gegnerisches Gebäude UND Spieler hat mehrere Straßen an diesem Knoten (Verbindung)
-            if (hasEnemyBuilding(neighbor, player) && graph.getOrDefault(neighbor, Collections.emptySet()).size() > 1) continue;
-
-            if (dfs(graph, visited, neighbor, target, player)) return true;
-        }
-
-        return false;
-    }
-
     public int getLongestRoadLength(Player player) {
         Map<HexCorner, Set<HexCorner>> roadGraph = buildPlayerRoadGraph(player);
         int longest = 0;
 
-        List<HexCorner> nodes = new ArrayList<>(roadGraph.keySet());
+        for (HexCorner start : roadGraph.keySet()) {
+        	// Fix not sure if right
+            //if (hasEnemyBuilding(start, player)) continue;
 
-        for (HexCorner start : nodes) {
-            if (hasEnemyBuilding(start, player)) continue;
-
-            for (HexCorner target : nodes) {
-                if (start.equals(target)) continue;
-
-                if (dfs(roadGraph, new HashSet<>(), start, target, player)) {
-                    int length = shortestPathLength(roadGraph, start, target, player);
-                    longest = Math.max(longest, length);
-                }
-            }
+            longest = Math.max(longest, dfsLongestPath(roadGraph, start, null, new HashSet<>(), player));
+            System.out.println(start + "  " +  dfsLongestPath(roadGraph, start, null, new HashSet<>(), player));
         }
 
         return longest;
     }
 
-    // Beispiel-Methode für Pfadlänge mit BFS (kann angepasst werden)
-    private int shortestPathLength(Map<HexCorner, Set<HexCorner>> graph, HexCorner start, HexCorner target, Player player) {
-        Queue<HexCorner> queue = new LinkedList<>();
-        Map<HexCorner, Integer> distance = new HashMap<>();
-        queue.add(start);
-        distance.put(start, 0);
+    private int dfsLongestPath(
+        Map<HexCorner, Set<HexCorner>> graph,
+        HexCorner current,
+        HexCorner prev,
+        Set<Set<HexCorner>> visitedEdges,
+        Player player
+    ) {
+        int maxLength = 0;
 
-        while (!queue.isEmpty()) {
-            HexCorner current = queue.poll();
+        for (HexCorner neighbor : graph.getOrDefault(current, Collections.emptySet())) {
+            Set<HexCorner> edge = Set.of(current, neighbor); // unordered
 
-            if (current.equals(target)) return distance.get(current);
+            if (visitedEdges.contains(edge)) continue;
 
-            for (HexCorner neighbor : graph.getOrDefault(current, Collections.emptySet())) {
-                if (distance.containsKey(neighbor)) continue;
-                if (hasEnemyBuilding(neighbor, player) && graph.getOrDefault(neighbor, Collections.emptySet()).size() > 1) continue;
+            // Blockiere durch gegnerisches Gebäude
+            if (hasEnemyBuilding(neighbor, player) && graph.getOrDefault(neighbor, Collections.emptySet()).size() > 1) continue;
 
-                distance.put(neighbor, distance.get(current) + 1);
-                queue.add(neighbor);
-            }
+            visitedEdges.add(edge);
+            int length = 1 + dfsLongestPath(graph, neighbor, current, visitedEdges, player);
+            visitedEdges.remove(edge); // backtrack
+
+            maxLength = Math.max(maxLength, length);
         }
 
-        return 0; // kein Pfad
+        return maxLength;
     }
+
+
     
     private HexEdge getHarborPosition(HexPosition pos, HarborOrientation orientation) {
         Hex hex = getHexByPosition(pos);
