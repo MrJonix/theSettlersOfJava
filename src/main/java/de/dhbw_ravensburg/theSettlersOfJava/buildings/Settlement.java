@@ -77,10 +77,14 @@ public class Settlement extends Building {
      */
     private void handleClick() {
         if (getOwner().equals(App.getGameController().getCurrentPlayer())) {
-            boolean success = getOwner().build(new City(getLocation(), getOwner()));
-            if (success) {
-                //FXGL.getAudioPlayer().playSound("on_build_success.mp3");
-            }
+            getOwner().build(new City(getLocation(), getOwner()), success -> {
+                if (success) {
+                    FXGL.getNotificationService().pushNotification("Gebäude erfolgreich gebaut!");
+                    //FXGL.getAudioPlayer().playSound("on_build_success.mp3");
+                } else {
+                    FXGL.getNotificationService().pushNotification("Bau fehlgeschlagen.");
+                }
+            });
         }
     }
 

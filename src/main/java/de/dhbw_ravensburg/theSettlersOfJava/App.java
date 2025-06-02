@@ -26,8 +26,8 @@ import javafx.scene.input.KeyCode;
 
 
 public class App extends GameApplication {
-    private static final int WIDTH = 1000;
-    private static final int HEIGHT = 1000;
+    private static int WIDTH = 1920;
+    private static int HEIGHT = 1080;
     private static GameController controller;
     private double zoom = 1.0;
     private static GameStatus status = new GameStatus();
@@ -36,6 +36,8 @@ public class App extends GameApplication {
 	protected void initSettings(GameSettings settings) {
         settings.setWidth(WIDTH);
         settings.setHeight(HEIGHT);
+        settings.setFullScreenAllowed(true); 
+        //settings.setFullScreenFromStart(true);
         settings.setTitle("SettlersOfJava");
         settings.setAppIcon("icon.png");
         settings.setMainMenuEnabled(true);

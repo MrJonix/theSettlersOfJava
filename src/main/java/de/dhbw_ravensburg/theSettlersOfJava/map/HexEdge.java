@@ -138,11 +138,13 @@ public class HexEdge {
      */
     private void handleMouseClick() {
         Player currentPlayer = App.getGameController().getCurrentPlayer();
-        if (currentPlayer.build(new Road(this, currentPlayer))) {
-            System.out.println("Road built successfully.");
-        } else {
-            System.out.println("Failed to build road.");
-        }
+        currentPlayer.build(new Road(this, currentPlayer), success -> {
+            if (success) {
+                FXGL.getNotificationService().pushNotification("Straße erfolgreich gebaut!");
+            } else {
+                FXGL.getNotificationService().pushNotification("Straßenbau fehlgeschlagen.");
+            }
+        });
     }
 
     public boolean isAdjacentTo(HexEdge otherEdge) {

@@ -1,4 +1,4 @@
-package de.dhbw_ravensburg.theSettlersOfJava.game;
+package de.dhbw_ravensburg.theSettlersOfJava.units;
 
 import java.util.Random;
 
@@ -6,6 +6,8 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.texture.Texture;
 
 import de.dhbw_ravensburg.theSettlersOfJava.App;
+import de.dhbw_ravensburg.theSettlersOfJava.game.GameController;
+import de.dhbw_ravensburg.theSettlersOfJava.game.GameState;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.ScaleTransition;

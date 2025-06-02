@@ -93,7 +93,14 @@ public class HexCorner {
 
     private void handleMouseClick() {
         Player currentPlayer = App.getGameController().getCurrentPlayer();
-        currentPlayer.build(new Settlement(this, currentPlayer));
+        
+        currentPlayer.build(new Settlement(this, currentPlayer), success -> {
+            if (success) {
+                FXGL.getNotificationService().pushNotification("Gebäude erfolgreich gebaut!");
+            } else {
+                FXGL.getNotificationService().pushNotification("Bau fehlgeschlagen.");
+            }
+        });
     }
 
     @Override
