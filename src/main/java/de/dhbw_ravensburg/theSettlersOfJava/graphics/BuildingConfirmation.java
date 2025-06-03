@@ -1,11 +1,9 @@
 package de.dhbw_ravensburg.theSettlersOfJava.graphics;
 
-import javafx.scene.Scene;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 
 import java.util.function.Consumer;
 
@@ -14,41 +12,48 @@ public class BuildingConfirmation {
     /**
      * Zeigt eine eingebettete Bestätigung im gegebenen Root-Node.
      *
-     * @param root        Der Root-Knoten (z. B. StackPane deiner Spielszene)
-     * @param onResult    Callback mit true (OK) oder false (Cancel)
+     * @param root     Der Root-Knoten (z. B. StackPane deiner Spielszene)
+     * @param onResult Callback mit true (OK) oder false (Cancel)
      */
-    public static void showConfirmationOverlay(Pane root, Consumer<Boolean> onResult) {
-        // Halbtransparenter Hintergrund
-        VBox overlay = new VBox(10);
-        overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.6); -fx-padding: 20px;");
-        overlay.setPrefSize(root.getWidth(), root.getHeight());
-        overlay.setTranslateX((root.getWidth() - 300) / 2);  // Optional zentrieren
-        overlay.setTranslateY((root.getHeight() - 150) / 2);
+    public static void showConfirmationOverlay(StackPane root, Consumer<Boolean> onResult) {
 
-        // Inhalt
+        // === Overlay mit halbtransparentem Hintergrund ===
+        VBox overlay = new VBox();
+        overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.6); -fx-padding: 20px;");
+        overlay.setAlignment(Pos.CENTER);
+
+        // Overlay nimmt gesamte Fenstergröße ein
+        overlay.prefWidthProperty().bind(root.widthProperty());
+        overlay.prefHeightProperty().bind(root.heightProperty());
+
+        // === Inhalt des Dialogs ===
         VBox dialog = new VBox(10);
         dialog.setStyle("-fx-background-color: white; -fx-padding: 15px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
+        dialog.setAlignment(Pos.CENTER);
+
         Label label = new Label("Are you sure you want to build here?");
         HBox buttons = new HBox(10);
+        buttons.setAlignment(Pos.CENTER);
+
         Button ok = new Button("OK");
         Button cancel = new Button("Cancel");
-
         buttons.getChildren().addAll(ok, cancel);
-        dialog.getChildren().addAll(label, buttons);
 
+        dialog.getChildren().addAll(label, buttons);
         overlay.getChildren().add(dialog);
 
-        // Buttons
+        // === Buttons reagieren ===
         ok.setOnAction(e -> {
             root.getChildren().remove(overlay);
             onResult.accept(true);
         });
+
         cancel.setOnAction(e -> {
             root.getChildren().remove(overlay);
             onResult.accept(false);
         });
 
-        // Als oberstes Element anzeigen
+        // === Overlay anzeigen ===
         if (!root.getChildren().contains(overlay)) {
             root.getChildren().add(overlay);
         }
