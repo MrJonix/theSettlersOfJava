@@ -61,6 +61,7 @@ public class CatanMainMenu extends FXGLMenu {
         	playerSetupView = PlayerSetupView.create(
         	    this::showMainMenu, // Back button handler
         	    players -> {
+        	    	App.getGameStatus().deletePlayersList();
         	        players.forEach(p -> App.getGameStatus().addPlayer(p));
         	        fireNewGame(); 
         	    }
