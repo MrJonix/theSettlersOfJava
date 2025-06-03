@@ -107,7 +107,6 @@ public class GameBoard {
 
             // Nur weiter machen, wenn eine gültige Orientierung vorhanden ist
             if (orientation == null) {
-                System.out.println("Skipping harbor at [" + q + "," + r + "], no orientation defined.");
                 continue;
             }
 
@@ -115,13 +114,11 @@ public class GameBoard {
             HexEdge harborEdge = getHarborPosition(harborPosition, orientation);
 
             if (harborEdge == null) {
-                System.err.println("No edge found for harbor at " + harborPosition + " with orientation " + orientation);
-                continue;
+               continue;
             }
 
             Harbor harbor = new Harbor(harborEdge, types.get(i/2),getHexByPosition(harborPosition),orientation); // oder spezifischer Typ je nach Bedarf
-            System.out.println("Created harbor on edge: " + harborEdge);
-
+           
             harbors.add(harbor);
         }
     }
@@ -209,7 +206,6 @@ public class GameBoard {
         
         roads.add(road);
         App.getGameController().setAllPlayersLongestRoad();
-        //System.out.println(buildPlayerRoadGraph(road.getOwner()));
         road.visualize();
         return true;
     }
@@ -252,7 +248,6 @@ public class GameBoard {
             setupBuilding = building;
 
         }
-        
         return true;
     }
     
@@ -357,7 +352,6 @@ public class GameBoard {
         if (owner == null) return;
         int amount = building.getVictoryPoints();
         owner.addResources(resource, amount);
-        System.out.println(owner.getName() + " erhält " + amount + "x " + resource);
     }
 
     private void calculateCornersAndEdgesForHex(Hex hex) {
@@ -484,7 +478,6 @@ public class GameBoard {
             //if (hasEnemyBuilding(start, player)) continue;
 
             longest = Math.max(longest, dfsLongestPath(roadGraph, start, null, new HashSet<>(), player));
-            System.out.println(start + "  " +  dfsLongestPath(roadGraph, start, null, new HashSet<>(), player));
         }
 
         return longest;
@@ -517,18 +510,12 @@ public class GameBoard {
         return maxLength;
     }
 
-
-    
     private HexEdge getHarborPosition(HexPosition pos, HarborOrientation orientation) {
         Hex hex = getHexByPosition(pos);
         HexCorner[] corners = hex.getAdjacentCornersArray();
 
         if (corners == null || corners.length < 6) {
-            System.err.println("Hex at " + pos + " has invalid corner list: " + corners);
             return null;
-        }
-        for(HexCorner c : corners) {
-        	System.out.print(c);
         }
 
         int i;
@@ -540,7 +527,6 @@ public class GameBoard {
             case MIDDLE_LEFT:   i = 4; break;
             case TOP_LEFT:      i = 5; break;
             default:
-                System.err.println("Invalid orientation: " + orientation);
                 return null;
         }
 
@@ -548,7 +534,6 @@ public class GameBoard {
         HexCorner c2 = corners[(i + 1) % 6];
 
         if (c1 == null || c2 == null) {
-            System.err.println("Null corner(s) at i=" + i + ": c1=" + c1 + ", c2=" + c2);
             return null;
         }
         
@@ -560,10 +545,34 @@ public class GameBoard {
             }
         }
 
-        System.err.println("No matching edge found for harbor at " + pos + " with orientation " + orientation);
         return null;
     }
-
-
+    
+    public Set<HarborType> getAvailibeHarborTypes(Player p) {
+        Set<HarborType> harborTypes = new HashSet<>();
+        
+        for (Harbor harbor : harbors) {
+            HexEdge harborEdge = harbor.getLocation();
+            HexCorner[] corners = harborEdge.getCorners();
+           
+            boolean playerHasAccess = false;
+            for (HexCorner corner : corners) {
+                // Check buildings at this corner
+                if (buildings.stream().anyMatch(building -> 
+                        building.getLocation().equals(corner) && 
+                        building.getOwner().equals(p))) {
+                    playerHasAccess = true;
+                    break;
+                }
+            }
+            
+            if (playerHasAccess) {
+                // The player has access to this harbor and its type is not already in the list
+            	harborTypes.add(harbor.getHarborType());
+            }
+        }
+        
+        return harborTypes;
+    }
 
 }
