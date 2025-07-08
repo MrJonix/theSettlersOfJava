@@ -28,6 +28,7 @@ public class HexCorner {
     private final double x;
     private final double y;
     private final Set<Hex> adjacentHexes;
+    
     /**
      * Initializes a HexCorner given three adjacent hexes.
      *
@@ -168,8 +169,6 @@ public class HexCorner {
             } else {
                 System.err.println("Fehler: Die Entität ist bereits entfernt oder nicht aktiv.");
             }
-        } else {
-            System.err.println("Fehler: highlightEntity ist null.");
         }
     }
 
