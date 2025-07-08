@@ -1,3 +1,4 @@
+// Dice.java
 package de.dhbw_ravensburg.theSettlersOfJava.units;
 
 import java.util.Random;
@@ -46,11 +47,14 @@ public class Dice {
         diceBackground.setArcWidth(15);
         diceBackground.setArcHeight(15);
 
-        Text diceText = new Text("🎲");
-        diceText.setFont(Font.font("Myriad Pro", FontWeight.BOLD, 25));
-        diceText.setFill(Color.BLACK);
+        // Geänderter Teil: Bild anstelle von Text für den Würfelknopf
+        ImageView diceImage = new ImageView(FXGL.getAssetLoader().loadTexture("/dice/dice3D.png").getImage());
+        diceImage.setFitWidth(SIZE * 0.7); // Angepasste Größe des Bildes
+        diceImage.setFitHeight(SIZE * 0.7);
+        diceImage.setPreserveRatio(true);
+        diceImage.setSmooth(true);
 
-        diceView = new StackPane(diceBackground, diceText);
+        diceView = new StackPane(diceBackground, diceImage); // Bild statt Text
         diceView.setAlignment(Pos.CENTER);
 
         // Hover-Effekt
