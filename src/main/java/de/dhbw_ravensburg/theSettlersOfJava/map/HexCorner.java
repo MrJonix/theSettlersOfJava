@@ -1,8 +1,6 @@
 package de.dhbw_ravensburg.theSettlersOfJava.map;
 
 import com.almasb.fxgl.animation.Animation;
-import com.almasb.fxgl.animation.AnimationBuilder.ScaleAnimationBuilder;
-import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 
@@ -16,7 +14,7 @@ import javafx.util.Duration;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
+
 import java.util.Objects;
 import java.util.Set;
 
