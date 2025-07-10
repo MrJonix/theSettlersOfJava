@@ -1,3 +1,4 @@
+// GameController.java
 package de.dhbw_ravensburg.theSettlersOfJava.game;
 
 import java.util.Collections;
@@ -19,9 +20,11 @@ import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Dice;
 import de.dhbw_ravensburg.theSettlersOfJava.units.NextPlayerButton;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
+import javafx.animation.PauseTransition; // Import hinzugefügt
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.layout.Pane;
+import javafx.util.Duration; // Import hinzugefügt
 import javafx.scene.layout.VBox;
 
 public class GameController {
@@ -34,6 +37,7 @@ public class GameController {
 	private GameState currentState = GameState.SETUP_PHASE;
 	private boolean firstSetup = true;
 	private Player currentLongestRoadPlayer = null;
+    private boolean isDiscardingResources = false; // Added flag
 
 	public GameController() {
 	    initializePlayers();
@@ -162,6 +166,8 @@ public class GameController {
 	private void robberPhase() {
 	    currentState = GameState.ROBBER_PHASE;
 	    FXGL.getNotificationService().pushNotification("Du musst jetzt den Räuber versetzen");
+	    FXGL.getNotificationService().pushNotification("Alle Spieler mit mehr als 7 Karten müssen die Hälfte abgeben."); // Added for clarity
+	    nextPlayerbutton.getView().setVisible(false); // Hide next player button during discard/robber phase
 
 	    // Liste der Spieler, die mehr als 7 Karten haben
 	    List<Player> toDiscard = players.stream()
@@ -169,14 +175,26 @@ public class GameController {
 	            .collect(Collectors.toList());
 	    
 	    if (toDiscard.size() > 0) {
-	    	processNextDiscard(toDiscard, 0);
+	    	isDiscardingResources = true; // Set flag to true if discards are needed
+	    	
+	    	// Geänderter Teil: Verzögerung vor dem Anzeigen des Abgabefensters
+	    	PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 Sekunden Pause
+	        pause.setOnFinished(event -> processNextDiscard(toDiscard, 0));
+	        pause.play();
+
 	    } else {
+	    	isDiscardingResources = false; // Set flag to false if no discards needed
 	    	FXGL.getNotificationService().pushNotification("Kein Spieler muss Karten abgegeben.");
+	    	// No nextPhase() call here, as robber still needs to be moved
 	    }
 	    
 	}
 	
 	public void moveRobber(Hex hex) {
+	    if (isDiscardingResources) { // Prevent robber movement during resource discard
+	        return; 
+	    }
+
 	    if (getCurrentGameState().equals(GameState.ROBBER_PHASE) &&
 	        !hex.getHexType().equals(HexType.WATER) &&
 	        !hex.equals(board.getRobber().getLocation())) {
@@ -192,10 +210,12 @@ public class GameController {
 	        if (victims.isEmpty()) {
 	            // Keine Spieler zum Stehlen -> direkt nächste Phase
 	            nextPhase();
+	            nextPlayerbutton.getView().setVisible(true); // Re-enable button after robber moves and no steal
 	        } else if (victims.size() == 1) {
 	            // Nur einen Spieler -> automatisch stehlen
 	            board.getRobber().stealRandomResourceFromPlayer(activePlayer, victims.get(0));
 	            nextPhase();
+	            nextPlayerbutton.getView().setVisible(true); // Re-enable button after robber moves and steal
 	        } else {
 	            // Mehrere Spieler -> Auswahl anzeigen
 	        	PlayerSelectionView view = new PlayerSelectionView(victims);
@@ -205,8 +225,8 @@ public class GameController {
 		            	board.getRobber().stealRandomResourceFromPlayer(activePlayer, victim);
 		            }
 	        	});
-
 	            nextPhase();
+	            nextPlayerbutton.getView().setVisible(true); // Re-enable button after robber moves and steal
 	        }
 	    }
 	}
@@ -215,9 +235,10 @@ public class GameController {
 	// Rekursive Verarbeitung der Spieler
 	private void processNextDiscard(List<Player> playersToDiscard, int index) {
 	    if (index >= playersToDiscard.size()) {
-	        // Alle Spieler durch – du kannst z.B. den Räuber versetzen lassen oder das Spiel fortsetzen
+	        isDiscardingResources = false; // All players have discarded
 	        FXGL.getNotificationService().pushNotification("Alle Spieler haben Karten abgegeben.");
-	        return;
+	        FXGL.getNotificationService().pushNotification("Ressourcenabgabe beendet. Bitte versetzen Sie den Räuber."); // Notify that robber can be moved
+	        return; 
 	    }
 
 	    Player player = playersToDiscard.get(index);

@@ -109,8 +109,17 @@ public class DiscardResourcesView {
     content.getChildren().addAll(header, grid, confirmBtn);
 
     StackPane overlay = new StackPane(content);
-    overlay.setTranslateX(FXGL.getAppWidth()/2 - overlay.getWidth());
-    overlay.setTranslateX(FXGL.getAppHeight()/2 - overlay.getHeight());
+
+    // Initial position based on assumed max dimensions
+    // This provides a good starting point before actual layout is computed
+    overlay.setTranslateX(FXGL.getAppWidth() / 2 - content.getMaxWidth() / 2);
+    overlay.setTranslateY(FXGL.getAppHeight() / 2 - content.getMaxHeight() / 2);
+
+    // Listener to precisely center the overlay after it has been laid out
+    overlay.layoutBoundsProperty().addListener((obs, oldBounds, newBounds) -> {
+        overlay.setTranslateX(FXGL.getAppWidth() / 2 - newBounds.getWidth() / 2);
+        overlay.setTranslateY(FXGL.getAppHeight() / 2 - newBounds.getHeight() / 2);
+    });
     return overlay;
 }
 
