@@ -4,6 +4,7 @@ package de.dhbw_ravensburg.theSettlersOfJava.game;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import com.almasb.fxgl.dsl.FXGL;
@@ -12,8 +13,8 @@ import de.dhbw_ravensburg.theSettlersOfJava.graphics.CurrentPlayerInfoUI;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.PlayerInfoUI;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.view.DiscardResourcesView;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.view.PlayerSelectionView;
+import de.dhbw_ravensburg.theSettlersOfJava.graphics.view.TradeView;
 import de.dhbw_ravensburg.theSettlersOfJava.map.Hex;
-import de.dhbw_ravensburg.theSettlersOfJava.map.HexCorner;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.HexType;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Dice;
@@ -24,6 +25,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration; // Import hinzugefügt
+import javafx.scene.layout.VBox;
 
 public class GameController {
 
@@ -43,16 +45,14 @@ public class GameController {
 	    initializeUI();
 	    initializeBoard();
 	    initializeDice();
-	    debugStartResources();
-	    
-	    
+	    //debugStartResources();
 	}
 
 	/* ------------------ Initialization Methods ------------------ */
 
 	public void setupPhase() {
 		board.getPossibleStartPositions().forEach(c -> c.highlight());
-
+		
 	}
 	
 	public void finishedPlayerSetup(Player owner) {
@@ -142,6 +142,7 @@ public class GameController {
 	        case ROLL_DICE:
 	        	currentState = GameState.ACTION_PHASE;
 	        	nextPlayerbutton.getView().setVisible(true);
+	        	trade();
 	            break;
 	        case ROBBER_PHASE:
 	        	currentState = GameState.ACTION_PHASE;
@@ -259,10 +260,26 @@ public class GameController {
 	}
 
 
-	public void trade() {
-	    if (!isActionPhase()) return;
-	    System.out.println("Handeln...");
-	}
+
+    // Assume this is called during the player's turn
+    public void trade() {
+        if (!isActionPhase()) 
+            return; // Ensure it's the appropriate phase for trading
+        
+        TradeView tradeView = new TradeView();
+        AtomicReference<VBox> tradeUIRef = new AtomicReference<>();
+
+        VBox tradeUI = tradeView.createTradeUI(() -> {
+            FXGL.getGameScene().removeUINode(tradeUIRef.get());
+        });
+        tradeUIRef.set(tradeUI);
+
+        FXGL.getGameScene().addUINode(tradeUI);
+        tradeUI.setLayoutX(100);
+        tradeUI.setLayoutY(100);
+
+
+    }
 
 	public void build() {
 	    if (!isActionPhase()) return;
@@ -365,4 +382,7 @@ public class GameController {
 		return firstSetup;
 	}
 
+	public List<Player> getPlayers() {
+		return players;
+	}
 }

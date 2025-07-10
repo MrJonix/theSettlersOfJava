@@ -86,6 +86,7 @@ public class Player {
                 onBuilt.accept(false);
             }
         });
+        App.getGameController().trade();
     }
 
     public void build(Road r, Consumer<Boolean> onBuilt) {
@@ -173,5 +174,9 @@ public class Player {
     @Override
     public String toString() {
     	return getName();
+    }
+
+    public boolean hasResources(ResourceType offeredResource, int offeredAmount) {
+        return resources.containsKey(offeredResource) && resources.get(offeredResource) >= offeredAmount;
     }
 }
