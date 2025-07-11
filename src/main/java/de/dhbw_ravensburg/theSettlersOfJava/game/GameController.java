@@ -13,19 +13,19 @@ import de.dhbw_ravensburg.theSettlersOfJava.graphics.CurrentPlayerInfoUI;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.PlayerInfoUI;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.view.DiscardResourcesView;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.view.PlayerSelectionView;
-import de.dhbw_ravensburg.theSettlersOfJava.graphics.view.TradeView;
+import de.dhbw_ravensburg.theSettlersOfJava.graphics.view.TradeUIController;
 import de.dhbw_ravensburg.theSettlersOfJava.map.Hex;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.HexType;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Dice;
 import de.dhbw_ravensburg.theSettlersOfJava.units.NextPlayerButton;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
-import javafx.animation.PauseTransition; // Import hinzugefügt
+import de.dhbw_ravensburg.theSettlersOfJava.units.PlayerColor;
+import javafx.animation.PauseTransition;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.layout.Pane;
-import javafx.util.Duration; // Import hinzugefügt
-import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 public class GameController {
 
@@ -37,7 +37,8 @@ public class GameController {
 	private GameState currentState = GameState.SETUP_PHASE;
 	private boolean firstSetup = true;
 	private Player currentLongestRoadPlayer = null;
-    private boolean isDiscardingResources = false; // Added flag
+	private TradeUIController tradeUI;
+	private boolean isDiscardingResources = false;
 
 	public GameController() {
 	    initializePlayers();
@@ -45,7 +46,8 @@ public class GameController {
 	    initializeUI();
 	    initializeBoard();
 	    initializeDice();
-	    //debugStartResources();
+	    initializeTrade();
+	    debugStartResources();
 	}
 
 	/* ------------------ Initialization Methods ------------------ */
@@ -113,7 +115,6 @@ public class GameController {
 	    dice = new Dice(x,y);
 	    dice.getView().setVisible(false);
 	}
-
 	private void debugStartResources() {
 	    for (Player player : players) {
 	        player.addResources(ResourceType.WOOD, 10);
@@ -123,17 +124,22 @@ public class GameController {
 	        player.addResources(ResourceType.ORE, 3);
 	    }
 	}
+	private void initializeTrade() {
+		tradeUI = new TradeUIController(this::getCurrentPlayer, players);
+		tradeUI.initTradeButton();
+
+	}
 
 	/* ------------------ Game Phase Control ------------------ */
 
 	public void nextPhase() {
 	    if (currentState == GameState.ACTION_PHASE) {
+	    	trade();
 	        System.out.println("Du kannst handeln oder bauen oder deinen Zug beenden.");
 	        currentState = GameState.END_TURN;
         	nextPhase();
 	        return;
 	    }
-
 	    switch (currentState) {
 	    	case SETUP_PHASE:
 	    		currentState = GameState.ROLL_DICE;
@@ -259,27 +265,11 @@ public class GameController {
 	 
 	}
 
-
-
-    // Assume this is called during the player's turn
-    public void trade() {
-        if (!isActionPhase()) 
-            return; // Ensure it's the appropriate phase for trading
-        
-        TradeView tradeView = new TradeView();
-        AtomicReference<VBox> tradeUIRef = new AtomicReference<>();
-
-        VBox tradeUI = tradeView.createTradeUI(() -> {
-            FXGL.getGameScene().removeUINode(tradeUIRef.get());
-        });
-        tradeUIRef.set(tradeUI);
-
-        FXGL.getGameScene().addUINode(tradeUI);
-        tradeUI.setLayoutX(100);
-        tradeUI.setLayoutY(100);
-
-
-    }
+	public void trade() {
+	    if (!isActionPhase()) return;
+		tradeUI.showTradeButton();
+	    System.out.println("Handeln...");
+	}
 
 	public void build() {
 	    if (!isActionPhase()) return;
