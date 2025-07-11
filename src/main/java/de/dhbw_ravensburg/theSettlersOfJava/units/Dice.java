@@ -1,4 +1,5 @@
-package de.dhbw_ravensburg.theSettlersOfJava.game;
+// Dice.java
+package de.dhbw_ravensburg.theSettlersOfJava.units;
 
 import java.util.Random;
 
@@ -6,6 +7,8 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.texture.Texture;
 
 import de.dhbw_ravensburg.theSettlersOfJava.App;
+import de.dhbw_ravensburg.theSettlersOfJava.game.GameController;
+import de.dhbw_ravensburg.theSettlersOfJava.game.GameState;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.ScaleTransition;
@@ -44,11 +47,14 @@ public class Dice {
         diceBackground.setArcWidth(15);
         diceBackground.setArcHeight(15);
 
-        Text diceText = new Text("🎲");
-        diceText.setFont(Font.font("Myriad Pro", FontWeight.BOLD, 25));
-        diceText.setFill(Color.BLACK);
+        // Geänderter Teil: Bild anstelle von Text für den Würfelknopf
+        ImageView diceImage = new ImageView(FXGL.getAssetLoader().loadTexture("/dice/dice3D.png").getImage());
+        diceImage.setFitWidth(SIZE * 0.7); // Angepasste Größe des Bildes
+        diceImage.setFitHeight(SIZE * 0.7);
+        diceImage.setPreserveRatio(true);
+        diceImage.setSmooth(true);
 
-        diceView = new StackPane(diceBackground, diceText);
+        diceView = new StackPane(diceBackground, diceImage); // Bild statt Text
         diceView.setAlignment(Pos.CENTER);
 
         // Hover-Effekt
@@ -176,7 +182,7 @@ public class Dice {
             fallbackBg.setArcWidth(10);
             fallbackBg.setArcHeight(10);
             
-            StackPane fallbackPane = new StackPane(fallbackBg, fallbackText);
+            new StackPane(fallbackBg, fallbackText);
             
             // Konvertiere zu ImageView (vereinfacht)
             ImageView fallbackView = new ImageView();

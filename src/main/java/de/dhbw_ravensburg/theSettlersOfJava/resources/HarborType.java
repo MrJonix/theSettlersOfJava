@@ -5,13 +5,17 @@ import java.util.Collections;
 import java.util.List;
 
 public enum HarborType {
-    BRICK,
-    WOOD,
-    WOOL,
-    WHEAT,
-    ORE,
-    THREE_TO_ONE;
-    
+    BRICK("/ship/boat_CLAY.png"),
+    WOOD("/ship/boat_WOOD.png"),
+    WOOL("/ship/boat_WOOL.png"),
+    WHEAT("/ship/boat_WHEAT.png"),
+    ORE("/ship/boat_MOUNTAIN.png"),
+    THREE_TO_ONE("/ship/boat_3_1.png");
+	private final String imagePath;
+	
+	private HarborType(String imagePath) {
+		this.imagePath = imagePath;
+	}
     
 	public static List<HarborType> generateHarborTypes() {
 	    List<HarborType> harbors = new ArrayList<>(List.of(
@@ -20,6 +24,11 @@ public enum HarborType {
 	    ));
 	    Collections.shuffle(harbors);
 	    return harbors;
+	}
+
+
+	public String getImagePath() {
+		return imagePath;
 	}
 
 }

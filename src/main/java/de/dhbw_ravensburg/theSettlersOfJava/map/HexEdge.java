@@ -2,6 +2,7 @@ package de.dhbw_ravensburg.theSettlersOfJava.map;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.texture.Texture;
 
 import de.dhbw_ravensburg.theSettlersOfJava.App;
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.Road;
@@ -93,33 +94,57 @@ public class HexEdge {
         line.setOnMouseClicked(event -> handleMouseClick());
     }
     
-    public void visualizeHarborEdge (Color color, double thickness) {
-    	double x1 = start.getX();
+    public void visualizeHarborEdge(HarborOrientation orientation, Color color, double thickness) {
+        double x1 = start.getX();
         double y1 = start.getY();
         double x2 = end.getX();
         double y2 = end.getY();
 
-        Line line = new Line(x1, y1, x2, y2);
-        line.setStroke(color);
-        line.setStrokeWidth(thickness);
-        line.toFront(); // Make sure it's not hidden
+        // Wähle Textur basierend auf Orientierung (hier: Platzhalter)
+        String texturePath = switch (orientation) {
+            case TOP_LEFT -> "/harbor/steg_LINKSOBEN.png";
+            case TOP_RIGHT -> "/harbor/steg_RECHTSOBEN.png";
+            case BOTTOM_LEFT -> "/harbor/steg_LINKSUNTEN.png";
+            case BOTTOM_RIGHT -> "/harbor/steg_RECHTSUNTEN.png";
+            default -> "/harbor/steg_LINKSOBEN.png";
+        };
+
+        Texture texture = FXGL.getAssetLoader().loadTexture(texturePath);
+
+        // Berechne die Richtung und Länge des Hafens
+        double dx = x2 - x1;
+        double dy = y2 - y1;
+        double length = Math.hypot(dx, dy);
+
+        // Setze die Größe des Bildes (z. B. Länge der Kante)
+        texture.setFitWidth(length);
+        texture.setPreserveRatio(true); // Höhe wird automatisch skaliert
+
+
+        // Positioniere zentriert zwischen den beiden Punkten
+        double centerX = (x1 + x2) / 2;
+        double centerY = (y1 + y2) / 2;
 
         FXGL.entityBuilder()
-            .at(0, 0)
-            .view(line)
+            .at(centerX - texture.getFitWidth() / 2, centerY - texture.getFitHeight() / 2)
+            .zIndex(9)
+            .view(texture)
             .buildAndAttach();
     }
+
 
     /**
      * Handles a mouse click on the line.
      */
     private void handleMouseClick() {
         Player currentPlayer = App.getGameController().getCurrentPlayer();
-        if (currentPlayer.build(new Road(this, currentPlayer))) {
-            System.out.println("Road built successfully.");
-        } else {
-            System.out.println("Failed to build road.");
-        }
+        currentPlayer.build(new Road(this, currentPlayer), success -> {
+            if (success) {
+                FXGL.getNotificationService().pushNotification("Straße erfolgreich gebaut!");
+            } else {
+                FXGL.getNotificationService().pushNotification("Straßenbau fehlgeschlagen.");
+            }
+        });
     }
 
     public boolean isAdjacentTo(HexEdge otherEdge) {

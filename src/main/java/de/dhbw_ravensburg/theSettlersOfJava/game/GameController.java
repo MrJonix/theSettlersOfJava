@@ -1,24 +1,24 @@
+// GameController.java
 package de.dhbw_ravensburg.theSettlersOfJava.game;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import com.almasb.fxgl.dsl.FXGL;
 
-import de.dhbw_ravensburg.theSettlersOfJava.App;
-import de.dhbw_ravensburg.theSettlersOfJava.buildings.Building;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.CurrentPlayerInfoUI;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.PlayerInfoUI;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.view.DiscardResourcesView;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.view.PlayerSelectionView;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.view.TradeUIController;
 import de.dhbw_ravensburg.theSettlersOfJava.map.Hex;
-import de.dhbw_ravensburg.theSettlersOfJava.map.HexCorner;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.HexType;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
+import de.dhbw_ravensburg.theSettlersOfJava.units.Dice;
+import de.dhbw_ravensburg.theSettlersOfJava.units.NextPlayerButton;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
 import de.dhbw_ravensburg.theSettlersOfJava.units.PlayerColor;
 import javafx.animation.PauseTransition;
@@ -31,6 +31,7 @@ public class GameController {
 
 	private GameBoard board;
 	private Dice dice;
+	private NextPlayerButton nextPlayerbutton;
 	private List<Player> players = GameStatus.getPlayerNames();
 	private final ObjectProperty<Player> currentPlayer = new SimpleObjectProperty<>();
 	private GameState currentState = GameState.SETUP_PHASE;
@@ -46,16 +47,13 @@ public class GameController {
 	    initializeDice();
 	    initializeTrade();
 	    debugStartResources();
-	    
-	    
 	}
 
 	/* ------------------ Initialization Methods ------------------ */
 
 	public void setupPhase() {
-		for(HexCorner c : board.getPossibleStartPositions()) {
-			c.highlight();
-		}
+		board.getPossibleStartPositions().forEach(c -> c.highlight());
+		
 	}
 	
 	public void finishedPlayerSetup(Player owner) {
@@ -101,6 +99,9 @@ public class GameController {
 
 	    CurrentPlayerInfoUI currentPlayerUI = new CurrentPlayerInfoUI(currentPlayer);
 	    FXGL.addUINode(currentPlayerUI.getRoot(), 20, 20); // Adjust position as needed
+	    
+	    nextPlayerbutton = new NextPlayerButton( FXGL.getAppWidth() - Dice.SIZE - 20, 20);
+	    nextPlayerbutton.getView().setVisible(false);
 	}
 
 	private void initializeBoard() {
@@ -144,14 +145,17 @@ public class GameController {
 	    		rollDice();
 	    		break;
 	        case ROLL_DICE:
+	        	currentState = GameState.ACTION_PHASE;
+	        	nextPlayerbutton.getView().setVisible(true);
+	        	trade();
 	            break;
 	        case ROBBER_PHASE:
 	        	currentState = GameState.ACTION_PHASE;
-	        	nextPhase(); //DEBUG
+	        	nextPlayerbutton.getView().setVisible(true);
 	            break;
 	        case END_TURN:
-	            endTurn();
-
+	        	currentState = GameState.ROLL_DICE;
+	            rollDice();
 	            break;
 	        default:
 	            System.out.println("Unbekannter Zustand: " + currentState);
@@ -161,11 +165,14 @@ public class GameController {
 	private void rollDice() {
 	    System.out.println("Würfeln...");
 	    dice.getView().setVisible(true);
+	    nextPlayerbutton.getView().setVisible(false);
 	}
 
 	private void robberPhase() {
 	    currentState = GameState.ROBBER_PHASE;
 	    FXGL.getNotificationService().pushNotification("Du musst jetzt den Räuber versetzen");
+	    FXGL.getNotificationService().pushNotification("Alle Spieler mit mehr als 7 Karten müssen die Hälfte abgeben."); // Added for clarity
+	    nextPlayerbutton.getView().setVisible(false); // Hide next player button during discard/robber phase
 
 	    // Liste der Spieler, die mehr als 7 Karten haben
 	    List<Player> toDiscard = players.stream()
@@ -173,14 +180,26 @@ public class GameController {
 	            .collect(Collectors.toList());
 	    
 	    if (toDiscard.size() > 0) {
-	    	processNextDiscard(toDiscard, 0);
+	    	isDiscardingResources = true; // Set flag to true if discards are needed
+	    	
+	    	// Geänderter Teil: Verzögerung vor dem Anzeigen des Abgabefensters
+	    	PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 Sekunden Pause
+	        pause.setOnFinished(event -> processNextDiscard(toDiscard, 0));
+	        pause.play();
+
 	    } else {
+	    	isDiscardingResources = false; // Set flag to false if no discards needed
 	    	FXGL.getNotificationService().pushNotification("Kein Spieler muss Karten abgegeben.");
+	    	// No nextPhase() call here, as robber still needs to be moved
 	    }
 	    
 	}
 	
 	public void moveRobber(Hex hex) {
+	    if (isDiscardingResources) { // Prevent robber movement during resource discard
+	        return; 
+	    }
+
 	    if (getCurrentGameState().equals(GameState.ROBBER_PHASE) &&
 	        !hex.getHexType().equals(HexType.WATER) &&
 	        !hex.equals(board.getRobber().getLocation())) {
@@ -196,10 +215,12 @@ public class GameController {
 	        if (victims.isEmpty()) {
 	            // Keine Spieler zum Stehlen -> direkt nächste Phase
 	            nextPhase();
+	            nextPlayerbutton.getView().setVisible(true); // Re-enable button after robber moves and no steal
 	        } else if (victims.size() == 1) {
 	            // Nur einen Spieler -> automatisch stehlen
 	            board.getRobber().stealRandomResourceFromPlayer(activePlayer, victims.get(0));
 	            nextPhase();
+	            nextPlayerbutton.getView().setVisible(true); // Re-enable button after robber moves and steal
 	        } else {
 	            // Mehrere Spieler -> Auswahl anzeigen
 	        	PlayerSelectionView view = new PlayerSelectionView(victims);
@@ -209,8 +230,8 @@ public class GameController {
 		            	board.getRobber().stealRandomResourceFromPlayer(activePlayer, victim);
 		            }
 	        	});
-
 	            nextPhase();
+	            nextPlayerbutton.getView().setVisible(true); // Re-enable button after robber moves and steal
 	        }
 	    }
 	}
@@ -219,28 +240,29 @@ public class GameController {
 	// Rekursive Verarbeitung der Spieler
 	private void processNextDiscard(List<Player> playersToDiscard, int index) {
 	    if (index >= playersToDiscard.size()) {
-	        // Alle Spieler durch – du kannst z.B. den Räuber versetzen lassen oder das Spiel fortsetzen
+	        isDiscardingResources = false; // All players have discarded
 	        FXGL.getNotificationService().pushNotification("Alle Spieler haben Karten abgegeben.");
-	        return;
+	        FXGL.getNotificationService().pushNotification("Ressourcenabgabe beendet. Bitte versetzen Sie den Räuber."); // Notify that robber can be moved
+	        return; 
 	    }
 
 	    Player player = playersToDiscard.get(index);
-	    DiscardResourcesView view = new DiscardResourcesView(player.getName(), player.getResources());
 
-	    view.showAndWait().ifPresent(discarded -> {
-	        // Ressourcen abziehen
+	    DiscardResourcesView view = new DiscardResourcesView(player.getName(), player.getResources(), discarded -> {
 	        discarded.forEach((type, amount) -> {
 	            int current = player.getResources().getOrDefault(type, 0);
 	            player.getResources().put(type, current - amount);
 	        });
 
 	        FXGL.getNotificationService().pushNotification(player.getName() + " hat Karten abgegeben.");
+
+	        processNextDiscard(playersToDiscard, index + 1);
 	    });
 
-	    // Nächster Spieler
-	    processNextDiscard(playersToDiscard, index + 1);
-	}
+	    FXGL.getGameScene().getRoot().getChildren().add(view.createOverlay());
 
+	 
+	}
 
 	public void trade() {
 	    if (!isActionPhase()) return;
@@ -260,23 +282,23 @@ public class GameController {
 	    nextPhase();
 	}
 
-	private void endTurn() {
+	public void endTurn() {
+		if(!currentState.equals(GameState.ACTION_PHASE)) return;
 	    System.out.println("Nächster Spieler ist dran.");
 	    int currentIndex = players.indexOf(currentPlayer.get());
 	    int nextIndex = (currentIndex + 1) % players.size();
 	    currentPlayer.set(players.get(nextIndex));
-	    
-	    currentState = GameState.ROLL_DICE;
-        rollDice();
+	    currentState = GameState.END_TURN;
+        nextPhase();
 	}
 
 	public void onDiceRolled(int total) {
 		dice.getView().setVisible(false);
+		
 	    if (total == 7) {
 	    	robberPhase();
 	    } else {
 	        board.distributeResources(total);
-	        currentState = GameState.ACTION_PHASE;
 	        nextPhase();
 	    }
 	}
@@ -349,4 +371,7 @@ public class GameController {
 		return firstSetup;
 	}
 
+	public List<Player> getPlayers() {
+		return players;
+	}
 }

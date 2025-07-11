@@ -15,6 +15,8 @@ import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.app.scene.Viewport;
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.input.Input;
+import com.almasb.fxgl.input.UserAction;
 
 import de.dhbw_ravensburg.theSettlersOfJava.game.GameController;
 import de.dhbw_ravensburg.theSettlersOfJava.game.GameStatus;
@@ -26,8 +28,8 @@ import javafx.scene.input.KeyCode;
 
 
 public class App extends GameApplication {
-    private static final int WIDTH = 1000;
-    private static final int HEIGHT = 1000;
+    private static int WIDTH = 1920;
+    private static int HEIGHT = 1080;
     private static GameController controller;
     private double zoom = 1.0;
     private static GameStatus status = new GameStatus();
@@ -36,6 +38,8 @@ public class App extends GameApplication {
 	protected void initSettings(GameSettings settings) {
         settings.setWidth(WIDTH);
         settings.setHeight(HEIGHT);
+        settings.setFullScreenAllowed(true); 
+        //settings.setFullScreenFromStart(true);
         settings.setTitle("SettlersOfJava");
         settings.setAppIcon("icon.png");
         settings.setMainMenuEnabled(true);
@@ -52,16 +56,53 @@ public class App extends GameApplication {
     
     @Override
     protected void initInput() {
-    	FXGL.getGameScene().getRoot().setCursor(Cursor.DEFAULT);
-    	onKey(KeyCode.PLUS, () -> zoomBy(0.04)); // Zoom in
-    	onKey(KeyCode.MINUS, () -> zoomBy(-0.04)); // Zoom out
-    
-    	onKey(KeyCode.UP, () -> moveCamera(0, -10));
-    	onKey(KeyCode.DOWN, () -> moveCamera(0, 10));
-    	onKey(KeyCode.LEFT, () -> moveCamera(-10, 0));
-    	onKey(KeyCode.RIGHT, () -> moveCamera(10, 0));
+        FXGL.getGameScene().getRoot().setCursor(Cursor.DEFAULT);
+
+        Input input = FXGL.getInput();
+
+        input.addAction(new UserAction("Zoom In") {
+            @Override
+            protected void onAction() {
+                zoomBy(0.04);
+            }
+        }, KeyCode.PLUS);
+
+        input.addAction(new UserAction("Zoom Out") {
+            @Override
+            protected void onAction() {
+                zoomBy(-0.04);
+            }
+        }, KeyCode.MINUS);
+
+        input.addAction(new UserAction("Move Up") {
+            @Override
+            protected void onAction() {
+                moveCamera(0, -10);
+            }
+        }, KeyCode.UP);
+
+        input.addAction(new UserAction("Move Down") {
+            @Override
+            protected void onAction() {
+                moveCamera(0, 10);
+            }
+        }, KeyCode.DOWN);
+
+        input.addAction(new UserAction("Move Left") {
+            @Override
+            protected void onAction() {
+                moveCamera(-10, 0);
+            }
+        }, KeyCode.LEFT);
+
+        input.addAction(new UserAction("Move Right") {
+            @Override
+            protected void onAction() {
+                moveCamera(10, 0);
+            }
+        }, KeyCode.RIGHT);
     }
-    
+
     private void moveCamera(double dx, double dy) {
         Viewport viewport = getGameScene().getViewport();
         viewport.setX(viewport.getX() + dx);

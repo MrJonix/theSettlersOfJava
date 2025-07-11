@@ -28,6 +28,7 @@ public class HexCorner {
     private final double x;
     private final double y;
     private final Set<Hex> adjacentHexes;
+    
     /**
      * Initializes a HexCorner given three adjacent hexes.
      *
@@ -93,7 +94,14 @@ public class HexCorner {
 
     private void handleMouseClick() {
         Player currentPlayer = App.getGameController().getCurrentPlayer();
-        currentPlayer.build(new Settlement(this, currentPlayer));
+        
+        currentPlayer.build(new Settlement(this, currentPlayer), success -> {
+            if (success) {
+                FXGL.getNotificationService().pushNotification("Gebäude erfolgreich gebaut!");
+            } else {
+                FXGL.getNotificationService().pushNotification("Bau fehlgeschlagen.");
+            }
+        });
     }
 
     @Override
@@ -161,8 +169,6 @@ public class HexCorner {
             } else {
                 System.err.println("Fehler: Die Entität ist bereits entfernt oder nicht aktiv.");
             }
-        } else {
-            System.err.println("Fehler: highlightEntity ist null.");
         }
     }
 
