@@ -38,6 +38,7 @@ public class GameController {
 	private boolean firstSetup = true;
 	private Player currentLongestRoadPlayer = null;
 	private TradeUIController tradeUI;
+	private boolean isDiscardingResources = false;
 
 	public GameController() {
 	    initializePlayers();

@@ -11,7 +11,6 @@ import de.dhbw_ravensburg.theSettlersOfJava.buildings.Building;
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.Road;
 import de.dhbw_ravensburg.theSettlersOfJava.game.GameState;
 import de.dhbw_ravensburg.theSettlersOfJava.game.TradeOffer;
-import de.dhbw_ravensburg.theSettlersOfJava.graphics.BuildingConfirmation;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.view.TradeUIController;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
 import javafx.beans.binding.IntegerBinding;
