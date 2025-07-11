@@ -54,7 +54,6 @@ public class GameController {
 
 	public void setupPhase() {
 		board.getPossibleStartPositions().forEach(c -> c.highlight());
-		
 	}
 	
 	public void finishedPlayerSetup(Player owner) {
