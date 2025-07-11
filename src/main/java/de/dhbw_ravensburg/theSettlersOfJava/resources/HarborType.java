@@ -31,4 +31,18 @@ public enum HarborType {
 		return imagePath;
 	}
 
+	public boolean isSpecific() {
+	    return this != THREE_TO_ONE;
+	}
+
+	public ResourceType toResourceType() {
+	    return switch (this) {
+	        case BRICK -> ResourceType.BRICK;
+	        case WOOD -> ResourceType.WOOD;
+	        case WOOL -> ResourceType.WOOL;
+	        case WHEAT -> ResourceType.WHEAT;
+	        case ORE -> ResourceType.ORE;
+	        default -> null; // THREE_TO_ONE has no specific resource
+	    };
+	}
 }
