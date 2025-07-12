@@ -14,12 +14,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+/**
+ * Controls the trade UI functionality for initiating and responding to trade offers in the game.
+ *
+ * This class handles the creation and interaction of the trade button,
+ * resource selection dialogs, and player selection for trade offers and counter-offers.
+ */
 public class TradeUIController {
 
     private Supplier<Player> currentPlayerSupplier;
     private List<Player> allPlayers;
     private Button tradeButton;
 
+    
     public TradeUIController(Supplier<Player> currentPlayerSupplier, List<Player> allPlayers) {
         this.currentPlayerSupplier = currentPlayerSupplier;
         this.allPlayers = allPlayers;

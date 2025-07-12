@@ -25,8 +25,21 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
+/**
+ * Factory class for creating FXGL entities related to the game board.
+ * 
+ * Responsible for generating hexagon tiles with textures and optional number tokens.
+ * Also includes click handler logic for triggering robber movement.
+ */
 public class CatanFactory implements EntityFactory {
 
+	/**
+     * Spawns a new hexagon tile with the given {@link SpawnData}.
+     * The tile is rendered with a terrain image, optional number token, and click interaction.
+     *
+     * @param data the spawn data containing the {@link Hex} object
+     * @return the created FXGL {@link Entity} representing the hex tile
+     */
     @Spawns("hexagon")
     public Entity newHexagon(SpawnData data) {
     	

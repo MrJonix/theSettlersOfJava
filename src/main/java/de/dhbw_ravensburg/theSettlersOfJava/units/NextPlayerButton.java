@@ -13,16 +13,31 @@ import javafx.util.Duration;
 import de.dhbw_ravensburg.theSettlersOfJava.App;
 import de.dhbw_ravensburg.theSettlersOfJava.game.GameController;
 
+/**
+ * Represents a UI button that ends the current player's turn and switches to the next player.
+ * 
+ * The button includes a hover animation and an icon, and is positioned in the game UI.
+ */
 public class NextPlayerButton {
 
     private static final int SIZE = 60;
     private StackPane buttonView;
 
+    /**
+     * Constructs the NextPlayerButton and adds it to the UI at the specified position.
+     *
+     * @param x the horizontal position in the game scene
+     * @param y the vertical position in the game scene
+     */
     public NextPlayerButton(double x, double y) {
         createButtonView();
         addToUI(x, y);
     }
 
+    /**
+     * Creates the visual representation of the button including background, icon,
+     * and mouse event handlers for hover and click effects.
+     */
     private void createButtonView() {
         Rectangle background = new Rectangle(SIZE, SIZE);
         background.setFill(Color.WHITE);
@@ -31,7 +46,7 @@ public class NextPlayerButton {
         background.setArcWidth(15);
         background.setArcHeight(15);
 
-        // Lade das Icon
+        // load the icon
         Texture icon = FXGL.getAssetLoader().loadTexture("/icons/icon_NEXT.png");
         ImageView iconView = new ImageView(icon.getImage());
         iconView.setFitWidth(30);
@@ -46,6 +61,11 @@ public class NextPlayerButton {
         buttonView.setOnMouseClicked(e -> onNextPlayer());
     }
 
+    /**
+     * Increases the button scale slightly on hover.
+     *
+     * @param e the mouse event triggering the scale
+     */
     private void scaleUp(MouseEvent e) {
         ScaleTransition scale = new ScaleTransition(Duration.millis(100), buttonView);
         scale.setToX(1.1);
@@ -53,6 +73,11 @@ public class NextPlayerButton {
         scale.play();
     }
 
+    /**
+     * Resets the button scale when the mouse exits.
+     *
+     * @param e the mouse event triggering the scale reset
+     */
     private void scaleDown(MouseEvent e) {
         ScaleTransition scale = new ScaleTransition(Duration.millis(100), buttonView);
         scale.setToX(1.0);
@@ -60,17 +85,31 @@ public class NextPlayerButton {
         scale.play();
     }
 
+    /**
+     * Ends the current player's turn and transitions to the next player.
+     */
     private void onNextPlayer() {
         GameController c = App.getGameController();
         c.endTurn();
     }
 
+    /**
+     * Adds the button to the FXGL game UI and sets its position.
+     *
+     * @param x the X coordinate in the scene
+     * @param y the Y coordinate in the scene
+     */
     private void addToUI(double x, double y) {
         FXGL.getGameScene().addUINode(buttonView);
         buttonView.setTranslateX(x);
         buttonView.setTranslateY(y);
     }
 
+    /**
+     * Returns the button as a JavaFX StackPane node.
+     *
+     * @return the StackPane containing the button UI
+     */
     public StackPane getView() {
         return buttonView;
     }

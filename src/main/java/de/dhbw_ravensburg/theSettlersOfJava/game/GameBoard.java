@@ -16,6 +16,18 @@ import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Robber;
 import javafx.scene.paint.Color;
 
+
+/**
+ * Represents the full game board of Settlers of Catan.
+ *
+ * Responsibilities:
+ * - Initialize and rotate land and water hex tiles
+ * - Generate and assign number tokens and the robber
+ * - Place and validate buildings and roads
+ * - Handle resource distribution and setup phase
+ * - Visualize all board components (hexes, edges, corners, harbors)
+ * - Evaluate longest road and harbor access
+ */
 public class GameBoard {
 
 	private static final int[][] coords = {
@@ -89,6 +101,12 @@ public class GameBoard {
     private Robber robber;
     private Building setupBuilding;
 
+    /**
+     * Constructs the game board by initializing hexes, water tiles, edges, corners,
+     * and the robber. Also sets up harbor tiles and visualizes all necessary components.
+     *
+     * @param hexTypeList the list of hex types to populate the board tiles with
+     */
     public GameBoard(List<HexType> hexTypeList) {
         initializeHexes(hexTypeList);
         initializeWaterTiles();
@@ -98,6 +116,10 @@ public class GameBoard {
         initalizeHarbors();
    }
     
+    /**
+     * Initializes and places harbors on the game board using predefined water coordinates
+     * and orientations. Assigns each harbor a random trade type and visualizes it on the map.
+     */
     private void initalizeHarbors() {
     		List<HarborType> types = HarborType.generateHarborTypes();
         for (int i = 0; i < 18; i = i +2) {
@@ -124,7 +146,13 @@ public class GameBoard {
     }
 
     
-
+    /**
+     * Initializes the land hex tiles on the game board using the given hex types.
+     * Applies a random rotation to the layout and assigns number tokens.
+     * The desert tile is excluded from numbering and is used to place the robber.
+     *
+     * @param hexTypeList the shuffled list of hex types used to populate the board
+     */
     private void initializeHexes(List<HexType> hexTypeList) {
         Random random = new Random();
         boolean desert = false;
@@ -145,7 +173,8 @@ public class GameBoard {
                 number = 0; // Desert does not have a number
                 desert = true;
             } else {
-                number = desert ? numberTokens[i - 1] : numberTokens[i]; // Adjust for the shifted index due to desert
+                number = desert ? numberTokens[i - 1] : numberTokens[i]; // Add edge to graph (enemy blocks are handled during DFS traversal)
+
             }
 
             Hex tile = new Hex(type, number, new HexPosition(coord[0], coord[1]));
@@ -157,12 +186,22 @@ public class GameBoard {
         }
     }
 
+    /**
+     * Rotates a hex coordinate 60 degrees counter-clockwise in axial coordinate system.
+     *
+     * @param coord the original axial coordinate [q, r]
+     * @return the rotated coordinate after applying 60° CCW transformation
+     */
     private static int[] rotateCCW60(int[] coord) {
         int newQ = -coord[1];
         int newR = coord[0] + coord[1];
         return new int[]{newQ, newR};
     }
 
+    /**
+     * Initializes and spawns water hex tiles around the game board.
+     * These tiles form the border and are visually rendered as water.
+     */
     private void initializeWaterTiles() {
         Arrays.stream(waterCoords).forEach(coord -> {
             Hex tile = new Hex(HexType.WATER, 0, new HexPosition(coord[0], coord[1]));
@@ -172,6 +211,11 @@ public class GameBoard {
         
     }
 
+    /**
+     * Visualizes all structural components of the game board.
+     * This includes hex edges, corners, roads, and buildings.
+     * Used after initialization or to refresh the board view.
+     */
     private void visualizeEdgesAndCorners() {
         hexEdges.forEach(edge -> edge.visualizeEdge(Color.WHITE));
         hexCorners.forEach(corner -> corner.visualizeCorner(Color.WHITE));
@@ -179,6 +223,14 @@ public class GameBoard {
         buildings.forEach(Building::visualize);
     }
 
+    /**
+     * Attempts to build a road at the given location for the specified player.
+     * Validates placement rules, including adjacency to the player's existing structures.
+     * In the setup phase, ensures the road is connected to the player's placed building.
+     *
+     * @param road the road to be built
+     * @return true if the road was successfully built, false otherwise
+     */
     public boolean buildRoad(Road road) {
         if (roads.stream().anyMatch(existingRoad -> existingRoad.getLocation().equals(road.getLocation()))) {
             FXGL.getDialogService().showMessageBox("Road already exists at this location!");
@@ -186,14 +238,14 @@ public class GameBoard {
         }
 
         if (!isAdjacentToPlayerStructure(road.getLocation(), road.getOwner())) {
-            FXGL.getDialogService().showMessageBox("Road must be built adjacent to an existing building or road!");
+            FXGL.getDialogService().showMessageBox("Road must be adjacent to your palced building!");
             return false;
         }
         
         if(App.getGameController().getCurrentGameState().equals(GameState.SETUP_PHASE)) {
         	HexCorner[] corners = road.getLocation().getCorners();
         	if (!(corners[0].equals(setupBuilding.getLocation()) || corners[1].equals(setupBuilding.getLocation()))){
-        		FXGL.getDialogService().showMessageBox("Road musst be adjacent to a your placed building");
+        		FXGL.getDialogService().showMessageBox("Road must be adjacent to a your placed building");
         		return false;
         	}
         	
@@ -210,6 +262,14 @@ public class GameBoard {
         return true;
     }
 
+    /**
+     * Checks whether the specified road location is adjacent to an existing structure
+     * (road or building) owned by the given player.
+     *
+     * @param roadLocation the hex edge where the road is intended to be placed
+     * @param owner the player attempting to build the road
+     * @return true if the road is adjacent to a player's existing building or road, false otherwise
+     */
     private boolean isAdjacentToPlayerStructure(HexEdge roadLocation, Player owner) {
         return buildings.stream().anyMatch(building -> 
                     building.getOwner().equals(owner) && roadLocation.isAdjacentToCorner(building.getLocation())) 
@@ -218,6 +278,14 @@ public class GameBoard {
                     existingRoad.getOwner().equals(owner) && roadLocation.isAdjacentTo(existingRoad.getLocation()));
     }
 
+    /**
+     * Attempts to build a building at the specified location.
+     * Validates placement rules, including distance to other buildings, player eligibility, and setup-phase behavior.
+     * If valid, adds the building to the board and visualizes it.
+     *
+     * @param building the building to be placed on the board
+     * @return true if the building was successfully built, false otherwise
+     */
     public boolean buildBuilding(Building building) {
         HexCorner corner = building.getLocation();
         Player owner = building.getOwner();
@@ -251,6 +319,12 @@ public class GameBoard {
         return true;
     }
     
+    /**
+     * Highlights all adjacent hex edges around the specified corner during the setup phase.
+     * This allows the player to select a valid edge for placing the initial road.
+     *
+     * @param loc the corner where the initial settlement was placed
+     */
 	private void buildSetupRoad(HexCorner loc) {
 
 		for(HexEdge e : hexEdges) {
@@ -262,6 +336,16 @@ public class GameBoard {
 		
 	}
 
+	/**
+	 * Checks if a building already exists at the specified corner that would block the new building.
+	 * If the existing building is a settlement owned by the same player and the new building is a city,
+	 * it triggers an upgrade instead of blocking.
+	 *
+	 * @param corner   the location to check
+	 * @param owner    the owner attempting to build
+	 * @param building the new building to be placed
+	 * @return true if the location is blocked by an existing building (not upgradable), false otherwise
+	 */
     private boolean isExistingBuildingBlocking(HexCorner corner, Player owner, Building building) {
         for (Building existingBuilding : buildings) {
             HexCorner buildingLocation = existingBuilding.getLocation();
@@ -270,7 +354,7 @@ public class GameBoard {
                     // Check if we are trying to build a City on top of an existing Settlement
                     if (building instanceof City) {
                         upgradeToCity(existingBuilding, building);
-                        return false; // Return false because we can upgrade and the caller doesn't need to block this action
+                        return false; // Return false to indicate no conflict,upgrade is allowed and handled internally
                     }
                 }
                 return true; // There's a building on this corner by the same player, and it's not an upgrade scenario
@@ -279,6 +363,13 @@ public class GameBoard {
         return false; // No building blocks this action
     }
 
+    /**
+     * Replaces an existing settlement with a new city at the same location.
+     * The old building is removed from the world and the new city is visualized and added to the board.
+     *
+     * @param existingBuilding the existing settlement to be replaced
+     * @param newBuilding      the new city building that will replace the settlement
+     */
     private void upgradeToCity(Building existingBuilding, Building newBuilding) {
         buildings.remove(existingBuilding);
         buildings.add(newBuilding);
@@ -286,11 +377,27 @@ public class GameBoard {
         existingBuilding.getEntity().removeFromWorld();
     }
 
+    /**
+     * Checks if the specified hex corner is too close to any existing building.
+     * According to the game rules, buildings must not be placed directly adjacent to each other.
+     *
+     * @param corner the corner to check
+     * @return true if there is another building on any connected corner, false otherwise
+     */
     private boolean isTooNearOtherBuilding(HexCorner corner) {
         return getConnectedCorners(corner).stream().anyMatch(adjacentCorner -> 
             buildings.stream().anyMatch(building -> building.getLocation().equals(adjacentCorner)));
     }
 
+    /**
+     * Checks whether the given player is allowed to build at the specified corner.
+     * In regular gameplay, a building must be connected to one of the player's roads
+     * unless it's one of the first two buildings during the setup phase.
+     *
+     * @param corner the hex corner where the player wants to build
+     * @param owner the player attempting to build
+     * @return true if the player is allowed to build at the specified corner, false otherwise
+     */
     private boolean isPlayerAllowedToBuild(HexCorner corner, Player owner) {
         if (getBuildingsFromPlayer(owner).size() >= 2) {
             return roads.stream().anyMatch(road -> 
@@ -299,6 +406,13 @@ public class GameBoard {
         return true;
     }
 
+    /**
+     * Returns a list of all hex corners directly connected to the given corner
+     * via existing hex edges. This represents the immediate neighboring corners.
+     *
+     * @param corner the corner for which to find connected neighbors
+     * @return a list of adjacent hex corners
+     */
     public List<HexCorner> getConnectedCorners(HexCorner corner) {
         return hexEdges.stream()
             .filter(edge -> Arrays.asList(edge.getCorners()).contains(corner))
@@ -307,6 +421,12 @@ public class GameBoard {
             .collect(Collectors.toList());
     }
     
+    /**
+     * Determines all valid starting positions for new settlements during setup.
+     * A valid position must not be adjacent to any existing buildings.
+     *
+     * @return a list of all available hex corners for initial settlement placement
+     */
     public List<HexCorner> getPossibleStartPositions() {
         List<HexCorner> list = new ArrayList<>();
         for (HexCorner c : hexCorners) {
@@ -331,12 +451,24 @@ public class GameBoard {
     }
 
 
+    /**
+     * Distributes resources to players based on the rolled number.
+     * Only hexes with the matching number token and not occupied by the robber are considered.
+     *
+     * @param total the number rolled by the dice
+     */
     public void distributeResources(int total) {
         hexes.stream()
             .filter(hex -> hex.getNumberToken() == total && !hex.equals(robber.getLocation()))
             .forEach(this::distributeResourcesForHex);
     }
 
+    /**
+     * Distributes resources from a specific hex to all adjacent buildings.
+     * Skips hexes without a resource type.
+     *
+     * @param hex the hex from which to distribute resources
+     */
     private void distributeResourcesForHex(Hex hex) {
         ResourceType resource = hex.getHexType().getResourceType();
         if (resource == null) return;
@@ -347,6 +479,13 @@ public class GameBoard {
             .forEach(building -> giveResourcesToPlayer(resource, building));
     }
 
+    /**
+     * Transfers resources to the owner of a building based on its type.
+     * Settlements provide 1 resource, cities 2 resources.
+     *
+     * @param resource  the type of resource to be given
+     * @param building  the building whose owner receives the resources
+     */
     private void giveResourcesToPlayer(ResourceType resource, Building building) {
         Player owner = building.getOwner();
         if (owner == null) return;
@@ -354,6 +493,12 @@ public class GameBoard {
         owner.addResources(resource, amount);
     }
 
+    /**
+     * Calculates and assigns the six corners and edges for a given hex tile.
+     * Corners are shared with adjacent hexes, and edges are formed between adjacent corners.
+     *
+     * @param hex the hex tile for which corners and edges are calculated
+     */
     private void calculateCornersAndEdgesForHex(Hex hex) {
         HexPosition pos = hex.getPosition();
         int q = pos.getQ();
@@ -386,12 +531,28 @@ public class GameBoard {
         createAndAddHexEdges(corners);
     }
 
+    /**
+     * Creates a HexCorner object representing the shared corner between the given three hexes
+     * and adds it to the global set of hex corners.
+     *
+     * @param hex the main hex tile
+     * @param h1 the first adjacent hex
+     * @param h2 the second adjacent hex
+     * @return the created HexCorner instance
+     */
     private HexCorner createAndAddHexCorner(Hex hex, Hex h1, Hex h2) {
         HexCorner corner = new HexCorner(hex, h1, h2);
         hexCorners.add(corner);
         return corner;
     }
 
+    /**
+     * Creates and adds all six hex edges for a given array of corners.
+     * Each edge connects two consecutive corners in the array.
+     * Also assigns a visual orientation to each edge based on its position.
+     *
+     * @param corners an array of six HexCorner instances representing the corners of a hex tile
+     */
     private void createAndAddHexEdges(HexCorner[] corners) {
         for (int i = 0; i < 6; i++) {
             HexCorner corner1 = corners[i];
@@ -420,6 +581,13 @@ public class GameBoard {
         }
     }
     
+    /**
+     * Retrieves all players who own buildings adjacent to the given hex.
+     * Used for determining possible resource distribution or trade access.
+     *
+     * @param hex the hex tile to check
+     * @return list of players with adjacent buildings
+     */
     public List<Player> getPlayersAdjacentToHex(Hex hex) {
         // Sammle alle Spieler, die an den Ecken angrenzen, an denen Gebäude stehen
         return buildings.stream()
@@ -434,18 +602,42 @@ public class GameBoard {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Retrieves the hex tile at the specified position.
+     *
+     * @param pos the position to look for
+     * @return the hex located at the given position, or null if none exists
+     */
     public Hex getHexByPosition(HexPosition pos) {
         return hexes.stream().filter(hex -> hex.getPosition().equals(pos)).findFirst().orElse(null);
     }
 
+    /**
+     * Returns all buildings owned by the specified player.
+     *
+     * @param player the player whose buildings are to be retrieved
+     * @return a set of buildings owned by the player
+     */
     private Set<Building> getBuildingsFromPlayer(Player player) {
         return buildings.stream().filter(building -> building.getOwner().equals(player)).collect(Collectors.toSet());
     }
 
+    /**
+     * Gets the robber instance currently on the game board.
+     *
+     * @return the robber object
+     */
     public Robber getRobber() {
         return robber;
     }
     
+    /**
+     * Builds a graph representation of all roads owned by the specified player.
+     * The graph connects corners with edges representing roads.
+     *
+     * @param player the player whose roads are used to build the graph
+     * @return a map where each corner is connected to its adjacent corners by player's roads
+     */
     private Map<HexCorner, Set<HexCorner>> buildPlayerRoadGraph(Player player) {
         Map<HexCorner, Set<HexCorner>> graph = new HashMap<>();
 
@@ -464,11 +656,24 @@ public class GameBoard {
         return graph;
     }
 
+    /**
+     * Checks whether there is an enemy building at the given corner.
+     *
+     * @param corner the hex corner to check
+     * @param currentPlayer the player to compare ownership against
+     * @return true if a building from another player is located at the corner
+     */
     private boolean hasEnemyBuilding(HexCorner corner, Player currentPlayer) {
         return buildings.stream()
             .anyMatch(b -> b.getLocation().equals(corner) && !b.getOwner().equals(currentPlayer));
     }
 
+    /**
+     * Calculates the longest continuous road for the given player using DFS.
+     *
+     * @param player the player whose roads to evaluate
+     * @return the length of the longest road
+     */
     public int getLongestRoadLength(Player player) {
         Map<HexCorner, Set<HexCorner>> roadGraph = buildPlayerRoadGraph(player);
         int longest = 0;
@@ -483,6 +688,16 @@ public class GameBoard {
         return longest;
     }
 
+    /**
+     * Recursive depth-first search to find the longest path in the player's road network.
+     *
+     * @param graph          the road graph of the player
+     * @param current        the current hex corner in traversal
+     * @param prev           the previous hex corner visited
+     * @param visitedEdges   the set of visited edges (as unordered corner pairs)
+     * @param player         the player owning the roads
+     * @return the length of the longest found path from this node
+     */
     private int dfsLongestPath(
         Map<HexCorner, Set<HexCorner>> graph,
         HexCorner current,
@@ -497,7 +712,7 @@ public class GameBoard {
 
             if (visitedEdges.contains(edge)) continue;
 
-            // Blockiere durch gegnerisches Gebäude
+            // Block if the neighbor corner contains an enemy building (except at endpoints)
             if (hasEnemyBuilding(neighbor, player) && graph.getOrDefault(neighbor, Collections.emptySet()).size() > 1) continue;
 
             visitedEdges.add(edge);
@@ -510,6 +725,13 @@ public class GameBoard {
         return maxLength;
     }
 
+    /**
+     * Finds the correct harbor edge on a given hex position and orientation, if it exists.
+     *
+     * @param pos the hex position containing the harbor
+     * @param orientation the orientation of the harbor on the hex
+     * @return the corresponding HexEdge if found; otherwise null
+     */
     private HexEdge getHarborPosition(HexPosition pos, HarborOrientation orientation) {
         Hex hex = getHexByPosition(pos);
         HexCorner[] corners = hex.getAdjacentCornersArray();
@@ -548,6 +770,12 @@ public class GameBoard {
         return null;
     }
     
+    /**
+     * Returns the set of harbor types a player has access to based on adjacent buildings.
+     *
+     * @param p the player whose accessible harbor types are to be determined
+     * @return a set of HarborType values available to the player
+     */
     public Set<HarborType> getAvailibeHarborTypes(Player p) {
         Set<HarborType> harborTypes = new HashSet<>();
         
@@ -567,7 +795,7 @@ public class GameBoard {
             }
             
             if (playerHasAccess) {
-                // The player has access to this harbor and its type is not already in the list
+            	// These tiles form the outer border of the map and are rendered as water hexes.
             	harborTypes.add(harbor.getHarborType());
             }
         }

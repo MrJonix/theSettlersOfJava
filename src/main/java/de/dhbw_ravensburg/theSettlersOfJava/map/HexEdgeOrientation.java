@@ -1,16 +1,24 @@
 package de.dhbw_ravensburg.theSettlersOfJava.map;
+
 /**
- * Represents the orientation of a hex edge.
+ * Represents the orientation of an edge between two hex corners.
+ * Used for layout, rendering, and harbor texture alignment.
  */
 public enum HexEdgeOrientation {
+
+    // Edge runs from left corner to right corner
     LEFT_TO_RIGHT,
+
+    // Edge runs from right corner to left corner
     RIGHT_TO_LEFT,
+
+    // Edge is vertically or horizontally aligned without clear direction
     STRAIGHT;
-    
+
     /**
-     * Gets a description of the orientation for better readability or debugging.
+     * Returns a readable description of the edge orientation.
      *
-     * @return a string description of the orientation
+     * @return a string representation of the orientation
      */
     @Override
     public String toString() {

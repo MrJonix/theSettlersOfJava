@@ -18,14 +18,15 @@ import javafx.util.Duration;
 import java.util.Objects;
 
 /**
- * Represents an edge between two hexagonal corners.
+ * Represents an edge between two hexagonal corners on the game board.
+ * Used for placing roads, harbors, and handling user interactions.
  */
 public class HexEdge {
 
     private final HexCorner start;
     private final HexCorner end;
     private final HexEdgeOrientation orientation;
-    private Entity highlightEntity;
+    private Entity highlightEntity;	// Holds the FXGL entity representing the highlight line (if active)
 
     /**
      * Constructs a HexEdge given two corners and an orientation.
@@ -33,6 +34,7 @@ public class HexEdge {
      * @param start       the start corner of the edge
      * @param end         the end corner of the edge
      * @param orientation the orientation of the edge
+     * @throws IllegalArgumentException if any parameter is null
      */
     public HexEdge(HexCorner start, HexCorner end, HexEdgeOrientation orientation) {
         if (start == null || end == null || orientation == null) {
@@ -44,19 +46,40 @@ public class HexEdge {
 
     }
 
+    /**
+     * Returns the orientation of this edge.
+     *
+     * @return the edge orientation
+     */
     public HexEdgeOrientation getHexEdgeOrientation() {
         return orientation;
     }
 
+    /**
+     * Returns an array containing the two corners of the edge.
+     *
+     * @return an array with start and end corners
+     */
     public HexCorner[] getCorners() {
         return new HexCorner[]{start, end};
     }
 
+    /**
+     * Returns a string representation of the edge showing both corners.
+     *
+     * @return a string showing the edge endpoints
+     */
     @Override
     public String toString() {
         return String.format("HexEdge between %s and %s", start, end);
     }
 
+    /**
+     * Checks equality based on corner pairs, regardless of order.
+     *
+     * @param obj the object to compare
+     * @return true if the same corners are connected
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -66,15 +89,20 @@ public class HexEdge {
                (start.equals(other.end) && end.equals(other.start));
     }
 
+    /**
+     * Computes a hash code based on both edge corners.
+     *
+     * @return the hash code of this edge
+     */
     @Override
     public int hashCode() {
         return Objects.hash(start) + Objects.hash(end);
     }
 
     /**
-     * Visualizes the edge by drawing a line between its corners with the specified color.
+     * Visualizes the edge using a colored line between its two corners.
      *
-     * @param color the color of the line
+     * @param color the color to use for the line
      */
     public void visualizeEdge(Color color) {
         double x1 = start.getX();
@@ -94,6 +122,14 @@ public class HexEdge {
         line.setOnMouseClicked(event -> handleMouseClick());
     }
     
+    /**
+     * Visualizes a harbor edge using a textured image, positioned and scaled correctly.
+     *
+     * @param orientation the orientation of the harbor (used to determine texture)
+     * @param color       unused (reserved for future customizations)
+     * @param thickness   currently unused; intended for sizing adjustments
+     */
+
     public void visualizeHarborEdge(HarborOrientation orientation, Color color, double thickness) {
         double x1 = start.getX();
         double y1 = start.getY();
@@ -134,7 +170,8 @@ public class HexEdge {
 
 
     /**
-     * Handles a mouse click on the line.
+     * Handles mouse click interactions for the edge.
+     * Attempts to build a road for the current player.
      */
     private void handleMouseClick() {
         Player currentPlayer = App.getGameController().getCurrentPlayer();
@@ -147,16 +184,31 @@ public class HexEdge {
         });
     }
 
+    /**
+     * Returns true if this edge is adjacent to the given edge.
+     *
+     * @param otherEdge the edge to check adjacency with
+     * @return true if the edges share a common corner
+     */
     public boolean isAdjacentTo(HexEdge otherEdge) {
         if (otherEdge == null) return false;
         return start.equals(otherEdge.start) || start.equals(otherEdge.end) ||
                end.equals(otherEdge.start) || end.equals(otherEdge.end);
     }
 
+    /**
+     * Returns true if this edge is adjacent to the given corner.
+     *
+     * @param corner the corner to check
+     * @return true if the corner is part of this edge
+     */
     public boolean isAdjacentToCorner(HexCorner corner) {
         return start.equals(corner) || end.equals(corner);
     }
 
+    /**
+     * Highlights the edge with an animated glow and interactive stroke effect.
+     */
     public void highlight() {
     	double x1 = start.getX();
     	double y1 = start.getY();
@@ -209,6 +261,9 @@ public class HexEdge {
         });
     }
 
+    /**
+     * Removes the visual highlight from the edge.
+     */
     public void removeHighlight() {
         if (highlightEntity != null) {
             highlightEntity.removeFromWorld();

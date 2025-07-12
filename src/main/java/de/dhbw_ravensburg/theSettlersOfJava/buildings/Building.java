@@ -66,7 +66,7 @@ public abstract class Building {
     public abstract String getImagePath();
 
     /**
-     * Visualizes the building at its location in the game world.
+     * Visualizes the building at its location in the game world using FXGL.
      */
     public void visualize() {
         Texture texture = FXGL.getAssetLoader().loadTexture(getImagePath());

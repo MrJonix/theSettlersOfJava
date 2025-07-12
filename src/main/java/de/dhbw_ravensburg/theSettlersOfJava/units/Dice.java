@@ -1,4 +1,3 @@
-// Dice.java
 package de.dhbw_ravensburg.theSettlersOfJava.units;
 
 import java.util.Random;
@@ -26,19 +25,31 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+/**
+ * Represents a clickable dice button in the game that triggers the dice roll process,
+ * displays an animated result view, and interacts with the GameController.
+ */
 public class Dice {
     public static final int SIZE = 60;
     private final Random random = new Random();
     private StackPane diceView;
     private VBox rollResultView;
 
-    
+    /**
+     * Constructs a Dice UI component and adds it to the game scene at the specified coordinates.
+     *
+     * @param x the horizontal position for the dice UI
+     * @param y the vertical position for the dice UI
+     */
     public Dice(double x, double y) {
         createDiceView();
         createRollResultView();
         addToUI(x, y);
     }
 
+    /**
+     * Creates the visual component of the dice button, including image and hover animation.
+     */
     private void createDiceView() {
         Rectangle diceBackground = new Rectangle(SIZE, SIZE);
         diceBackground.setFill(Color.WHITE);
@@ -47,17 +58,16 @@ public class Dice {
         diceBackground.setArcWidth(15);
         diceBackground.setArcHeight(15);
 
-        // Geänderter Teil: Bild anstelle von Text für den Würfelknopf
         ImageView diceImage = new ImageView(FXGL.getAssetLoader().loadTexture("/dice/dice3D.png").getImage());
-        diceImage.setFitWidth(SIZE * 0.7); // Angepasste Größe des Bildes
+        diceImage.setFitWidth(SIZE * 0.7); 
         diceImage.setFitHeight(SIZE * 0.7);
         diceImage.setPreserveRatio(true);
         diceImage.setSmooth(true);
 
-        diceView = new StackPane(diceBackground, diceImage); // Bild statt Text
+        diceView = new StackPane(diceBackground, diceImage);
         diceView.setAlignment(Pos.CENTER);
 
-        // Hover-Effekt
+        // Hover-effect
         diceView.setOnMouseEntered(e -> {
             ScaleTransition scale = new ScaleTransition(Duration.millis(100), diceView);
             scale.setToX(1.1);
@@ -72,9 +82,13 @@ public class Dice {
             scale.play();
         });
 
+        //Click to roll dice
         diceView.setOnMouseClicked(e -> rollDice());
     }
 
+    /**
+     * Initializes the UI container that will show the result of the dice roll with animation.
+     */
     private void createRollResultView() {
         rollResultView = new VBox(10);
         rollResultView.setAlignment(Pos.CENTER);
@@ -88,6 +102,12 @@ public class Dice {
     }
 
 
+    /**
+     * Adds the dice button and result display to the FXGL UI layer at the specified position.
+     *
+     * @param x the X position for the dice button
+     * @param y the Y position for the dice button
+     */
     private void addToUI(double x, double y) {
         // Füge beide UI-Elemente zum GameScene UI-Layer hinzu
         FXGL.getGameScene().addUINode(diceView);
@@ -100,10 +120,12 @@ public class Dice {
 
     }
 
+    /**
+     * Rolls two dice and triggers the result animation if allowed by the current game state.
+     */
     private void rollDice() {
         GameController c = App.getGameController();
         
-        // Nur würfeln, wenn der aktuelle State ROLL_DICE ist
         if (c.getCurrentGameState() != GameState.ROLL_DICE) {
             FXGL.getNotificationService().pushNotification("Du kannst jetzt nicht würfeln!");
             return;
@@ -117,22 +139,29 @@ public class Dice {
         c.onDiceRolled(total); // Delegiere Ergebnis an GameController
     }
 
+    /**
+     * Displays the result of the dice roll with images, text, and animation.
+     *
+     * @param dice1 the result of the first die
+     * @param dice2 the result of the second die
+     * @param total the sum of both dice
+     */
     private void showDiceRollAnimation(int dice1, int dice2, int total) {
-        // Lade die Würfelbilder
+        // load dice image
         ImageView diceImage1 = createDiceImageView(dice1);
         ImageView diceImage2 = createDiceImageView(dice2);
         
-        // Container für die beiden Würfel
+        // container for both dice 
         HBox diceContainer = new HBox(30);
         diceContainer.setAlignment(Pos.CENTER);
         diceContainer.getChildren().addAll(diceImage1, diceImage2);
         
-        // Text für das Gesamtergebnis
+        // text for the sum value after rolling dice
         Text resultText = new Text("Würfelergebnis: " + total);
         resultText.setFont(Font.font("Myriad Pro", FontWeight.BOLD, 28));
         resultText.setFill(Color.BLACK);
         
-        // Hintergrund für bessere Lesbarkeit (weißer Hintergrund)
+        // White background, for better UX
         Rectangle background = new Rectangle(300, 200);
         background.setFill(Color.WHITE);
         background.setStroke(Color.BLACK);
@@ -140,29 +169,36 @@ public class Dice {
         background.setArcWidth(20);
         background.setArcHeight(20);
         
-        // Alles zusammenfügen
+        // bring together
         rollResultView.getChildren().clear();
         VBox contentBox = new VBox(20);
         contentBox.setAlignment(Pos.CENTER);
         contentBox.getChildren().addAll(diceContainer, resultText);
         
         StackPane completeView = new StackPane(background, contentBox);
-        // Positioniere das Ergebnis-Display in der Bildschirmmitte
+        // position result in the center of the frame
         rollResultView.setTranslateX(FXGL.getAppWidth() / 2 - 151.5);
         rollResultView.setTranslateY(FXGL.getAppHeight() / 2 - 101.5);
         rollResultView.getChildren().add(completeView);
 
-        // Animation erstellen
+        // Create animation
         createRollAnimation();
     }
 
+    /**
+     * Creates an ImageView for the specified dice value.
+     * Falls back to a simple text display if the image cannot be loaded.
+     *
+     * @param diceValue the rolled dice value (1-6)
+     * @return an ImageView representing the die face
+     */
     private ImageView createDiceImageView(int diceValue) {
         try {
-            // Lade das entsprechende Würfelbild
+            // load pertaining dice image
         	Texture diceTexture = FXGL.getAssetLoader().loadTexture("/dice/dice_" + diceValue + ".png");
         	ImageView imageView = new ImageView(diceTexture.getImage());
             
-            // Skaliere das Bild auf eine angemessene Größe
+            // scaling image to an appropriate size
             imageView.setFitWidth(80);
             imageView.setFitHeight(80);
             imageView.setPreserveRatio(true);
@@ -170,7 +206,7 @@ public class Dice {
             
             return imageView;
         } catch (Exception e) {
-            // Fallback: Erstelle einen Text-basierten Würfel falls Bild nicht geladen werden kann
+            // Fallback: invisible image placeholder
             Text fallbackText = new Text(String.valueOf(diceValue));
             fallbackText.setFont(Font.font("Myriad Pro", FontWeight.BOLD, 40));
             fallbackText.setFill(Color.BLACK);
@@ -184,7 +220,7 @@ public class Dice {
             
             new StackPane(fallbackBg, fallbackText);
             
-            // Konvertiere zu ImageView (vereinfacht)
+            // Convert to image view (simplified)
             ImageView fallbackView = new ImageView();
             fallbackView.setFitWidth(80);
             fallbackView.setFitHeight(80);
@@ -194,6 +230,9 @@ public class Dice {
         }
     }
 
+    /**
+     * Creates and plays the animation for showing and hiding the dice result.
+     */
     private void createRollAnimation() {
         // Fade In Animation
         FadeTransition fadeIn = new FadeTransition(Duration.millis(300), rollResultView);
@@ -207,7 +246,7 @@ public class Dice {
         scaleIn.setToX(1.0);
         scaleIn.setToY(1.0);
         
-        // Pause für 3 Sekunden
+        // 3 second pause
         PauseTransition pause = new PauseTransition(Duration.seconds(3));
         
         // Fade Out Animation
@@ -222,10 +261,10 @@ public class Dice {
         scaleOut.setToX(0.5);
         scaleOut.setToY(0.5);
         
-        // Sequenz erstellens
+        // create sequence
         SequentialTransition sequence = new SequentialTransition();
         
-        // Zeige das Ergebnis
+        // show result
         sequence.getChildren().add(new javafx.animation.Transition() {
             {
                 setCycleDuration(Duration.millis(1));
@@ -238,12 +277,17 @@ public class Dice {
         
         sequence.getChildren().addAll(fadeIn, scaleIn, pause, fadeOut, scaleOut);
         
-        // Verstecke das Ergebnis am Ende
+        // hide result (at the end)
         sequence.setOnFinished(e -> rollResultView.setVisible(false));
         
         sequence.play();
     }
 
+    /**
+     * Returns the dice button as a JavaFX StackPane.
+     *
+     * @return the dice button UI node
+     */
     public StackPane getView() {
         return diceView;
     }

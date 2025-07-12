@@ -27,6 +27,11 @@ import javafx.scene.Cursor;
 import javafx.scene.input.KeyCode;
 
 
+/**
+ * Main FXGL game application for SettlersOfJava.
+ * 
+ * Initializes game settings, user input, scene, camera zoom, and taskbar integration.
+ */
 public class App extends GameApplication {
     private static int WIDTH = 1920;
     private static int HEIGHT = 1080;
@@ -34,6 +39,11 @@ public class App extends GameApplication {
     private double zoom = 1.0;
     private static GameStatus status = new GameStatus();
     
+    /**
+     * Initializes the FXGL game settings such as resolution, title, fullscreen, and menus.
+     *
+     * @param settings the FXGL game settings to configure
+     */
 	@Override
 	protected void initSettings(GameSettings settings) {
         settings.setWidth(WIDTH);
@@ -54,6 +64,9 @@ public class App extends GameApplication {
         });
 	}
     
+	/**
+     * Initializes user input for zooming and camera movement using keyboard keys.
+     */
     @Override
     protected void initInput() {
         FXGL.getGameScene().getRoot().setCursor(Cursor.DEFAULT);
@@ -103,12 +116,23 @@ public class App extends GameApplication {
         }, KeyCode.RIGHT);
     }
 
+    /**
+     * Moves the camera viewport by the specified amount.
+     *
+     * @param dx horizontal shift
+     * @param dy vertical shift
+     */
     private void moveCamera(double dx, double dy) {
         Viewport viewport = getGameScene().getViewport();
         viewport.setX(viewport.getX() + dx);
         viewport.setY(viewport.getY() + dy);
     }
     
+    /**
+     * Zooms the camera in or out and keeps the viewport centered.
+     *
+     * @param delta the zoom increment (positive to zoom in, negative to zoom out)
+     */
     private void zoomBy(double delta) {
         double oldZoom = zoom;
         zoom = Math.max(0.1, zoom + delta);
@@ -127,6 +151,11 @@ public class App extends GameApplication {
         viewport.setY(centerY - appHeight / (2 * zoom));
     }
 
+    /**
+     * Sets the taskbar icon image for the game window, if supported by the OS.
+     *
+     * @param res the resource path to the icon image
+     */
     private void setTaskbar(String res) {
         if (Taskbar.isTaskbarSupported()) {
             Taskbar taskbar = Taskbar.getTaskbar();
@@ -136,7 +165,9 @@ public class App extends GameApplication {
             }
         }
     }
-    
+    /**
+     * Initializes the game logic, sets up the board and controller, and centers the viewport.
+     */
     @Override
     protected void initGame() {
         getGameWorld().addEntityFactory(new CatanFactory());
@@ -150,13 +181,29 @@ public class App extends GameApplication {
         viewport.setY(pos.getY() - HEIGHT / 2);
     }
     
+    /**
+     * Returns the global game controller instance.
+     *
+     * @return the game controller
+     */
     public static GameController getGameController() {
     	return controller;
     }
+    
+    /**
+     * Returns the shared game status object.
+     *
+     * @return the game status
+     */
     public static GameStatus getGameStatus() {
 		return status;
     }
-    	
+    
+    /**
+     * Entry point to launch the FXGL game application.
+     *
+     * @param args command line arguments
+     */
 	public static void main(String[] args) {
 	    launch(args);
 	}

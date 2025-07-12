@@ -20,19 +20,19 @@ public class Settlement extends Building {
     private static final Map<ResourceType, Integer> SETTLEMENT_COST = createSettlementCost();
 
     /**
-     * Constructs a Settlement at a specific location owned by a player.
+     * Creates a settlement at the specified hex corner, owned by a player.
      *
      * @param location the hex corner location of the settlement
-     * @param owner    the player who owns the settlement
+     * @param owner the player who owns the settlement
      */
     public Settlement(HexCorner location, Player owner) {
         super(location, owner, SETTLEMENT_COST);
     }
 
     /**
-     * Gets the victory points provided by the settlement.
+     * Gets the number of victory points provided by the settlement.
      *
-     * @return the number of victory points
+     * @return one (1) victory point
      */
     @Override
     public int getVictoryPoints() {
@@ -50,7 +50,7 @@ public class Settlement extends Building {
     }
 
     /**
-     * Visualizes the settlement at its location in the game world.
+     * Visualizes the settlement on the game board and attaches a click action for upgrades.
      */
     @Override
     public void visualize() {
@@ -73,7 +73,8 @@ public class Settlement extends Building {
     }
 
     /**
-     * Handles the click action for the settlement entity, allowing for upgrades.
+     * Handles the click interaction on the settlement.
+     * Allows the current player to attempt an upgrade to a city.
      */
     private void handleClick() {
         if (getOwner().equals(App.getGameController().getCurrentPlayer())) {
@@ -89,10 +90,11 @@ public class Settlement extends Building {
     }
 
     /**
-     * Initializes the settlement cost map.
+     * Creates the resource cost map for building a settlement.
      *
      * @return an unmodifiable map representing the settlement cost
      */
+
     private static Map<ResourceType, Integer> createSettlementCost() {
         Map<ResourceType, Integer> cost = new HashMap<>();
         cost.put(ResourceType.WOOD, 1);
