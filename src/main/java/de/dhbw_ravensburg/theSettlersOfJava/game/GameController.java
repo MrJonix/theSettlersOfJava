@@ -133,9 +133,10 @@ public class GameController {
 
 	public void nextPhase() {
 	    if (currentState == GameState.ACTION_PHASE) {
-	    	trade();
+	    	//trade();
 	        System.out.println("Du kannst handeln oder bauen oder deinen Zug beenden.");
 	        currentState = GameState.END_TURN;
+			updateTradeUI();
         	nextPhase();
 	        return;
 	    }
@@ -147,14 +148,16 @@ public class GameController {
 	        case ROLL_DICE:
 	        	currentState = GameState.ACTION_PHASE;
 	        	nextPlayerbutton.getView().setVisible(true);
-	        	trade();
+	    		updateTradeUI();
 	            break;
 	        case ROBBER_PHASE:
 	        	currentState = GameState.ACTION_PHASE;
 	        	nextPlayerbutton.getView().setVisible(true);
+	    		updateTradeUI();
 	            break;
 	        case END_TURN:
 	        	currentState = GameState.ROLL_DICE;
+	        	tradeUI.hideTradeButton();
 	            rollDice();
 	            break;
 	        default:
@@ -264,14 +267,16 @@ public class GameController {
 	 
 	}
 
-	public void trade() {
-	    if (!isActionPhase()) return;
-		tradeUI.showTradeButton();
-	    System.out.println("Handeln...");
+	public void updateTradeUI() {
+	    if (isActionPhase()) {
+	        tradeUI.showTradeButton();
+	    } else {
+	        tradeUI.hideTradeButton();
+	    }
 	}
 
 	public void build() {
-	    if (!isActionPhase()) return;
+	    if (!isActionPhase())return;
 	    System.out.println("Bauen...");
 	}
 
