@@ -13,6 +13,7 @@ import de.dhbw_ravensburg.theSettlersOfJava.graphics.PlayerInfoUI;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.view.DiscardResourcesView;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.view.PlayerSelectionView;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.view.TradeUIController;
+import de.dhbw_ravensburg.theSettlersOfJava.graphics.view.WinView;
 import de.dhbw_ravensburg.theSettlersOfJava.map.Hex;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.HexType;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
@@ -156,11 +157,11 @@ public class GameController {
 	 */
 	private void debugStartResources() {
 	    for (Player player : players) {
-	        player.addResources(ResourceType.WOOD, 10);
-	        player.addResources(ResourceType.BRICK, 10);
-	        player.addResources(ResourceType.WHEAT, 5);
-	        player.addResources(ResourceType.WOOL, 2);
-	        player.addResources(ResourceType.ORE, 3);
+	        player.addResources(ResourceType.WOOD, 20);
+	        player.addResources(ResourceType.BRICK, 20);
+	        player.addResources(ResourceType.WHEAT, 20);
+	        player.addResources(ResourceType.WOOL, 20);
+	        player.addResources(ResourceType.ORE, 20);
 	    }
 	}
 	

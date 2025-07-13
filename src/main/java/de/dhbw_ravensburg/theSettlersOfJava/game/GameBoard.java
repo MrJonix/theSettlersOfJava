@@ -5,6 +5,8 @@ import static com.almasb.fxgl.dsl.FXGL.spawn;
 import java.util.*;
 import java.util.stream.Collectors;
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.entity.components.IrremovableComponent;
+import com.almasb.fxgl.texture.Texture;
 
 import de.dhbw_ravensburg.theSettlersOfJava.App;
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.*;
@@ -14,6 +16,8 @@ import de.dhbw_ravensburg.theSettlersOfJava.resources.HexType;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Robber;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
 
@@ -114,8 +118,22 @@ public class GameBoard {
         robber.visualize();
         visualizeEdgesAndCorners();
         initalizeHarbors();
+        initializeBuildCostCard(-250,500);
    }
     
+    public void initializeBuildCostCard(double x, double y) {
+        // Load the image from the assets/textures/ directory
+    	Texture costTexture = FXGL.getAssetLoader().loadTexture("Baukosten_BUNT.png");
+        costTexture.setTranslateX(x);
+        costTexture.setTranslateY(y);
+
+        FXGL.entityBuilder()
+            .at(x, y)
+            .view(costTexture)
+            .zIndex(10) // Für die Sichtbarkeit über der Map‑Tiles
+            .with(new IrremovableComponent()) // Optional: falls sie nicht entfernt werden soll
+            .buildAndAttach();
+    }
     /**
      * Initializes and places harbors on the game board using predefined water coordinates
      * and orientations. Assigns each harbor a random trade type and visualizes it on the map.

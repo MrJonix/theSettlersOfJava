@@ -38,7 +38,9 @@ public class CatanFactory implements EntityFactory {
      * The tile is rendered with a terrain image, optional number token, and click interaction.
      *
      * @param data the spawn data containing the {@link Hex} object
-     * @return the created FXGL {@link Entity} representing the hex tile
+     * @return the created FXGL {@link Entity
+     * 
+     * } representing the hex tile
      */
     @Spawns("hexagon")
     public Entity newHexagon(SpawnData data) {

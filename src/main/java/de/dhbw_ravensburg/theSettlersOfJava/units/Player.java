@@ -12,6 +12,7 @@ import de.dhbw_ravensburg.theSettlersOfJava.buildings.Road;
 import de.dhbw_ravensburg.theSettlersOfJava.game.GameState;
 import de.dhbw_ravensburg.theSettlersOfJava.game.TradeOffer;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.view.TradeUIController;
+import de.dhbw_ravensburg.theSettlersOfJava.graphics.view.WinView;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
 import javafx.beans.binding.IntegerBinding;
 import javafx.beans.property.*;
@@ -107,7 +108,7 @@ public class Player {
             
 
             if (App.getGameController().getGameBoard().buildBuilding(b)) {
-                victoryPoints.set(victoryPoints.get() + 1);
+                setVictoryPoints(victoryPoints.get() + 1);
 
                 if (!setupPhase) {
                     cost.forEach(this::removeResources);
@@ -180,7 +181,13 @@ public class Player {
     // VictoryPoints Property
     public IntegerProperty victoryPointsProperty() { return victoryPoints; }
     public int getVictoryPoints() { return victoryPoints.get(); }
-    public void setVictoryPoints(int vp) { victoryPoints.set(vp); }
+    public void setVictoryPoints(int vp) { 
+    	victoryPoints.set(vp);
+    	if(vp >= 10) {
+    		new WinView().showWinScreen(this);
+    		
+    	}
+    }
 
     // Resources MapProperty
     public MapProperty<ResourceType, Integer> resourcesProperty() { return resources; }
