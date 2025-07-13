@@ -17,7 +17,7 @@ public class City extends Building {
     private static final Map<ResourceType, Integer> CITY_COST = createCityCost();
 
     /**
-     * Constructs a City at a specific location owned by a player.
+     * Creates a City at a specific location owned by a player.
      *
      * @param location the hex corner location of the city
      * @param owner the player who owns the city
@@ -27,7 +27,7 @@ public class City extends Building {
     }
 
     /**
-     * Gets the victory points provided by the city.
+     * Gets the number of victory points granted by the city.
      *
      * @return the number of victory points
      */
@@ -47,7 +47,7 @@ public class City extends Building {
     }
 
     /**
-     * Initializes the city cost map.
+     * Initializes the cost map for building a city.
      *
      * @return an unmodifiable map representing the city cost
      */

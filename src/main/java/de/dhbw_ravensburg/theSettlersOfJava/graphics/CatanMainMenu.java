@@ -19,6 +19,13 @@ import javafx.scene.layout.VBox;
 import java.io.InputStream;
 import java.util.List;
 
+
+/**
+ * Custom FXGL main menu for The Settlers of Java.
+ * 
+ * Provides navigation to Player Setup, Rules, and Credits screens,
+ * and allows the user to start a new game or exit the application.
+ */
 public class CatanMainMenu extends FXGLMenu {
 
     private VBox mainMenu;
@@ -26,15 +33,24 @@ public class CatanMainMenu extends FXGLMenu {
     private VBox rulesView;
     private VBox playerSetupView;
 
+    
+    /**
+     * Constructs the main menu using FXGL's {@link FXGLMenu} with type {@code MAIN_MENU}.
+     * Initializes and lays out the UI components.
+     */
     public CatanMainMenu() {
         super(MenuType.MAIN_MENU);
         getContentRoot().setCursor(Cursor.DEFAULT);
         setupUI();
     }
 
+    /**
+     * Initializes and arranges all views for the menu, including background and submenus.
+     * Connects navigation logic to appropriate buttons.
+     */
     private void setupUI() {
     	
-        // Background
+        // Load background image
         String backgroundImagePath = "/images/background.png";
         InputStream imageStream = getClass().getResourceAsStream(backgroundImagePath);
 
@@ -48,6 +64,7 @@ public class CatanMainMenu extends FXGLMenu {
         backgroundView.setFitHeight(getAppHeight());
         backgroundView.setFitWidth(getAppWidth());
 
+        // Main menu layout
         mainMenu = MainMenuView.create(
         	    this::showPlayerSetup,
         	    this::showRules,
@@ -55,6 +72,7 @@ public class CatanMainMenu extends FXGLMenu {
         	    this::fireExit
         	);
 
+        	// Other views
         	creditsView = CreditsView.create(this::showMainMenu);
         	rulesView = RulesView.create(this::showMainMenu);
 
@@ -75,6 +93,9 @@ public class CatanMainMenu extends FXGLMenu {
         getContentRoot().getChildren().add(root);
     }
 
+    /**
+     * Displays the main menu and hides all other views.
+     */
     private void showMainMenu() {
         mainMenu.setVisible(true);
         creditsView.setVisible(false);
@@ -82,17 +103,27 @@ public class CatanMainMenu extends FXGLMenu {
         playerSetupView.setVisible(false);
     }
 
+    /**
+     * Displays the credits screen and hides all other views.
+     */
     private void showCredits() {
         mainMenu.setVisible(false);
         creditsView.setVisible(true);
         rulesView.setVisible(false);
     }
 
+    /**
+     * Displays the rules screen and hides all other views.
+     */
     private void showRules() {
         mainMenu.setVisible(false);
         creditsView.setVisible(false);
         rulesView.setVisible(true);
     }
+    
+    /**
+     * Displays the player setup screen and hides all other views.
+     */
     private void showPlayerSetup() {
         mainMenu.setVisible(false);
         creditsView.setVisible(false);

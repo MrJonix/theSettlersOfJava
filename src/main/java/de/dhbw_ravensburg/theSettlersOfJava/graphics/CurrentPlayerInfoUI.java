@@ -24,6 +24,12 @@ import com.almasb.fxgl.dsl.FXGL;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
+/**
+ * UI component for displaying the current player's information.
+ * 
+ * Shows the player's name, color, victory points, and resource inventory.
+ * Automatically updates when the current player or their resources change.
+ */
 public class CurrentPlayerInfoUI {
 
     private final VBox root;
@@ -36,12 +42,21 @@ public class CurrentPlayerInfoUI {
     private Player currentPlayer;
 
 
-    // Listener für Ressourcenänderungen
+    // Listener for resource changes
     private final MapChangeListener<ResourceType, Integer> resourceListener = change -> {
         if (currentPlayer != null) {
             updateResourceDisplay(currentPlayer);
         }
     };
+
+    /**
+     * Constructs the UI for displaying the current player's information.
+     *
+     * Binds the UI to the given player property and automatically updates
+     * whenever the current player or their resources change.
+     *
+     * @param currentPlayerProperty the property containing the current player
+     */
 
     public CurrentPlayerInfoUI(ObjectProperty<Player> currentPlayerProperty) {
         root = new VBox(15);
@@ -57,7 +72,7 @@ public class CurrentPlayerInfoUI {
                 createResourceSection()
         );
 
-        // Spielerwechsel-Listener
+        // Listener for player change
         currentPlayerProperty.addListener((obs, oldPlayer, newPlayer) -> {
             if (oldPlayer != null) {
                 nameLabel.textProperty().unbind();
@@ -71,7 +86,7 @@ public class CurrentPlayerInfoUI {
             }
         });
 
-        // Initialisierung bei bestehendem Spieler
+        // Initialization if player already set
         if (currentPlayerProperty.get() != null) {
             Player p = currentPlayerProperty.get();
             p.resourcesProperty().addListener(resourceListener);
@@ -80,12 +95,23 @@ public class CurrentPlayerInfoUI {
         }
     }
 
+    /**
+     * Creates the header section containing the player's color indicator and name.
+     *
+     * @return an {@link HBox} with the player's color and name label
+     */
     private HBox createHeader() {
         HBox header = new HBox(10);
         header.getChildren().addAll(colorIndicator, nameLabel);
         return header;
     }
 
+    /**
+     * Creates the UI section displaying all available resource types and their quantities.
+     * Each row contains an icon, resource name, and a label for the amount.
+     *
+     * @return a {@link VBox} containing the resource title and the resource grid
+     */
     private VBox createResourceSection() {
         VBox resourceSection = new VBox(5);
 
@@ -119,6 +145,12 @@ public class CurrentPlayerInfoUI {
         return resourceSection;
     }
 
+    /**
+     * Updates the display information for the current player.
+     * Binds the player's name and victory points to the corresponding UI elements.
+     *
+     * @param player the player whose information should be displayed
+     */
     private void updateInfo(Player player) {
         this.currentPlayer = player;
 
@@ -127,12 +159,24 @@ public class CurrentPlayerInfoUI {
         pointsLabel.textProperty().bind(player.victoryPointsProperty().asString("Siegpunkte: %d"));
     }
 
+    /**
+     * Updates the resource counts shown in the UI for the given player.
+     *
+     * @param player the player whose resources should be displayed
+     */
+
     private void updateResourceDisplay(Player player) {
         for (ResourceType type : ResourceType.values()) {
             Integer amount = player.getResources().get(type);
             resourceLabels.get(type).setText(String.valueOf(amount != null ? amount : 0));
         }
     }
+
+    /**
+     * Returns the root UI container for displaying current player information.
+     *
+     * @return the {@link VBox} container with player details and resource overview
+     */
 
     public VBox getRoot() {
         return root;

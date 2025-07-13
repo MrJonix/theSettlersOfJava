@@ -14,8 +14,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Represents a road built between hex edges by a player.
+ * Represents a road built by a player between two hex corners on the game board.
+ * Roads are visualized based on their orientation and associated player color.
  */
+
 public class Road {
 
     private static final Map<HexEdgeOrientation, String> IMAGE_PATHS = createImagePaths();
@@ -25,10 +27,10 @@ public class Road {
     private final Player owner;
 
     /**
-     * Constructs a Road at a specific hex edge owned by a player.
+     * Creates a road at a specified hex edge owned by a player.
      *
      * @param location the hex edge location of the road
-     * @param owner    the player who owns the road
+     * @param owner the player who owns the road
      */
     public Road(HexEdge location, Player owner) {
         this.location = location;
@@ -38,15 +40,17 @@ public class Road {
     /**
      * Gets the cost of building a road.
      *
-     * @return a map representing the road cost
+     * @return an unmodifiable map of required resources
      */
     public Map<ResourceType, Integer> getRoadCost() {
         return ROAD_COST;
     }
 
     /**
-     * Visualizes the road on the game board.
+     * Visualizes the road on the game board using the owner's color and edge orientation.
+     * Centers the texture between the two hex corners.
      */
+
     public void visualize() {
         HexCorner[] hexCorners = location.getCorners();
         double x1 = hexCorners[0].getX();
@@ -70,18 +74,28 @@ public class Road {
             .buildAndAttach();
     }
 
+    /**
+     * Gets the hex edge where the road is placed.
+     * 
+     * @return the road's location on the game board
+     */
     public HexEdge getLocation() {
         return location;
     }
 
+    /**
+     * Gets the player who owns the road.
+     * 
+     * @return the owner of the road
+     */
     public Player getOwner() {
         return owner;
     }
 
     /**
-     * Initializes the image paths map.
+     * Creates a mapping of edge orientations to their corresponding road image paths.
      *
-     * @return a map for image paths based on edge orientation
+     * @return a map of image paths basked on edge orientation
      */
     private static Map<HexEdgeOrientation, String> createImagePaths() {
         Map<HexEdgeOrientation, String> paths = new EnumMap<>(HexEdgeOrientation.class);
@@ -93,7 +107,7 @@ public class Road {
 
 
     /**
-     * Initializes the road cost map.
+     * Creates the resource cost map for building a road.
      *
      * @return an unmodifiable map representing the road cost
      */

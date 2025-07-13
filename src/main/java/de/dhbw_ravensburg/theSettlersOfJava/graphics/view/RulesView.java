@@ -11,7 +11,11 @@ import de.dhbw_ravensburg.theSettlersOfJava.graphics.UIHelpers;
 
 /**
  * A modular UI component that displays game rules.
+ *
+ * Includes headings, bullet points, and paragraph text in a scrollable layout.
+ * Used to present the game rules within a stylized, readable panel.
  */
+
 public class RulesView {
 
     /**
@@ -44,6 +48,7 @@ public class RulesView {
             sectionTitle("🎯 Goal of the Game"),
             paragraph("Be the first to reach 10 victory points through constructions, roads, and development cards."),
 
+            
             sectionTitle("🧩 Game Material"),
             bullet("19 terrain hexes (Forest, Pasture, Field, Hill, Mountain, Desert)"),
             bullet("Number tokens (2–12, except 7)"),
@@ -107,7 +112,13 @@ public class RulesView {
         return rules;
     }
 
-    // Helper for section headings
+    /**
+     * Creates a stylized heading text for a rule section.
+     *
+     * @param title the section title to display
+     * @return a {@link Text} styled as a heading
+     */
+
     private static Text sectionTitle(String title) {
         Text text = new Text("\n" + title + "\n");
         text.setFont(Font.font("Myriad Pro", FontWeight.BOLD, 20));
@@ -115,21 +126,40 @@ public class RulesView {
         return text;
     }
 
-    // Helper for normal paragraphs
+    /**
+     * Creates a paragraph text block for rule descriptions.
+     *
+     * @param body the main paragraph content
+     * @return a {@link Text} styled as normal body text
+     */
+
     private static Text paragraph(String body) {
         Text text = new Text(body + "\n");
         text.setFont(Font.font("Myriad Pro", 16));
         return text;
     }
 
-    // Helper for bullet points
+    /**
+     * Creates a bullet point text line.
+     *
+     * @param line the content of the bullet point
+     * @return a {@link Text} element prefixed with a bullet symbol
+     */
+
     private static Text bullet(String line) {
         Text text = new Text("• " + line + "\n");
         text.setFont(Font.font("Myriad Pro", 16));
         return text;
     }
 
-    // Helper for numbered steps
+    /**
+     * Creates a numbered step with a title and explanation.
+     *
+     * @param stepTitle the heading/title of the step
+     * @param body      the description or details of the step
+     * @return a combined {@link Text} element with styled title and body
+     */
+
     private static Text numbered(String stepTitle, String body) {
         Text title = new Text(stepTitle + "\n");
         title.setFont(Font.font("Myriad Pro", FontWeight.SEMI_BOLD, 16));

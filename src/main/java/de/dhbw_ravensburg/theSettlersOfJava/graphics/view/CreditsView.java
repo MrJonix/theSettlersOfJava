@@ -15,15 +15,22 @@ import java.awt.Desktop;
 import java.net.URI;
 
 /**
- * A modular UI component that displays game credits.
+ * UI component that displays the game's credits screen.
+ * 
+ * Includes a title, list of team members, a GitHub link to the project,
+ * and a back button to return to the main menu.
  */
+
 public class CreditsView {
 
-    /**
-     * Creates the credits view layout.
-     *
-     * @param onBack Runnable to execute when the BACK button is pressed.
-     * @return a VBox representing the Credits screen.
+	/**
+     * Creates the visual layout for the credits screen.
+     * 
+     * This includes a title, a list of team members, a GitHub hyperlink,
+     * and a back button to return to the main menu or previous screen.
+     * 
+     * @param onBack a Runnable that will be executed when the BACK button is clicked
+     * @return a VBox containing the complete credits UI layout
      */
     public static VBox create(Runnable onBack) {
         VBox credits = new VBox(20);

@@ -21,7 +21,8 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Represents a corner between hexagonal tiles, calculated from the centers of adjacent hexes.
+ * Represents a corner formed by three adjacent hexes on the game board.
+ * Used for building placement, highlighting, and spatial calculations.
  */
 public class HexCorner {
 
@@ -30,11 +31,13 @@ public class HexCorner {
     private final Set<Hex> adjacentHexes;
     
     /**
-     * Initializes a HexCorner given three adjacent hexes.
+     * Constructs a HexCorner given three adjacent hexes.
+     * The position is computed as the centroid of the hex centers.
      *
      * @param hex1 the first adjacent hex
      * @param hex2 the second adjacent hex
      * @param hex3 the third adjacent hex
+     * @throws IllegalArgumentException if any hex is null
      */
     public HexCorner(Hex hex1, Hex hex2, Hex hex3) {
         if (hex1 == null || hex2 == null || hex3 == null) {
@@ -51,9 +54,9 @@ public class HexCorner {
     }
 
     /**
-     * Calculates the average position of the three hex centers to find the corner.
+     * Calculates the average X and Y of the centers of all adjacent hexes.
      *
-     * @return an array containing x and y coordinates of the corner
+     * @return a double array with X and Y coordinates
      */
     private double[] calculateCornerPosition() {
         double xSum = 0;
@@ -65,22 +68,37 @@ public class HexCorner {
         return new double[]{xSum / 3, ySum / 3};
     }
 
+    /**
+     * Returns the x-coordinate of the corner.
+     *
+     * @return x position in world space
+     */
     public double getX() {
         return x;
     }
 
+    /**
+     * Returns the y-coordinate of the corner.
+     *
+     * @return y position in world space
+     */
     public double getY() {
         return y;
     }
 
+    /**
+     * Returns an unmodifiable set of hexes adjacent to this corner.
+     *
+     * @return adjacent hexes
+     */
     public Set<Hex> getAdjacentHexes() {
         return Collections.unmodifiableSet(adjacentHexes);
     }
 
     /**
-     * Visualizes this hex corner using a circle with the specified color.
+     * Visualizes the corner using a colored circle and adds mouse click logic.
      *
-     * @param color the color of the circle
+     * @param color the color of the visualized circle
      */
     public void visualizeCorner(Color color) {
         Circle circle = new Circle(10, color);
@@ -92,6 +110,10 @@ public class HexCorner {
         circle.setOnMouseClicked(event -> handleMouseClick());
     }
 
+    /**
+     * Handles mouse click on the corner by attempting to build a settlement.
+     * Triggers a notification upon success or failure.
+     */
     private void handleMouseClick() {
         Player currentPlayer = App.getGameController().getCurrentPlayer();
         
@@ -104,11 +126,22 @@ public class HexCorner {
         });
     }
 
+    /**
+     * Returns a string with the formatted x and y coordinates of the corner.
+     *
+     * @return a string representation of this corner
+     */
     @Override
     public String toString() {
         return String.format("Corner Coordinates: (%.2f, %.2f)", x, y);
     }
 
+    /**
+     * Checks equality based on the set of adjacent hexes.
+     *
+     * @param obj the object to compare with
+     * @return true if hex sets match, false otherwise
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -118,6 +151,11 @@ public class HexCorner {
         return new HashSet<>(adjacentHexes).equals(new HashSet<>(other.adjacentHexes));
     }
 
+    /**
+     * Computes hash code based on the adjacent hexes.
+     *
+     * @return hash code for use in sets/maps
+     */
     @Override
     public int hashCode() {
         return Objects.hash(new HashSet<>(adjacentHexes));
@@ -127,6 +165,9 @@ public class HexCorner {
     private Entity highlightEntity;
     private Animation<?> highlightAnimation;
 
+    /**
+     * Visually highlights the corner with an animated pulsing circle.
+     */
     public void highlight() {
         Circle highlightCircle = new Circle(14, Color.TRANSPARENT);
         highlightCircle.setStroke(App.getGameController().getCurrentPlayer().getColor());
@@ -156,6 +197,9 @@ public class HexCorner {
         });
     }
 
+    /**
+     * Removes the highlight animation and visual indicator, if present.
+     */
     public void removeHighlight() {
         if (highlightAnimation != null) {
             highlightAnimation.stop();

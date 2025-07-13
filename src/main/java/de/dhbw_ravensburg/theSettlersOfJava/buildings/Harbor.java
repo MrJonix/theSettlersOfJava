@@ -8,7 +8,8 @@ import de.dhbw_ravensburg.theSettlersOfJava.map.HexEdge;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.HarborType;
 
 /**
- * Represents a harbor located on a specific hex edge, providing trade benefits for a specific resource type.
+ * Represents a harbor located on a hex edge, providing trade benefits 
+ * for a specific resource type and including a visual orientation on the map.
  */
 public class Harbor {
 
@@ -18,10 +19,12 @@ public class Harbor {
     private final Hex locationHex;
     
     /**
-     * Constructs a Harbor at a specific location with a specified trade resource type.
+     * Creates a Harbor at a specific edge with a specified trade resource type.
      *
      * @param location    the hex edge location of the harbor
      * @param harborType the resource type associated with the harbor
+     * @param locationHex the hex tile associated with the harbor
+     * @param orientation the orientation of the harbor relative to the hex
      */
     public Harbor(HexEdge location, HarborType harborType, Hex locationHex, HarborOrientation orientation) {
         this.location = location;
@@ -32,8 +35,8 @@ public class Harbor {
     }
 
     /**
-     * Visualizes the harbor on the game board.
-     * Currently, this method does not perform any operations.
+     * Visualizes the harbor on the game board using its image and position.
+     * Applies scaling and centering based on the associated hex and orientation.
      */
 	public void visualize() {
 		
@@ -42,16 +45,16 @@ public class Harbor {
 	    try {
 		    Texture texture = FXGL.getAssetLoader().loadTexture(harborType.getImagePath());
 		    
-		    // Originalgröße des Bildes
+		    // Original size of the image
 		    double originalWidth = Hex.HEX_SIZE * 2 - 10;
 		    double originalHeight = Math.sqrt(3) * Hex.HEX_SIZE - 10;
 	        texture.setFitWidth(originalHeight);
 	        texture.setFitHeight(originalWidth);
 	        texture.setPreserveRatio(true);
 
-		    // Positionieren, zentriert
-		    double drawX = locationHex.getPosition().getX() - originalHeight / 2;
-		    double drawY = locationHex.getPosition().getY() - originalWidth / 2;
+		    // Positioning and centering
+		    double drawX = locationHex.getPosition().getX() - originalHeight/2;
+		    double drawY = locationHex.getPosition().getY() - originalWidth/2;
 
 		    FXGL.entityBuilder()
 		        .at(drawX, drawY)
@@ -76,11 +79,10 @@ public class Harbor {
 		    e.printStackTrace();
 		}
 
-	   // location.visualizeHarborEdge(orientation, color, 15); // visual: draws a thick colored edge
 	}
 
     /**
-     * Gets the location of the harbor.
+     * Gets the location of the harbor on the game board.
      *
      * @return the hex edge where the harbor is located
      */
@@ -89,18 +91,28 @@ public class Harbor {
     }
     
     /**
-     * Gets the resource type associated with the harbor for trading.
+     * Gets the type of resource the harbor offers for trading.
      *
-     * @return the harbor type of the harbor
+     * @return the harbor's type of the harbor
      */
     public HarborType getHarborType() {
         return harborType;
     }
-
+    
+    /**
+     * Gets the hex tile associated with the harbor's position.
+     * 
+     * @return the hex containing the harbor
+     */
 	public Hex getLocationHex() {
 		return locationHex;
 	}
 
+	/**
+	 * Gets the orientation of the harbor relative to its hex tile.
+	 * 
+	 * @return the harbor's orientation
+	 */
 	public HarborOrientation getOrientation() {
 		return orientation;
 	}

@@ -18,15 +18,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * UI for selecting player names.
+ * UI component for setting up players before the game starts.
+ * 
+ * Allows the user to select the number of players (3 or 4),
+ * enter player names, and confirm the setup.
+ * 
+ * Each player is assigned a predefined color and validated before starting the game.
  */
 public class PlayerSetupView {
+
+	/**
+	 * Functional interface for handling confirmed player setups.
+	 * Called when the user has entered all player names and clicks "Start Game".
+	 */
 
     @FunctionalInterface
     public interface OnPlayersConfirmed {
         void handle(List<Player> players);
     }
-
+    
+    /** Fixed color assignment order for up to 4 players. */
     private static final PlayerColor[] PREASSIGNED_COLORS = {PlayerColor.ORANGE, PlayerColor.BLUE, PlayerColor.GREEN, PlayerColor.RED};
     private static final String ACTIVE_STYLE = "-fx-background-color: #FFD700; -fx-text-fill: #000;";
     private static final String INACTIVE_STYLE = "-fx-background-color: #E0E0E0; -fx-text-fill: #888;";

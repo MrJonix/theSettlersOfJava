@@ -14,18 +14,39 @@ import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
+/**
+ * Represents the Robber entity in the game.
+ * 
+ * The Robber can move between hexes, steal resources from other players,
+ * and be visually rendered on the game board.
+ */
 public class Robber {
 	private Hex location;
 	private Entity robberEntity;
 	
+	/**
+     * Creates a Robber instance at the specified initial hex location.
+     *
+     * @param location the hex where the robber starts
+     */
 	public Robber(Hex location) {
 		this.location = location;
 	}
 
+	/**
+     * Returns the current hex where the robber is located.
+     *
+     * @return the current hex of the robber
+     */
 	public Hex getLocation() {
 		return location;
 	}
 
+	/**
+     * Moves the robber to a new hex and updates its visual position if already visualized.
+     *
+     * @param newLocation the new hex location for the robber
+     */
 	public void moveRobber(Hex newLocation) {
 	    this.location = newLocation;
 
@@ -33,13 +54,18 @@ public class Robber {
 	        robberEntity.setPosition(newLocation.getPosition().getWorldPosition());
 	    }
 	}
-
 	
+	/**
+     * Steals a random resource from the victim and transfers it to the thief, if possible.
+     *
+     * @param thief  the player who is stealing
+     * @param victim the player being stolen from
+     */
 	public void stealRandomResourceFromPlayer(Player thief, Player victim) {
 	    Map<ResourceType, Integer> victimResources = victim.getResources();
 	    List<ResourceType> availableResources = new ArrayList<>();
 
-	    // Sammle alle Ressourcen, die der Opfer-Spieler besitzt
+	    // Collect all resources possessed by the victim
 	    for (Map.Entry<ResourceType, Integer> entry : victimResources.entrySet()) {
 	        ResourceType type = entry.getKey();
 	        int amount = entry.getValue();
@@ -49,27 +75,29 @@ public class Robber {
 	    }
 
 	    if (availableResources.isEmpty()) {
-	        // Opfer hat keine Ressourcen, nichts zu stehlen
+	        // Victim has no resources, nothing to steal
 	        return;
 	    }
 
-	    // Zufällige Ressource auswählen
+	    // Randomly chosen resource
 	    ResourceType stolenResource = availableResources.get(new Random().nextInt(availableResources.size()));
 	    if (stolenResource == null) return;
-	    // Ressource beim Opfer abziehen
+	    // deduct resources of the victim
 	    victimResources.put(stolenResource, victimResources.get(stolenResource) - 1);
 
-	    // Ressource dem Dieb hinzufügen
+	    // Add resource to thief
 	    Map<ResourceType, Integer> thiefResources = thief.getResources();
 	    thiefResources.put(stolenResource, thiefResources.getOrDefault(stolenResource, 0) + 1);
 
-	    // Benachrichtigung ausgeben (FXGL NotificationService)
+	    // Notify players via FXGL (FXGL NotificationService)
 	    FXGL.getNotificationService().pushNotification(
 	        thief.getName() + " hat eine " + stolenResource.name() + " von " + victim.getName() + " gestohlen!");
 	}
 
-
-	
+	/**
+     * Renders the robber visually on the current hex using a 2D texture.
+     * If already visualized, the previous instance is removed first.
+     */
 	public void visualize() {
 	    if (robberEntity != null) {
 	        robberEntity.removeFromWorld(); // Alte Instanz entfernen
