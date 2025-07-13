@@ -11,11 +11,11 @@ import java.util.Random;
  */
 public enum ResourceType {
 	
-    BRICK("Brick", Color.RED, "/cards/card_CLAY.png"),
-    WOOD("WOOD", Color.GREEN, "/cards/card_WOOD.png"),
-    WOOL("Wool", Color.WHITE, "/cards/card_WOOL.png"),
-    WHEAT("Wheat", Color.YELLOW, "/cards/card_WHEAT.png"),
-    ORE("Ore", Color.GRAY, "/cards/card_MOUNTAIN.png");
+    BRICK("Brick", Color.RED, "cards/card_CLAY.png"),
+    WOOD("WOOD", Color.GREEN, "cards/card_WOOD.png"),
+    WOOL("Wool", Color.WHITE, "cards/card_WOOL.png"),
+    WHEAT("Wheat", Color.YELLOW, "cards/card_WHEAT.png"),
+    ORE("Ore", Color.GRAY, "cards/card_MOUNTAIN.png");
 
     private final String displayName;
     private final Color color;

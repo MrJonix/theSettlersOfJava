@@ -148,9 +148,9 @@ public class PlayerInfoUI {
         stats.setAlignment(Pos.CENTER_LEFT);
         stats.setSpacing(10);
 
-        HBox vp = createStatIconWithText("/icons/icon_SP.png", player.victoryPointsProperty().asString(), 18);
-        HBox longR = createStatIconWithText("/icons/icon_STREET.png", player.longestRoadProperty().asString(), 18);
-        HBox resources = createStatIconWithText("/icons/icon_CARDS.png", player.resourceSizeProperty().asString(), 16);
+        HBox vp = createStatIconWithText("icons/icon_SP.png", player.victoryPointsProperty().asString(), 18);
+        HBox longR = createStatIconWithText("icons/icon_STREET.png", player.longestRoadProperty().asString(), 18);
+        HBox resources = createStatIconWithText("icons/icon_CARDS.png", player.resourceSizeProperty().asString(), 16);
 
         Region spacer1 = new Region();
         Region spacer2 = new Region();

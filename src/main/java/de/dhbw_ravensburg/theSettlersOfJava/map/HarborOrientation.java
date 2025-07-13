@@ -8,17 +8,17 @@ package de.dhbw_ravensburg.theSettlersOfJava.map;
  */
 public enum HarborOrientation {
 	  /** Harbor is located at the top-left edge of the hex. */
-    TOP_LEFT("/harbour/TOP_LEFT.png"),
+    TOP_LEFT("harbour/TOP_LEFT.png"),
     /** Harbor is located at the top-right edge of the hex. */
-    TOP_RIGHT("/harbour/TOP_RIGHT.png"),
+    TOP_RIGHT("harbour/TOP_RIGHT.png"),
     /** Harbor is located at the middle-left edge of the hex. */
-    MIDDLE_LEFT("/harbour/MIDDLE_LEFT.png"),
+    MIDDLE_LEFT("harbour/MIDDLE_LEFT.png"),
     /** Harbor is located at the middle-right edge of the hex. */
-    MIDDLE_RIGHT("/harbour/MIDDLE_RIGHT.png"),
+    MIDDLE_RIGHT("harbour/MIDDLE_RIGHT.png"),
     /** Harbor is located at the bottom-left edge of the hex. */
-    BOTTOM_LEFT("/harbour/BOTTOM_LEFT.png"),
+    BOTTOM_LEFT("harbour/BOTTOM_LEFT.png"),
     /** Harbor is located at the bottom-right edge of the hex. */
-    BOTTOM_RIGHT("/harbour/BOTTOM_RIGHT.png");
+    BOTTOM_RIGHT("harbour/BOTTOM_RIGHT.png");
 
     private final String imagePath;
 

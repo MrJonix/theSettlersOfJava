@@ -5,12 +5,12 @@ import java.util.Collections;
 import java.util.List;
 
 public enum HarborType {
-    BRICK("/ship/boat_CLAY.png"),
-    WOOD("/ship/boat_WOOD.png"),
-    WOOL("/ship/boat_WOOL.png"),
-    WHEAT("/ship/boat_WHEAT.png"),
-    ORE("/ship/boat_MOUNTAIN.png"),
-    THREE_TO_ONE("/ship/boat_3_1.png");
+    BRICK("ship/boat_CLAY.png"),
+    WOOD("ship/boat_WOOD.png"),
+    WOOL("ship/boat_WOOL.png"),
+    WHEAT("ship/boat_WHEAT.png"),
+    ORE("ship/boat_MOUNTAIN.png"),
+    THREE_TO_ONE("ship/boat_3_1.png");
 	private final String imagePath;
 	
 	private HarborType(String imagePath) {

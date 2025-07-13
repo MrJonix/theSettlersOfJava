@@ -61,7 +61,7 @@ public class GameController {
 	    initializeBoard();
 	    initializeDice();
 	    initializeTrade();
-	    debugStartResources();
+	    //debugStartResources();
 	}
 
 	/* ------------------ Initialization Methods ------------------ */

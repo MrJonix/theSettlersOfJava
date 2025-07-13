@@ -58,7 +58,7 @@ public class Dice {
         diceBackground.setArcWidth(15);
         diceBackground.setArcHeight(15);
 
-        ImageView diceImage = new ImageView(FXGL.getAssetLoader().loadTexture("/dice/dice3D.png").getImage());
+        ImageView diceImage = new ImageView(FXGL.getAssetLoader().loadTexture("dice/dice3D.png").getImage());
         diceImage.setFitWidth(SIZE * 0.7); 
         diceImage.setFitHeight(SIZE * 0.7);
         diceImage.setPreserveRatio(true);
@@ -195,7 +195,7 @@ public class Dice {
     private ImageView createDiceImageView(int diceValue) {
         try {
             // load pertaining dice image
-        	Texture diceTexture = FXGL.getAssetLoader().loadTexture("/dice/dice_" + diceValue + ".png");
+        	Texture diceTexture = FXGL.getAssetLoader().loadTexture("dice/dice_" + diceValue + ".png");
         	ImageView imageView = new ImageView(diceTexture.getImage());
             
             // scaling image to an appropriate size

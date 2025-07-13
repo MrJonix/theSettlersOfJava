@@ -47,7 +47,7 @@ public class NextPlayerButton {
         background.setArcHeight(15);
 
         // load the icon
-        Texture icon = FXGL.getAssetLoader().loadTexture("/icons/icon_NEXT.png");
+        Texture icon = FXGL.getAssetLoader().loadTexture("icons/icon_NEXT.png");
         ImageView iconView = new ImageView(icon.getImage());
         iconView.setFitWidth(30);
         iconView.setFitHeight(30);
