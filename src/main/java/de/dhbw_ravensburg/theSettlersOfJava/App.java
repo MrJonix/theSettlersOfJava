@@ -179,6 +179,8 @@ public class App extends GameApplication {
         
         viewport.setX(pos.getX() - WIDTH / 2);
         viewport.setY(pos.getY() - HEIGHT / 2);
+        FXGL.set("GameBoard", controller.getGameBoard());
+
     }
     
     /**

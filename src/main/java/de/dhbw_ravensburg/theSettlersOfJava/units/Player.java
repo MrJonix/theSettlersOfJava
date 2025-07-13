@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import com.almasb.fxgl.dsl.FXGL;
-
+import de.dhbw_ravensburg.theSettlersOfJava.game.*;
 import de.dhbw_ravensburg.theSettlersOfJava.App;
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.Building;
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.Road;
@@ -18,14 +18,36 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableMap;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.control.ButtonBar;
-
+import javafx.scene.control.Spinner;
+import javafx.scene.layout.*;
+import javafx.scene.text.Text;
+import java.util.Set;
+import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Region;
+import javafx.scene.input.MouseEvent;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.function.Supplier;
 
 public class Player {
 
@@ -96,7 +118,7 @@ public class Player {
                 onBuilt.accept(false);
             }
         });
-        App.getGameController().trade();
+        App.getGameController().updateTradeUI();
     }
 
     public void build(Road r, Consumer<Boolean> onBuilt) {
@@ -193,55 +215,10 @@ public class Player {
             addResources(entry.getKey(), entry.getValue());
         }
     }
+
     public void receiveTradeOffer(TradeOffer offer) {
-        Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.setTitle("Handelsangebot von " + offer.getOfferer().getName());
-
-        VBox content = new VBox(10);
-        content.getChildren().add(new Label("Angebotene Ressourcen:"));
-        for (Map.Entry<ResourceType, Integer> entry : offer.getOfferedResources().entrySet()) {
-            content.getChildren().add(new Label(entry.getKey() + ": " + entry.getValue()));
-        }
-
-        content.getChildren().add(new Label("Angeforderte Ressourcen:"));
-        for (Map.Entry<ResourceType, Integer> entry : offer.getRequestedResources().entrySet()) {
-            content.getChildren().add(new Label(entry.getKey() + ": " + entry.getValue()));
-        }
-
-        dialog.getDialogPane().setContent(content);
-        ButtonType acceptButton = new ButtonType("Annehmen", ButtonBar.ButtonData.YES);
-        ButtonType counterButton = new ButtonType("Gegenangebot", ButtonBar.ButtonData.OTHER);
-        ButtonType declineButton = new ButtonType("Ablehnen", ButtonBar.ButtonData.NO);
-
-        dialog.getDialogPane().getButtonTypes().addAll(acceptButton, counterButton, declineButton);
-
-        Optional<ButtonType> result = dialog.showAndWait();
-
-        if (result.isPresent()) {
-            if (result.get() == acceptButton) {
-                if (!this.hasResources(offer.getRequestedResources()) ||
-                    !offer.getOfferer().hasResources(offer.getOfferedResources())) {
-
-                    FXGL.showMessage("Mindestens einer der Spieler hat nicht genügend Ressourcen.");
-                    return;
-                }
-
-                this.removeResourcesMap(offer.getRequestedResources());
-                this.addResourcesMap(offer.getOfferedResources());
-
-                offer.getOfferer().removeResourcesMap(offer.getOfferedResources());
-                offer.getOfferer().addResourcesMap(offer.getRequestedResources());
-
-                FXGL.showMessage("Handel erfolgreich durchgeführt.");
-
-            } else if (result.get() == counterButton) {
-                TradeUIController tradeUI = FXGL.geto("tradeUI");
-                tradeUI.openTradeDialogWithTarget(this, offer.getOfferer());
-
-            } else if (result.get() == declineButton) {
-                FXGL.showMessage("Du hast das Handelsangebot abgelehnt.");
-            }
-        }
+        TradeUIController tradeUI = FXGL.geto("tradeUI");
+        tradeUI.showTradeOfferOverlay(this, offer);
     }
 
     @Override

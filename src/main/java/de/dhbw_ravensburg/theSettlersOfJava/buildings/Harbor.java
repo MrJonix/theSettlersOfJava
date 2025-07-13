@@ -39,14 +39,16 @@ public class Harbor {
      * Applies scaling and centering based on the associated hex and orientation.
      */
 	public void visualize() {
+		
 	    if (location == null) return;
-		try {
+		
+	    try {
 		    Texture texture = FXGL.getAssetLoader().loadTexture(harborType.getImagePath());
 		    
 		    // Original size of the image
 		    double originalWidth = Hex.HEX_SIZE * 2 - 10;
 		    double originalHeight = Math.sqrt(3) * Hex.HEX_SIZE - 10;
-	        texture.setFitWidth(originalHeight);  
+	        texture.setFitWidth(originalHeight);
 	        texture.setFitHeight(originalWidth);
 	        texture.setPreserveRatio(true);
 
@@ -59,12 +61,24 @@ public class Harbor {
 		        .zIndex(10)
 		        .view(texture)
 		        .buildAndAttach();
+		    
+		    Texture stegTexture = FXGL.getAssetLoader().loadTexture(orientation.getImagePath());
+		    stegTexture.setFitWidth(originalHeight);
+		    stegTexture.setFitHeight(originalWidth);
+		    stegTexture.setPreserveRatio(true);
+
+		    FXGL.entityBuilder()
+		        .at(drawX, drawY)
+		        .zIndex(11)
+		        .view(stegTexture)
+		        .buildAndAttach();
+
 
 		} catch (Exception e) {
 		    System.err.println("Failed to load or display harbor ship texture: " + e.getMessage());
 		    e.printStackTrace();
 		}
-		
+
 	}
 
     /**
