@@ -16,8 +16,6 @@ import de.dhbw_ravensburg.theSettlersOfJava.resources.HexType;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Robber;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
 

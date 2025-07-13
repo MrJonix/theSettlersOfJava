@@ -3,7 +3,6 @@ package de.dhbw_ravensburg.theSettlersOfJava.game;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import com.almasb.fxgl.dsl.FXGL;
@@ -13,14 +12,12 @@ import de.dhbw_ravensburg.theSettlersOfJava.graphics.PlayerInfoUI;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.view.DiscardResourcesView;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.view.PlayerSelectionView;
 import de.dhbw_ravensburg.theSettlersOfJava.graphics.view.TradeUIController;
-import de.dhbw_ravensburg.theSettlersOfJava.graphics.view.WinView;
 import de.dhbw_ravensburg.theSettlersOfJava.map.Hex;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.HexType;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Dice;
 import de.dhbw_ravensburg.theSettlersOfJava.units.NextPlayerButton;
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
-import de.dhbw_ravensburg.theSettlersOfJava.units.PlayerColor;
 import javafx.animation.PauseTransition;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -103,7 +100,6 @@ public class GameController {
 	    // If last player has placed second settlement, finish setup
 	    if (!firstSetup && nextIndex < 0) {
 	        // Exit the setup phase
-	        System.out.println("Setup-Phase abgeschlossen.");
 	        nextPhase();
 	        return;
 	    }
@@ -183,7 +179,6 @@ public class GameController {
 	public void nextPhase() {
 	    if (currentState == GameState.ACTION_PHASE) {
 	    	//trade();
-	        System.out.println("Du kannst handeln oder bauen oder deinen Zug beenden.");
 	        currentState = GameState.END_TURN;
 			updateTradeUI();
         	nextPhase();
@@ -218,7 +213,6 @@ public class GameController {
 	 * Displays the dice UI to allow the current player to roll.
 	 */
 	private void rollDice() {
-	    System.out.println("Würfeln...");
 	    dice.getView().setVisible(true);
 	    nextPlayerbutton.getView().setVisible(false);
 	}
@@ -342,7 +336,6 @@ public class GameController {
 	public void trade() {
 	    if (!isActionPhase()) return;
 		tradeUI.showTradeButton();
-	    System.out.println("Handeln...");
   }
   
 	public void updateTradeUI() {
@@ -358,7 +351,6 @@ public class GameController {
 	 */
 	public void build() {
 	    if (!isActionPhase())return;
-	    System.out.println("Bauen...");
 	}
 
 	/**
@@ -366,7 +358,6 @@ public class GameController {
 	 */
 	public void endTurnActionPhase() {
 	    if (!isActionPhase()) return;
-	    System.out.println("Zug wird beendet...");
 	    currentState = GameState.END_TURN;
 	    nextPhase();
 	}
@@ -376,7 +367,6 @@ public class GameController {
 	 */
 	public void endTurn() {
 		if(!currentState.equals(GameState.ACTION_PHASE)) return;
-	    System.out.println("Nächster Spieler ist dran.");
 	    int currentIndex = players.indexOf(currentPlayer.get());
 	    int nextIndex = (currentIndex + 1) % players.size();
 	    currentPlayer.set(players.get(nextIndex));
@@ -408,7 +398,6 @@ public class GameController {
 	 */
 	private boolean isActionPhase() {
 	    if (currentState != GameState.ACTION_PHASE) {
-	        System.out.println("Diese Aktion ist nur in der ACTION_PHASE erlaubt.");
 	        return false;
 	    }
 	    return true;

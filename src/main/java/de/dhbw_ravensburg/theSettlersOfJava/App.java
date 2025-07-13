@@ -2,7 +2,6 @@ package de.dhbw_ravensburg.theSettlersOfJava;
 
 import static com.almasb.fxgl.dsl.FXGL.getGameScene;
 import static com.almasb.fxgl.dsl.FXGL.getGameWorld;
-import static com.almasb.fxgl.dsl.FXGL.onKey;
 
 import java.awt.Image;
 import java.awt.Taskbar;

@@ -97,8 +97,6 @@ public class TradeOffer{
 
             offerer.addResourcesMap(requestedResources);
             receiver.addResourcesMap(offeredResources);
-        } else {
-            System.out.println("Handel fehlgeschlagen: Ein Spieler hat nicht genug Ressourcen.");
         }
     }
 

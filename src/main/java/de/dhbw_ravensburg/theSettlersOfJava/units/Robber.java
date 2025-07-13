@@ -11,8 +11,6 @@ import com.almasb.fxgl.texture.Texture;
 
 import de.dhbw_ravensburg.theSettlersOfJava.map.Hex;
 import de.dhbw_ravensburg.theSettlersOfJava.resources.ResourceType;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 
 /**
  * Represents the Robber entity in the game.

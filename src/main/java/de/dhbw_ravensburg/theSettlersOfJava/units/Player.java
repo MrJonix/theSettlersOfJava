@@ -1,11 +1,9 @@
 package de.dhbw_ravensburg.theSettlersOfJava.units;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 import com.almasb.fxgl.dsl.FXGL;
-import de.dhbw_ravensburg.theSettlersOfJava.game.*;
 import de.dhbw_ravensburg.theSettlersOfJava.App;
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.Building;
 import de.dhbw_ravensburg.theSettlersOfJava.buildings.Road;
@@ -19,36 +17,9 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableMap;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.Spinner;
-import javafx.scene.layout.*;
-import javafx.scene.text.Text;
-import java.util.Set;
+
 import de.dhbw_ravensburg.theSettlersOfJava.units.Player;
-import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Region;
-import javafx.scene.input.MouseEvent;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.function.Supplier;
 
 public class Player {
 
@@ -71,8 +42,10 @@ public class Player {
         @Override
         protected int computeValue() {
             int sum = 0;
-            for (int val : resources.values()) {
-                sum += val;
+            for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
+                if (entry.getKey() != null) {  // Key auf null prüfen
+                    sum += entry.getValue();   // Wert hinzufügen
+                }
             }
             return sum;
         }
