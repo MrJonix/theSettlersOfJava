@@ -88,13 +88,13 @@ public class RulesView {
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        scrollPane.setStyle("""
-        	    -fx-background: white;
-        	    -fx-background-color: white;
-        	    -fx-control-inner-background: white;
-        	    -fx-background-insets: 0;
-        	    -fx-padding: 0;
-        	""");
+        scrollPane.setStyle(
+        	    "-fx-background: white; " +
+        	    "-fx-background-color: white; " +
+        	    "-fx-control-inner-background: white; " +
+        	    "-fx-background-insets: 0; " +
+        	    "-fx-padding: 0;"
+        	);
 
 
         // Wrapper with white background and DropShadow

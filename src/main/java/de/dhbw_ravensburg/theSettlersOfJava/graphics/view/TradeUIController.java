@@ -57,13 +57,13 @@ public class TradeUIController {
         tradeButton = new Button();
         tradeButton.setGraphic(icon);
         tradeButton.setMaxSize(60, 60);
-        tradeButton.setStyle("""
-        	    -fx-background-color: white;
-        	    -fx-border-color: black;
-        	    -fx-border-width: 2px;
-        	    -fx-background-radius: 10;
-        	    -fx-border-radius: 10;
-        	""");        
+        tradeButton.setStyle(
+        	    "-fx-background-color: white; " +
+        	    "-fx-border-color: black; " +
+        	    "-fx-border-width: 2px; " +
+        	    "-fx-background-radius: 10; " +
+        	    "-fx-border-radius: 10;"
+        	);    
         tradeButton.setVisible(false);
         tradeButton.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
             tradeButton.setScaleX(1.1);

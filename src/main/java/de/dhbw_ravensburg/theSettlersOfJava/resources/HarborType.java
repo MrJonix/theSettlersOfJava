@@ -36,13 +36,20 @@ public enum HarborType {
 	}
 
 	public ResourceType toResourceType() {
-	    return switch (this) {
-	        case BRICK -> ResourceType.BRICK;
-	        case WOOD -> ResourceType.WOOD;
-	        case WOOL -> ResourceType.WOOL;
-	        case WHEAT -> ResourceType.WHEAT;
-	        case ORE -> ResourceType.ORE;
-	        default -> null; // THREE_TO_ONE has no specific resource
-	    };
+	    switch (this) {
+	        case BRICK:
+	            return ResourceType.BRICK;
+	        case WOOD:
+	            return ResourceType.WOOD;
+	        case WOOL:
+	            return ResourceType.WOOL;
+	        case WHEAT:
+	            return ResourceType.WHEAT;
+	        case ORE:
+	            return ResourceType.ORE;
+	        default:
+	            return null; // THREE_TO_ONE has no specific resource
+	    }
 	}
+
 }

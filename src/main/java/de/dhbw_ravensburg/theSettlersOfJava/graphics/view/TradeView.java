@@ -36,13 +36,13 @@ public class TradeView {
 
         VBox layout = new VBox(10);
         layout.setPadding(new Insets(15));
-        layout.setStyle("""
-            -fx-background-color: rgba(230,230,230,0.95);
-            -fx-border-color: black;
-            -fx-border-radius: 5;
-            -fx-background-radius: 5;
-            -fx-padding: 15;
-        """);
+        layout.setStyle(
+        	    "-fx-background-color: rgba(230,230,230,0.95);" +
+        	    "-fx-border-color: black;" +
+        	    "-fx-border-radius: 5;" +
+        	    "-fx-background-radius: 5;" +
+        	    "-fx-padding: 15;"
+        	);
 
         Text title = FXGL.getUIFactoryService().newText("Handel", Color.BLACK, 24);
 

@@ -45,14 +45,12 @@ public class CreditsView {
         title.setFont(Font.font("Myriad Pro", FontWeight.EXTRA_BOLD, 62));
         title.setFill(Color.web("#FFC700"));
 
-        // Credits text
-        String text = """
-            The Settlers of Java
+        String text = "The Settlers of Java\n\n" +
+                "- Jonas Thelen\n" +
+                "- Nico Schweinbenz\n" +
+                "- Kim Wolf\n" +
+                "- Arthur Nulet";
 
-            - Jonas Thelen
-            - Nico Schweinbenz
-            - Kim Wolf
-            - Arthur Nulet""";
 
         Label label = new Label(text);
         label.setFont(Font.font("Myriad Pro", 24));

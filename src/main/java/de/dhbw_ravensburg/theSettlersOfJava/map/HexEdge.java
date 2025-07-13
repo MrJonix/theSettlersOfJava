@@ -136,14 +136,25 @@ public class HexEdge {
         double x2 = end.getX();
         double y2 = end.getY();
 
-        // Wähle Textur basierend auf Orientierung (hier: Platzhalter)
-        String texturePath = switch (orientation) {
-            case TOP_LEFT -> "/harbor/steg_LINKSOBEN.png";
-            case TOP_RIGHT -> "/harbor/steg_RECHTSOBEN.png";
-            case BOTTOM_LEFT -> "/harbor/steg_LINKSUNTEN.png";
-            case BOTTOM_RIGHT -> "/harbor/steg_RECHTSUNTEN.png";
-            default -> "/harbor/steg_LINKSOBEN.png";
-        };
+        String texturePath;
+        switch (orientation) {
+            case TOP_LEFT:
+                texturePath = "/harbor/steg_LINKSOBEN.png";
+                break;
+            case TOP_RIGHT:
+                texturePath = "/harbor/steg_RECHTSOBEN.png";
+                break;
+            case BOTTOM_LEFT:
+                texturePath = "/harbor/steg_LINKSUNTEN.png";
+                break;
+            case BOTTOM_RIGHT:
+                texturePath = "/harbor/steg_RECHTSUNTEN.png";
+                break;
+            default:
+                texturePath = "/harbor/steg_LINKSOBEN.png";
+                break;
+        }
+
 
         Texture texture = FXGL.getAssetLoader().loadTexture(texturePath);
 
