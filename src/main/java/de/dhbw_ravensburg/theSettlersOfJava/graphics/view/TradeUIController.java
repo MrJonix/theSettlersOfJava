@@ -525,6 +525,7 @@ public class TradeUIController {
             if (!targetPlayer.hasResources(offer.getRequestedResources()) ||
                 !offer.getOfferer().hasResources(offer.getOfferedResources())) {
                 FXGL.showMessage("Mindestens einer der Spieler hat nicht genügend Ressourcen.");
+                tradeDialogOpen = false;
                 return;
             }
 
